@@ -1,6 +1,7 @@
 package dev.imb11.fog.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
+import com.mojang.blaze3d.systems.RenderSystem;
 import dev.imb11.fog.BiomeColourEntry;
 import dev.imb11.fog.FogManager;
 import dev.imb11.fog.HazeCalculator;
@@ -21,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(BackgroundRenderer.class)
-public class FogMixin {
+public abstract class BackgroundRendererMixin {
     @Shadow private static float red;
 
     @Shadow private static float green;
@@ -29,12 +30,17 @@ public class FogMixin {
     @Shadow
     private static float blue;
 
+    @Shadow
+    public static void clearFog() {
+    }
+
     @ModifyArgs(method = "render", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;clearColor(FFFF)V", remap = false))
-    private static void modifyFogColors(Args args, Camera camera, float deltaTick, ClientWorld level, int viewDistance, float bossColorModifier) {
+    private static void modifyFogColors(Args args, Camera camera, float deltaTick, ClientWorld world, int viewDistance, float bossColorModifier) {
             FogManager fogManager = FogManager.getInstance();
             FogManager.FogSettings settings = fogManager.getFogSettings(deltaTick, viewDistance);
 
-            double hazeValue = HazeCalculator.getHaze((int) level.getTimeOfDay());
+            // TODO: Do this in getFogSettings.
+            double hazeValue = HazeCalculator.getHaze((int) world.getTimeOfDay());
             BiomeColourEntry defaultEntry = new BiomeColourEntry(Identifier.of("default", "default"), 0.68f, 0.83f, 1f);
             red = (float) MathHelper.lerp(hazeValue, defaultEntry.fogR(), settings.fogR());
             green = (float) MathHelper.lerp(hazeValue, defaultEntry.fogG(), settings.fogG());
@@ -50,5 +56,40 @@ public class FogMixin {
             fogData.fogEnd = (float) settings.fogEnd();
             fogData.fogShape = FogShape.SPHERE;
         }
+    }
+
+    @Inject(method = "render", at = @At(value = "HEAD"), cancellable = true)
+    private static void renderInject(Camera camera, float deltaTick, ClientWorld world, int viewDistance, float skyDarkness, CallbackInfo ci) {
+        FogManager fogManager = FogManager.getInstance();
+        FogManager.FogSettings settings = fogManager.getFogSettings(deltaTick, viewDistance);
+
+        // TODO: Do this in getFogSettings.
+        double hazeValue = HazeCalculator.getHaze((int) world.getTimeOfDay());
+        BiomeColourEntry defaultEntry = new BiomeColourEntry(Identifier.of("default", "default"), 0.68f, 0.83f, 1f);
+        float r = (float) MathHelper.lerp(hazeValue, defaultEntry.fogR(), settings.fogR());
+        float g = (float) MathHelper.lerp(hazeValue, defaultEntry.fogG(), settings.fogG());
+        float b = (float) MathHelper.lerp(hazeValue, defaultEntry.fogB(), settings.fogB());
+        clearFog();
+        RenderSystem.clearColor(r, g, b, 1.0F);
+        ci.cancel();
+    }
+
+    // Changes the color of the seam/transition in the sky
+    @Inject(method = "setFogBlack", at = @At("HEAD"), cancellable = true)
+    private static void setFogBlackInject(CallbackInfo ci) {
+        FogManager fogManager = FogManager.getInstance();
+        MinecraftClient client = MinecraftClient.getInstance();
+        float deltaTick = client.getTickDelta();
+        int viewDistance = client.options.getViewDistance().getValue();
+        FogManager.FogSettings settings = fogManager.getFogSettings(deltaTick, viewDistance);
+
+        // TODO: Do this in getFogSettings.
+        double hazeValue = HazeCalculator.getHaze((int) client.world.getTimeOfDay());
+        BiomeColourEntry defaultEntry = new BiomeColourEntry(Identifier.of("default", "default"), 0.68f, 0.83f, 1f);
+        float r = (float) MathHelper.lerp(hazeValue, defaultEntry.fogR(), settings.fogR());
+        float g = (float) MathHelper.lerp(hazeValue, defaultEntry.fogG(), settings.fogG());
+        float b = (float) MathHelper.lerp(hazeValue, defaultEntry.fogB(), settings.fogB());
+        RenderSystem.clearColor(r, g, b, 1.0F);
+        ci.cancel();
     }
 }
