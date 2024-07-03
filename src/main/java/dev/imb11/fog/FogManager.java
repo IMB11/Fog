@@ -14,8 +14,8 @@ public class FogManager implements ClientTickEvents.EndWorldTick {
     public static FogManager INSTANCE = new FogManager();
     public final InterpolatedValue raininess = new InterpolatedValue(0.0f, 0.03f);
     public final InterpolatedValue undergroundness = new InterpolatedValue(0.0f, 0.25f);
-    public final InterpolatedValue fogStart = new InterpolatedValue(0f, 0.05f);
-    public final InterpolatedValue fogEnd = new InterpolatedValue(1f, 0.05f);
+    public final InterpolatedValue fogStart = new InterpolatedValue(0.05f, 0.05f);
+    public final InterpolatedValue fogEnd = new InterpolatedValue(0.85f, 0.05f);
     public final InterpolatedValue darkness = new InterpolatedValue(0.0f, 0.1f);
     public final InterpolatedValue fogColorRed = new InterpolatedValue((float) 0x33 / 255f, 0.05f);
     public final InterpolatedValue fogColorGreen = new InterpolatedValue((float) 0x33 / 255f, 0.05f);
