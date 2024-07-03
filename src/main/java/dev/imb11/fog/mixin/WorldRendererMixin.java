@@ -23,23 +23,24 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(WorldRenderer.class)
 public class WorldRendererMixin {
-    @ModifyVariable(method = "renderSky(Lnet/minecraft/client/util/math/MatrixStack;Lorg/joml/Matrix4f;FLnet/minecraft/client/render/Camera;ZLjava/lang/Runnable;)V", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/client/world/ClientWorld;getSkyColor(Lnet/minecraft/util/math/Vec3d;F)Lnet/minecraft/util/math/Vec3d;"))
-    @SuppressWarnings("InvalidInjectorMethodSignature")
-    public Vec3d preventHorizonBreak(Vec3d original) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        ClientWorld world = client.world;
-        FogManager fogManager = FogManager.getInstance();
-        FogManager.FogSettings settings = fogManager.getFogSettings(client.getTickDelta(), client.options.getViewDistance().getValue());
-        double hazeValue = HazeCalculator.getHaze((int) world.getTimeOfDay());
-        BiomeColourEntry defaultEntry = new BiomeColourEntry(Identifier.of("default", "default"), 0.68f, 0.83f, 1f);
-        float fogColorR = (float) MathHelper.lerp(hazeValue, defaultEntry.fogR(), settings.fogR());
-        float fogColorG = (float) MathHelper.lerp(hazeValue, defaultEntry.fogG(), settings.fogG());
-        float fogColorB = (float) MathHelper.lerp(hazeValue, defaultEntry.fogB(), settings.fogB());
-        return original;
-    }
+//    @ModifyVariable(method = "renderSky(Lnet/minecraft/client/util/math/MatrixStack;Lorg/joml/Matrix4f;FLnet/minecraft/client/render/Camera;ZLjava/lang/Runnable;)V", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/client/world/ClientWorld;getSkyColor(Lnet/minecraft/util/math/Vec3d;F)Lnet/minecraft/util/math/Vec3d;"))
+//    @SuppressWarnings("InvalidInjectorMethodSignature")
+//    public Vec3d preventHorizonBreak(Vec3d original) {
+//        MinecraftClient client = MinecraftClient.getInstance();
+//        ClientWorld world = client.world;
+//        FogManager fogManager = FogManager.getInstance();
+//        FogManager.FogSettings settings = fogManager.getFogSettings(client.getTickDelta(), client.options.getViewDistance().getValue());
+//        double hazeValue = HazeCalculator.getHaze((int) world.getTimeOfDay());
+//        BiomeColourEntry defaultEntry = new BiomeColourEntry(Identifier.of("default", "default"), 0.68f, 0.83f, 1f);
+//        float fogColorR = (float) MathHelper.lerp(hazeValue, defaultEntry.fogR(), settings.fogR());
+//        float fogColorG = (float) MathHelper.lerp(hazeValue, defaultEntry.fogG(), settings.fogG());
+//        float fogColorB = (float) MathHelper.lerp(hazeValue, defaultEntry.fogB(), settings.fogB());
+//        return original;
+//    }
 
     @Inject(method = "renderSky(Lnet/minecraft/client/util/math/MatrixStack;Lorg/joml/Matrix4f;FLnet/minecraft/client/render/Camera;ZLjava/lang/Runnable;)V", at = @At("TAIL"))
     public void renderSky(MatrixStack matrixStack, Matrix4f projectionMatrix, float deltaTick, Camera camera, boolean isFoggy, Runnable setupFog, CallbackInfo ci) {
+        // TODO: Check if Iris shaders active before rendering here.
         MinecraftClient client = MinecraftClient.getInstance();
         ClientWorld world = client.world;
         FogManager fogManager = FogManager.getInstance();
