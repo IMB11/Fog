@@ -1,13 +1,16 @@
 package dev.imb11.fog.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
+import dev.imb11.fog.BiomeColourEntry;
 import dev.imb11.fog.FogManager;
+import dev.imb11.fog.HazeCalculator;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.BackgroundRenderer;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.CameraSubmersionType;
 import net.minecraft.client.render.FogShape;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -31,10 +34,11 @@ public class FogMixin {
             FogManager fogManager = FogManager.getInstance();
             FogManager.FogSettings settings = fogManager.getFogSettings(deltaTick, viewDistance);
 
-            float undergroundFactor = 1 - fogManager.getUndergroundFactor(MinecraftClient.getInstance(), deltaTick);
-            red = settings.fogR();
-            green = settings.fogG();
-            blue = settings.fogB();
+            double hazeValue = HazeCalculator.getHaze((int) level.getTimeOfDay());
+            BiomeColourEntry defaultEntry = new BiomeColourEntry(Identifier.of("default", "default"), 0.68f, 0.83f, 1f);
+            red = (float) MathHelper.lerp(hazeValue, defaultEntry.fogR(), settings.fogR());
+            green = (float) MathHelper.lerp(hazeValue, defaultEntry.fogG(), settings.fogG());
+            blue = (float) MathHelper.lerp(hazeValue, defaultEntry.fogB(), settings.fogB());
     }
     @Inject(method = "applyFog", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderFogStart(F)V", remap = false, shift = At.Shift.BEFORE))
     private static void fogRenderEvent(Camera camera, BackgroundRenderer.FogType fogType, float viewDistance, boolean thickFog, float deltaTick, CallbackInfo ci, @Local BackgroundRenderer.FogData fogData) {
