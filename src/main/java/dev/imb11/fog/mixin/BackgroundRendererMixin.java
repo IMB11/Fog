@@ -34,10 +34,10 @@ public abstract class BackgroundRendererMixin {
     public static void clearFog() {
     }
 
-    @ModifyArgs(method = "render", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;clearColor(FFFF)V", remap = false))
-    private static void modifyFogColors(Args args, Camera camera, float deltaTick, ClientWorld world, int viewDistance, float bossColorModifier) {
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;clearColor(FFFF)V", remap = false, shift = At.Shift.BEFORE))
+    private static void modifyFogColors(Camera camera, float tickDelta, ClientWorld world, int viewDistance, float skyDarkness, CallbackInfo ci) {
             FogManager fogManager = FogManager.getInstance();
-            FogManager.FogSettings settings = fogManager.getFogSettings(deltaTick, viewDistance);
+            FogManager.FogSettings settings = fogManager.getFogSettings(tickDelta, viewDistance);
 
             // TODO: Do this in getFogSettings.
             double hazeValue = HazeCalculator.getHaze((int) world.getTimeOfDay());
@@ -58,24 +58,8 @@ public abstract class BackgroundRendererMixin {
         }
     }
 
-    @Inject(method = "render", at = @At(value = "HEAD"), cancellable = true)
-    private static void renderInject(Camera camera, float deltaTick, ClientWorld world, int viewDistance, float skyDarkness, CallbackInfo ci) {
-        FogManager fogManager = FogManager.getInstance();
-        FogManager.FogSettings settings = fogManager.getFogSettings(deltaTick, viewDistance);
-
-        // TODO: Do this in getFogSettings.
-        double hazeValue = HazeCalculator.getHaze((int) world.getTimeOfDay());
-        BiomeColourEntry defaultEntry = new BiomeColourEntry(Identifier.of("default", "default"), 0.68f, 0.83f, 1f);
-        float r = (float) MathHelper.lerp(hazeValue, defaultEntry.fogR(), settings.fogR());
-        float g = (float) MathHelper.lerp(hazeValue, defaultEntry.fogG(), settings.fogG());
-        float b = (float) MathHelper.lerp(hazeValue, defaultEntry.fogB(), settings.fogB());
-        clearFog();
-        RenderSystem.clearColor(r, g, b, 1.0F);
-        ci.cancel();
-    }
-
     // Changes the color of the seam/transition in the sky
-    @Inject(method = "setFogBlack", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "setFogBlack", at = @At("HEAD"))
     private static void setFogBlackInject(CallbackInfo ci) {
         FogManager fogManager = FogManager.getInstance();
         MinecraftClient client = MinecraftClient.getInstance();
@@ -90,6 +74,5 @@ public abstract class BackgroundRendererMixin {
         float g = (float) MathHelper.lerp(hazeValue, defaultEntry.fogG(), settings.fogG());
         float b = (float) MathHelper.lerp(hazeValue, defaultEntry.fogB(), settings.fogB());
         RenderSystem.clearColor(r, g, b, 1.0F);
-        ci.cancel();
     }
 }
