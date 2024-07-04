@@ -2,7 +2,7 @@ plugins {
 	id "dev.architectury.loom" version "1.7-SNAPSHOT"
 }
 
-def loader = stonecutter.current.version.split("-")[1]
+def loader = property("loom.platform")
 def isFabric = loader == "fabric"
 def mcVersion = property("deps.minecraft")
 
@@ -16,6 +16,15 @@ base {
 loom {
 	// TODO: Better multiversion AW strategy: https://github.com/IMB11/Sounds/blob/main/build.gradle#L86
 	accessWidenerPath = getRootProject().file('src/main/resources/fog.accesswidener')
+
+	if (loader == "forge") {
+		forge {
+			convertAccessWideners.set(true)
+			mixinConfigs(
+					"fog.mixins.json",
+			)
+		}
+	}
 }
 
 if (stonecutter.current.active) { // run configs for non-active version would be invalid
