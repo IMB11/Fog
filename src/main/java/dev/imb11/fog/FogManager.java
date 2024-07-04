@@ -14,7 +14,7 @@ public class FogManager implements ClientTickEvents.EndWorldTick {
     public static FogManager INSTANCE = new FogManager();
     public final InterpolatedValue raininess = new InterpolatedValue(0.0f, 0.03f);
     public final InterpolatedValue undergroundness = new InterpolatedValue(0.0f, 0.25f);
-    public final InterpolatedValue fogStart = new InterpolatedValue(0.05f, 0.05f);
+    public final InterpolatedValue fogStart = new InterpolatedValue(0.1f, 0.05f);
     public final InterpolatedValue fogEnd = new InterpolatedValue(0.85f, 0.05f);
     public final InterpolatedValue darkness = new InterpolatedValue(0.0f, 0.1f);
     public final InterpolatedValue fogColorRed = new InterpolatedValue((float) 0x33 / 255f, 0.05f);
@@ -110,15 +110,21 @@ public class FogManager implements ClientTickEvents.EndWorldTick {
         float raininessValue = raininess.get(tickDelta);
         float fogEndValue = viewDistance * (fogEnd.get(tickDelta)) * undergroundFogMultiplier;
 
-        // Adjust fog end based on raininess
-        if (raininessValue > 0.0f) {
-            fogEndValue /= 1.0f + 0.5f * raininessValue;
-        }
-
-        // Adjust fog color based on darkness
         float fogRed = fogColorRed.get(tickDelta);
         float fogGreen = fogColorGreen.get(tickDelta);
         float fogBlue = fogColorBlue.get(tickDelta);
+
+        // Adjust fog end based on raininess
+        if (raininessValue > 0.0f) {
+            fogEndValue /= 1.0f + 0.5f * raininessValue;
+
+            // Darken fog colour based on raininess
+            fogRed *= 1f - raininessValue;
+            fogGreen *= 1f - raininessValue;
+            fogBlue *= 0.85f - raininessValue;
+        }
+
+        // Adjust fog color based on darkness
         float darknessValue = darkness.get(tickDelta);
 
         fogRed *= 1 - darknessValue;

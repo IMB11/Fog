@@ -8,7 +8,6 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.util.math.MathHelper;
 
 public record DarknessCalculation(float fogStart, float fogEnd, float darknessValue) {
-
     public static DarknessCalculation of(MinecraftClient client, float fogStart, float fogEnd, float deltaTick) {
         float renderDistance = client.gameRenderer.getViewDistance() * 16;
         Entity entity = client.cameraEntity;

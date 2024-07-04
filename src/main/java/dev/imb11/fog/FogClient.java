@@ -28,6 +28,6 @@ public class FogClient implements ModInitializer {
 			}));
         });
 
-		ClientTickEvents.END_WORLD_TICK.register(FogManager.getInstance());
+		ClientTickEvents.END_WORLD_TICK.register((world) -> FogManager.getInstance().onEndTick(world));
 	}
 }
