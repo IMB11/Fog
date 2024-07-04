@@ -1,5 +1,8 @@
-package dev.imb11.fog;
+package dev.imb11.fog.client;
 
+import dev.imb11.fog.client.resource.BiomeColourEntry;
+import dev.imb11.fog.client.util.math.DarknessCalculation;
+import dev.imb11.fog.client.util.math.InterpolatedValue;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;

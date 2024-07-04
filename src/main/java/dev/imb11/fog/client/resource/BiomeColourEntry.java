@@ -1,4 +1,4 @@
-package dev.imb11.fog;
+package dev.imb11.fog.client.resource;
 
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;

@@ -1,4 +1,4 @@
-package dev.imb11.fog;
+package dev.imb11.fog.client.util.math;
 
 import net.minecraft.util.math.MathHelper;
 

@@ -1,4 +1,4 @@
-package dev.imb11.fog;
+package dev.imb11.fog.client.util.math;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
@@ -6,9 +6,10 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.util.math.MathHelper;
+import org.jetbrains.annotations.NotNull;
 
 public record DarknessCalculation(float fogStart, float fogEnd, float darknessValue) {
-    public static DarknessCalculation of(MinecraftClient client, float fogStart, float fogEnd, float deltaTick) {
+    public static DarknessCalculation of(@NotNull MinecraftClient client, float fogStart, float fogEnd, float deltaTick) {
         float renderDistance = client.gameRenderer.getViewDistance() * 16;
         Entity entity = client.cameraEntity;
         float darknessValue = 0.0F;
@@ -34,7 +35,7 @@ public record DarknessCalculation(float fogStart, float fogEnd, float darknessVa
         return new DarknessCalculation(fogStart, fogEnd, darknessValue);
     }
 
-    private static float calculateDarknessScale(LivingEntity entity, float deltaTick) {
+    private static float calculateDarknessScale(@NotNull LivingEntity entity, float deltaTick) {
         float darknessFactor = entity.getStatusEffect(StatusEffects.DARKNESS)
                 .getFactorCalculationData()
                 .get()

@@ -1,7 +1,7 @@
 /*? if fabric { ?*/
 package dev.imb11.fog.fabric.client;
 
-import dev.imb11.fog.FogManager;
+import dev.imb11.fog.client.FogManager;
 import dev.imb11.fog.client.FogClient;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;

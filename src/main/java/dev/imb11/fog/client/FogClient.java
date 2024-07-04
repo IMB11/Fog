@@ -1,6 +1,5 @@
 package dev.imb11.fog.client;
 
-import dev.imb11.fog.FogManager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;

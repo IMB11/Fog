@@ -1,9 +1,9 @@
 package dev.imb11.fog.mixin.client.rendering;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import dev.imb11.fog.BiomeColourEntry;
-import dev.imb11.fog.FogManager;
-import dev.imb11.fog.HazeCalculator;
+import dev.imb11.fog.client.resource.BiomeColourEntry;
+import dev.imb11.fog.client.FogManager;
+import dev.imb11.fog.client.util.math.HazeCalculator;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;

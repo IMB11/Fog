@@ -1,11 +1,11 @@
-package dev.imb11.fog;
+package dev.imb11.fog.client.util.math;
 
-import net.minecraft.util.Identifier;
+import dev.imb11.fog.client.resource.BiomeColourEntry;
+import dev.imb11.fog.client.FogManager;
 import net.minecraft.util.math.MathHelper;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
 
 public class HazeCalculator {
     // Define the key time points and corresponding haze values
