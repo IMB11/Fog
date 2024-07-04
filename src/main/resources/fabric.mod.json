@@ -1,31 +1,31 @@
 {
-	"schemaVersion": 1,
-	"id": "fog",
-	"version": "${mod_version}",
-	"name": "Fog",
-	"description": "This is an example description! Tell everyone what your mod is about!",
-	"authors": [
-		"Me!"
-	],
-	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
-	},
-	"license": "ARR",
-	"accessWidener": "fog.accesswidener",
-	"icon": "assets/fog/icon.png",
-	"environment": "*",
-	"entrypoints": {
-		"main": [
-            "dev.imb11.fog.FogClient"
-		]
-	},
-	"mixins": [
-		"fog.mixins.json"
-	],
-	"depends": {
-		"fabricloader": "*",
-		"fabric": "*",
-		"minecraft": ">=${target_minecraft}"
-	}
+  "schemaVersion": 1,
+  "id": "fog",
+  "version": "${mod_version}",
+  "name": "Fog",
+  "description": "This is an example description! Tell everyone what your mod is about!",
+  "authors": [
+    "Me!"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+  "license": "ARR",
+  "accessWidener": "fog.accesswidener",
+  "icon": "assets/fog/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "dev.imb11.fog.fabric.client.FogClientFabric"
+    ]
+  },
+  "mixins": [
+    "fog.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": "*",
+    "fabric": "*",
+    "minecraft": ">=${target_minecraft}"
+  }
 }
