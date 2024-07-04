@@ -115,8 +115,6 @@ public class FogManager implements ClientTickEvents.EndWorldTick {
             fogEndValue /= 1.0f + 0.5f * raininessValue;
         }
 
-        float fogDensity = undergroundness.get(tickDelta);
-
         // Adjust fog color based on darkness
         float fogRed = fogColorRed.get(tickDelta);
         float fogGreen = fogColorGreen.get(tickDelta);
@@ -127,8 +125,8 @@ public class FogManager implements ClientTickEvents.EndWorldTick {
         fogGreen *= 1 - darknessValue;
         fogBlue *= 1 - darknessValue;
 
-        return new FogSettings(fogStartValue, fogEndValue, fogDensity, fogRed, fogGreen, fogBlue);
+        return new FogSettings(fogStartValue, fogEndValue, fogRed, fogGreen, fogBlue);
     }
 
-    public static record FogSettings(double fogStart, double fogEnd, double fogDensity, float fogR, float fogG, float fogB) {}
+    public static record FogSettings(double fogStart, double fogEnd, float fogR, float fogG, float fogB) {}
 }

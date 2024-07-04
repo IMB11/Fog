@@ -1,5 +1,8 @@
 package dev.imb11.fog;
 
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
@@ -13,6 +16,17 @@ public class HazeCalculator {
     private static final double[] hazeValues = {
             0.85, 0.25, 0.25, 0.25, 0.85, 0.5, 0.5, 0.85
     };
+
+    public static FogManager.FogSettings applyHaze(FogManager.FogSettings settings, int timeOfDay) {
+        double hazeValue = getHaze(timeOfDay);
+        BiomeColourEntry defaultEntry = BiomeColourEntry.getOrDefault(null);
+
+        float fogColorR = (float) MathHelper.lerp(hazeValue, defaultEntry.fogR(), settings.fogR());
+        float fogColorG = (float) MathHelper.lerp(hazeValue, defaultEntry.fogG(), settings.fogG());
+        float fogColorB = (float) MathHelper.lerp(hazeValue, defaultEntry.fogB(), settings.fogB());
+
+        return new FogManager.FogSettings(settings.fogStart(), settings.fogEnd(), fogColorR, fogColorG, fogColorB);
+    }
 
     public static double getHaze(int time) {
         // Ensure time is within the valid range

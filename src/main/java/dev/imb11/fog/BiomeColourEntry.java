@@ -1,19 +1,26 @@
 package dev.imb11.fog;
 
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
 public record BiomeColourEntry(Identifier biomeID, float fogR, float fogG, float fogB) {
     public static final ArrayList<BiomeColourEntry> BIOME_COLOURS = new ArrayList<>();
 
-    public static BiomeColourEntry getOrDefault(Identifier biomeID) {
+    public static BiomeColourEntry getOrDefault(@Nullable Identifier biomeID) {
+        BiomeColourEntry defaultEntry = new BiomeColourEntry(Identifier.of("minecraft", "null"), 0.68f, 0.83f, 1f);
+        if (biomeID == null) {
+            return defaultEntry;
+        }
+
         for (BiomeColourEntry entry : BIOME_COLOURS) {
             if (entry.biomeID().equals(biomeID)) {
                 return entry;
             }
         }
-        return new BiomeColourEntry(biomeID, 0.68f, 0.83f, 1f);
+
+        return defaultEntry;
     }
 
     static {
