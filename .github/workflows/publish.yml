@@ -1,0 +1,60 @@
+name: Distribute JARs
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: corretto
+          cache: gradle
+          java-version: 21
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: "wrapper"
+      - name: Build JARs
+        uses: Wandalen/wretry.action@master
+        with:
+          command: "gradle chiseledBuild"
+          attempt_limit: 3
+      - name: Upload Built JARs
+        uses: actions/upload-artifact@v4
+        with:
+          name: built-jars
+          path: |
+            ./versions/**/build/libs/*.jar
+
+  distribute:
+    needs: build
+    runs-on: "ubuntu-latest"
+    strategy:
+      matrix:
+        # REMINDER: Update this array when adding new game versions.
+        game_version: [ "1.20.1" ]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Download Built JARs
+        uses: actions/download-artifact@v4
+        with:
+          name: built-jars
+          path: ./versions
+      - name: Publish to Modrinth, CurseForge, etc.
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          files: |
+            versions/${{ matrix.game_version }}/build/libs/!(*-@(dev|sources|javadoc)).jar
+            versions/${{ matrix.game_version }}/build/libs/*-@(dev|sources|javadoc).jar
+          version: ${{ github.ref_name }}+${{ matrix.game_version }}
+          modrinth-id: ${{ vars.MODRINTH_ID }}
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          curseforge-id: ${{ vars.CURSEFORGE_ID }}
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          github-token: ${{ secrets.CLASSIC_GITHUB_TOKEN }}

@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "fog",
-	"version": "${version}",
+	"version": "${mod_version}",
 	"name": "Fog",
 	"description": "This is an example description! Tell everyone what your mod is about!",
 	"authors": [
@@ -24,12 +24,8 @@
 		"fog.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.15.11",
-		"minecraft": "~1.20.1",
-		"java": ">=17",
-		"fabric-api": "*"
-	},
-	"suggests": {
-		"another-mod": "*"
+		"fabricloader": "*",
+		"fabric": "*",
+		"minecraft": ">=${target_minecraft}"
 	}
 }
