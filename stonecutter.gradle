@@ -5,3 +5,10 @@ stonecutter.registerChiseled tasks.register("chiseledBuild", stonecutter.chisele
     setGroup "project"
     ofTask "build"
 }
+
+stonecutter.configureEach {
+    def platform = project.property("loom.platform")
+    stonecutter.const("fabric", platform == "fabric")
+    stonecutter.const("forge", platform == "forge")
+    stonecutter.const("neoforge", platform == "neoforge")
+}
