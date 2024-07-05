@@ -16,6 +16,8 @@ public class FogClient {
 	public static void initialize() {
 		LOGGER.info("Loading {}.", MOD_NAME);
 
+		// TODO: Add Architectury API
+//		ReloadListenerRegistry.register(ResourceType.CLIENT_RESOURCES, new FogResourceReloader());
 		ClientTickEvents.END_WORLD_TICK.register((world) -> FogManager.getInstance().onEndTick(world));
 	}
 }

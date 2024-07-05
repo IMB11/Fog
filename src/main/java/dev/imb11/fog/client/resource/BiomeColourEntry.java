@@ -1,10 +1,13 @@
 package dev.imb11.fog.client.resource;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
+@Environment(EnvType.CLIENT)
 public record BiomeColourEntry(Identifier biomeID, float fogR, float fogG, float fogB) {
     public static final ArrayList<BiomeColourEntry> BIOME_COLOURS = new ArrayList<>();
 
