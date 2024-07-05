@@ -3,139 +3,146 @@ package dev.imb11.fog.client;
 import dev.imb11.fog.client.resource.BiomeColourEntry;
 import dev.imb11.fog.client.util.math.DarknessCalculation;
 import dev.imb11.fog.client.util.math.InterpolatedValue;
+import dev.imb11.fog.client.util.player.PlayerUtil;
+import dev.imb11.fog.client.util.world.ClientWorldUtil;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.LightType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class FogManager implements ClientTickEvents.EndWorldTick {
-    public static FogManager INSTANCE = new FogManager();
-    public final InterpolatedValue raininess = new InterpolatedValue(0.0f, 0.03f);
-    public final InterpolatedValue undergroundness = new InterpolatedValue(0.0f, 0.25f);
-    public final InterpolatedValue fogStart = new InterpolatedValue(0.1f, 0.05f);
-    public final InterpolatedValue fogEnd = new InterpolatedValue(0.85f, 0.05f);
-    public final InterpolatedValue darkness = new InterpolatedValue(0.0f, 0.1f);
-    public final InterpolatedValue fogColorRed = new InterpolatedValue((float) 0x33 / 255f, 0.05f);
-    public final InterpolatedValue fogColorGreen = new InterpolatedValue((float) 0x33 / 255f, 0.05f);
-    public final InterpolatedValue fogColorBlue = new InterpolatedValue((float) 0x33 / 255f, 0.05f);
-    public final InterpolatedValue currentSkyLight = new InterpolatedValue(16.0F);
-    public final InterpolatedValue currentBlockLight = new InterpolatedValue(16.0F);
-    public final InterpolatedValue currentLight = new InterpolatedValue(16.0F);
+	public static FogManager INSTANCE = new FogManager();
+	public final InterpolatedValue raininess = new InterpolatedValue(0.0f, 0.03f);
+	public final InterpolatedValue undergroundness = new InterpolatedValue(0.0f, 0.25f);
+	public final InterpolatedValue fogStart = new InterpolatedValue(0.1f, 0.05f);
+	public final InterpolatedValue fogEnd = new InterpolatedValue(0.85f, 0.05f);
+	public final InterpolatedValue darkness = new InterpolatedValue(0.0f, 0.1f);
+	public final InterpolatedValue fogColorRed = new InterpolatedValue((float) 0x33 / 255f, 0.05f);
+	public final InterpolatedValue fogColorGreen = new InterpolatedValue((float) 0x33 / 255f, 0.05f);
+	public final InterpolatedValue fogColorBlue = new InterpolatedValue((float) 0x33 / 255f, 0.05f);
+	public final InterpolatedValue currentSkyLight = new InterpolatedValue(16.0F);
+	public final InterpolatedValue currentBlockLight = new InterpolatedValue(16.0F);
+	public final InterpolatedValue currentLight = new InterpolatedValue(16.0F);
 
-    public static FogManager getInstance() {
-        return INSTANCE;
-    }
+	public static @NotNull FogManager getInstance() {
+		return INSTANCE;
+	}
 
-    @Override
-    public void onEndTick(ClientWorld world) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        float deltaTick = client.getTickDelta();
+	@Override
+	public void onEndTick(@NotNull ClientWorld world) {
+		@NotNull final var client = MinecraftClient.getInstance();
+		@Nullable final var clientPlayer = client.player;
+		if (clientPlayer == null) {
+			return;
+		}
 
-        if(world.isRaining()) {
-            raininess.interpolate(1.0f);
-        } else {
-            raininess.interpolate(0.0f);
-        }
+		if (world.isRaining()) {
+			raininess.interpolate(1.0f);
+		} else {
+			raininess.interpolate(0.0f);
+		}
 
-        BlockPos pos = client.player.getBlockPos();
-        Vec3d eyePos = client.player.getEyePos();
+		@Nullable final BlockPos clientPlayerBlockPosition = clientPlayer.getBlockPos();
+		if (clientPlayerBlockPosition == null) {
+			return;
+		}
 
-        boolean isAboveGround = eyePos.getY() + 0.5f > client.world.getTopY(Heightmap.Type.WORLD_SURFACE, pos.getX(), pos.getZ()) || eyePos.getY() + 0.5f > client.world.getSeaLevel();
+		if (PlayerUtil.isPlayerAboveGround(
+				clientPlayer.getEyePos().getY(), world.getSeaLevel(),
+				world.getTopY(Heightmap.Type.WORLD_SURFACE, clientPlayerBlockPosition.getX(), clientPlayerBlockPosition.getZ())
+		)) {
+			this.undergroundness.interpolate(0.0F, 0.05f);
+		} else {
+			this.undergroundness.interpolate(1.0F);
+		}
 
-        if (isAboveGround) {
-            this.undergroundness.interpolate(0.0F, 0.05f);
-        } else {
-            this.undergroundness.interpolate(1.0F);
-        }
+		float density = ClientWorldUtil.isFogDenseAtPosition(world, clientPlayerBlockPosition) ? 0.9F : 1.0F;
 
-        boolean isFogDense = client.world.getDimensionEffects().useThickFog(pos.getX(), pos.getZ()) || client.inGameHud.getBossBarHud().shouldThickenFog();
-        float density = isFogDense ? 0.9F : 1.0F;
+		DarknessCalculation darknessCalculation = DarknessCalculation.of(
+				client, fogStart.getDefaultValue(), fogEnd.getDefaultValue() * density, client.getTickDelta());
 
-        DarknessCalculation darknessCalculation = DarknessCalculation.of(client, fogStart.getDefaultValue(), fogEnd.getDefaultValue() * density, deltaTick);
+		BiomeColourEntry biomeColourEntry = BiomeColourEntry.getOrDefault(
+				world.getBiome(clientPlayer.getBlockPos()).getKey().get().getValue());
 
-        BiomeColourEntry biomeColourEntry = BiomeColourEntry.getOrDefault(client.world.getBiome(client.player.getBlockPos()).getKey().get().getValue());
+		this.fogColorRed.interpolate(biomeColourEntry.fogR());
+		this.fogColorGreen.interpolate(biomeColourEntry.fogG());
+		this.fogColorBlue.interpolate(biomeColourEntry.fogB());
 
-        this.fogColorRed.interpolate(biomeColourEntry.fogR());
-        this.fogColorGreen.interpolate(biomeColourEntry.fogG());
-        this.fogColorBlue.interpolate(biomeColourEntry.fogB());
+		this.fogStart.interpolate(darknessCalculation.fogStart());
+		this.fogEnd.interpolate(darknessCalculation.fogEnd());
+		this.darkness.interpolate(darknessCalculation.darknessValue());
 
-        this.fogStart.interpolate(darknessCalculation.fogStart());
-        this.fogEnd.interpolate(darknessCalculation.fogEnd());
-        this.darkness.interpolate(darknessCalculation.darknessValue());
+		this.currentSkyLight.interpolate(world.getLightLevel(LightType.SKY, clientPlayerBlockPosition));
+		this.currentBlockLight.interpolate(world.getLightLevel(LightType.BLOCK, clientPlayerBlockPosition));
+		this.currentLight.interpolate(world.getBaseLightLevel(clientPlayerBlockPosition, 0));
+	}
 
-        this.currentSkyLight.interpolate(client.world.getLightLevel(LightType.SKY, pos));
-        this.currentBlockLight.interpolate(client.world.getLightLevel(LightType.BLOCK, pos));
-        this.currentLight.interpolate(client.world.getBaseLightLevel(pos, 0));
-    }
+	public static float mapRange(float fromMin, float fromMax, float toMin, float toMax, float value) {
+		float clampedValue = MathHelper.clamp(value, fromMin, fromMax);
+		return toMin + (clampedValue - fromMin) * (toMax - toMin) / (fromMax - fromMin);
+	}
 
-    public static float mapRange(float fromMin, float fromMax, float toMin, float toMax, float value) {
-        float clampedValue = MathHelper.clamp(value, fromMin, fromMax);
-        return toMin + (clampedValue - fromMin) * (toMax - toMin) / (fromMax - fromMin);
-    }
+	public float getUndergroundFactor(@NotNull MinecraftClient client, float deltaTicks) {
+		@Nullable var clientCamera = client.cameraEntity;
+		@Nullable var clientWorld = client.world;
+		if (clientCamera == null || clientWorld == null) {
+			return 0.0F;
+		}
 
-    public float getUndergroundFactor(MinecraftClient client, float deltaTicks) {
-        Entity cameraEntity = client.cameraEntity;
-        if (cameraEntity == null) return 0.0F; // Handle case where cameraEntity is null
+		float y = (float) clientCamera.getY();
+		float seaLevel = clientWorld.getSeaLevel();
 
-        float y = (float) cameraEntity.getY();
-        float seaLevel = client.world.getSeaLevel();
+		// Map y to a factor between 0 and 1 based on sea level +/- 32
+		float yFactor = mapRange(seaLevel - 32.0F, seaLevel + 32.0F, 1.0F, 0.0F, y);
+		yFactor = MathHelper.clamp(yFactor, 0.0F, 1.0F); // Clamp yFactor to ensure it's within [0, 1]
 
-        // Map y to a factor between 0 and 1 based on sea level +/- 32
-        float yFactor = mapRange(seaLevel - 32.0F, seaLevel + 32.0F, 1.0F, 0.0F, y);
-        yFactor = MathHelper.clamp(yFactor, 0.0F, 1.0F); // Clamp yFactor to ensure it's within [0, 1]
+		float undergroundnessValue = this.undergroundness.get(deltaTicks);
+		float skyLight = this.currentSkyLight.get(deltaTicks);
 
-        float undergroundnessValue = this.undergroundness.get(deltaTicks);
-        float skyLight = this.currentSkyLight.get(deltaTicks);
+		// Calculate underground factor by lerping between yFactor, undergroundness, and sky light
+		return MathHelper.lerp(yFactor, 1.0F - undergroundnessValue, skyLight / 16.0F);
+	}
 
-        // Calculate underground factor using lerping between yFactor, undergroundness, and sky light
-        float undergroundFactor = MathHelper.lerp(yFactor, 1.0F - undergroundnessValue, skyLight / 16.0F);
+	public FogSettings getFogSettings(float tickDelta, float viewDistance) {
+		float fogStartValue = fogStart.get(tickDelta) * viewDistance;
 
-        return undergroundFactor;
-    }
+		// Calculate undergroundness fog multiplier
+		// TODO: Add a config option for disabling the undergroundness fog multiplier
+		float undergroundFogMultiplier = MathHelper.lerp(this.undergroundness.get(tickDelta), 0.75F, 1.0F);
+		undergroundFogMultiplier = MathHelper.lerp(this.darkness.get(tickDelta), undergroundFogMultiplier, 1.0F);
 
-    public FogSettings getFogSettings(float tickDelta, float viewDistance) {
-        float fogStartValue = fogStart.get(tickDelta) * viewDistance;
+		// Calculate fog end considering raininess and underground fog multiplier
+		float raininessValue = raininess.get(tickDelta);
+		float fogEndValue = viewDistance * (fogEnd.get(tickDelta)) * undergroundFogMultiplier;
 
-        // Calculate underground fog multiplier
-        float undergroundFogMultiplier = 1.0F;
-        if (true) {
-            undergroundFogMultiplier = MathHelper.lerp(this.undergroundness.get(tickDelta), 0.75F, 1.0F);
-            float darkness = this.darkness.get(tickDelta);
-            undergroundFogMultiplier = MathHelper.lerp(darkness, undergroundFogMultiplier, 1.0F);
-        }
+		float fogRed = fogColorRed.get(tickDelta);
+		float fogGreen = fogColorGreen.get(tickDelta);
+		float fogBlue = fogColorBlue.get(tickDelta);
 
-        // Calculate fog end considering raininess and underground fog multiplier
-        float raininessValue = raininess.get(tickDelta);
-        float fogEndValue = viewDistance * (fogEnd.get(tickDelta)) * undergroundFogMultiplier;
+		// Adjust fog end based on raininess
+		if (raininessValue > 0.0f) {
+			fogEndValue /= 1.0f + 0.5f * raininessValue;
 
-        float fogRed = fogColorRed.get(tickDelta);
-        float fogGreen = fogColorGreen.get(tickDelta);
-        float fogBlue = fogColorBlue.get(tickDelta);
+			// Darken fog colour based on raininess
+			fogRed *= 1f - raininessValue;
+			fogGreen *= 1f - raininessValue;
+			fogBlue *= 0.85f - raininessValue;
+		}
 
-        // Adjust fog end based on raininess
-        if (raininessValue > 0.0f) {
-            fogEndValue /= 1.0f + 0.5f * raininessValue;
+		// Adjust fog color based on darkness
+		float darknessValue = this.darkness.get(tickDelta);
 
-            // Darken fog colour based on raininess
-            fogRed *= 1f - raininessValue;
-            fogGreen *= 1f - raininessValue;
-            fogBlue *= 0.85f - raininessValue;
-        }
+		fogRed *= 1 - darknessValue;
+		fogGreen *= 1 - darknessValue;
+		fogBlue *= 1 - darknessValue;
 
-        // Adjust fog color based on darkness
-        float darknessValue = darkness.get(tickDelta);
+		return new FogSettings(fogStartValue, fogEndValue, fogRed, fogGreen, fogBlue);
+	}
 
-        fogRed *= 1 - darknessValue;
-        fogGreen *= 1 - darknessValue;
-        fogBlue *= 1 - darknessValue;
-
-        return new FogSettings(fogStartValue, fogEndValue, fogRed, fogGreen, fogBlue);
-    }
-
-    public static record FogSettings(double fogStart, double fogEnd, float fogR, float fogG, float fogB) {}
+	public record FogSettings(double fogStart, double fogEnd, float fogR, float fogG, float fogB) {}
 }

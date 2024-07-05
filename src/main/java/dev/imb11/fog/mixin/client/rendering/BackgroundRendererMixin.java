@@ -12,6 +12,8 @@ import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.CameraSubmersionType;
 import net.minecraft.client.render.FogShape;
 import net.minecraft.client.world.ClientWorld;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -29,36 +31,44 @@ public abstract class BackgroundRendererMixin {
 	private static float blue;
 
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;clearColor(FFFF)V", remap = false, shift = At.Shift.BEFORE))
-	private static void modifyFogColors(Camera camera, float tickDelta, ClientWorld world, int viewDistance, float skyDarkness, CallbackInfo ci) {
-		FogManager fogManager = FogManager.getInstance();
-		FogManager.FogSettings settings = fogManager.getFogSettings(tickDelta, viewDistance);
-		settings = HazeCalculator.applyHaze(settings, (int) world.getTimeOfDay());
-		red = settings.fogR();
-		green = settings.fogG();
-		blue = settings.fogB();
+	private static void fog$modifyFogColors(@NotNull Camera camera, float tickDelta, @NotNull ClientWorld world, int viewDistance, float skyDarkness, @NotNull CallbackInfo ci) {
+		@NotNull var fogSettings = FogManager.getInstance().getFogSettings(tickDelta, viewDistance);
+		fogSettings = HazeCalculator.applyHaze(fogSettings, (int) world.getTimeOfDay());
+		red = fogSettings.fogR();
+		green = fogSettings.fogG();
+		blue = fogSettings.fogB();
 	}
 
 	@Inject(method = "applyFog", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderFogStart(F)V", remap = false, shift = At.Shift.BEFORE))
-	private static void fogRenderEvent(Camera camera, BackgroundRenderer.FogType fogType, float viewDistance, boolean thickFog, float deltaTick, CallbackInfo ci, @Local BackgroundRenderer.FogData fogData) {
-		FogManager fogManager = FogManager.getInstance();
-		FogManager.FogSettings settings = fogManager.getFogSettings(deltaTick, viewDistance);
-
-		if (camera.getSubmersionType() == CameraSubmersionType.NONE) {
-			fogData.fogStart = (float) settings.fogStart();
-			fogData.fogEnd = (float) settings.fogEnd();
-			fogData.fogShape = FogShape.SPHERE;
+	private static void fog$fogRenderEvent(@NotNull Camera camera, @NotNull BackgroundRenderer.FogType fogType, float viewDistance, boolean thickFog, float deltaTick, @NotNull CallbackInfo ci, @Local @NotNull BackgroundRenderer.FogData fogData) {
+		if (camera.getSubmersionType() != CameraSubmersionType.NONE) {
+			return;
 		}
+
+		@NotNull var fogSettings = FogManager.getInstance().getFogSettings(deltaTick, viewDistance);
+		fogData.fogStart = (float) fogSettings.fogStart();
+		fogData.fogEnd = (float) fogSettings.fogEnd();
+		fogData.fogShape = FogShape.SPHERE;
 	}
 
-	// Changes the color of the seam/transition in the sky
+	/**
+	 * Changes the color of the seam/transition in the sky.
+	 *
+	 * @param ci The {@link CallbackInfo} for this {@link Inject}.
+	 */
 	@Inject(method = "setFogBlack", at = @At("HEAD"))
-	private static void setFogBlackInject(CallbackInfo ci) {
-		FogManager fogManager = FogManager.getInstance();
-		MinecraftClient client = MinecraftClient.getInstance();
-		float deltaTick = client.getTickDelta();
-		int viewDistance = client.options.getViewDistance().getValue();
-		FogManager.FogSettings settings = fogManager.getFogSettings(deltaTick, viewDistance);
-		settings = HazeCalculator.applyHaze(settings, (int) client.world.getTimeOfDay());
-		RenderSystem.clearColor(settings.fogR(), settings.fogG(), settings.fogB(), 1.0F);
+	private static void fog$setFogBlackChangeClearColor(@NotNull CallbackInfo ci) {
+		@NotNull final var client = MinecraftClient.getInstance();
+		@Nullable final var clientWorld = client.world;
+		if (clientWorld == null) {
+			return;
+		}
+
+		@NotNull var fogSettings = FogManager.getInstance().getFogSettings(
+				client.getTickDelta(),
+				client.options.getViewDistance().getValue()
+		);
+		fogSettings = HazeCalculator.applyHaze(fogSettings, (int) clientWorld.getTimeOfDay());
+		RenderSystem.clearColor(fogSettings.fogR(), fogSettings.fogG(), fogSettings.fogB(), 1.0F);
 	}
 }
