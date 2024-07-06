@@ -1,14 +1,12 @@
 package dev.imb11.fog.client.util.math;
 
-import dev.imb11.fog.client.resource.BiomeColourEntry;
 import dev.imb11.fog.client.FogManager;
+import dev.imb11.fog.client.registry.FogRegistry;
+import dev.imb11.fog.client.resource.CustomFogDefinition;
+import dev.imb11.fog.client.util.color.Color;
 import net.minecraft.util.math.MathHelper;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-
 public class HazeCalculator {
-    // Define the key time points and corresponding haze values
     private static final int[] times = {
             0, 500, 1500, 11500, 12500, 13500, 22500, 23500
     };
@@ -19,11 +17,13 @@ public class HazeCalculator {
 
     public static FogManager.FogSettings applyHaze(FogManager.FogSettings settings, int timeOfDay) {
         double hazeValue = getHaze(timeOfDay);
-        BiomeColourEntry defaultEntry = BiomeColourEntry.getOrDefault(null);
 
-        float fogColorR = (float) MathHelper.lerp(hazeValue, defaultEntry.fogR(), settings.fogR());
-        float fogColorG = (float) MathHelper.lerp(hazeValue, defaultEntry.fogG(), settings.fogG());
-        float fogColorB = (float) MathHelper.lerp(hazeValue, defaultEntry.fogB(), settings.fogB());
+	    CustomFogDefinition.FogColors defaultEntry = FogRegistry.getDefaultBiomeColors();
+	    Color color = timeOfDay >= 13000 && timeOfDay <= 23000 ? defaultEntry.getNightColor() : defaultEntry.getDayColor();
+
+        float fogColorR = (float) MathHelper.lerp(hazeValue, color.red / 255f, settings.fogR());
+        float fogColorG = (float) MathHelper.lerp(hazeValue, color.green / 255f, settings.fogG());
+        float fogColorB = (float) MathHelper.lerp(hazeValue, color.blue / 255f, settings.fogB());
 
         return new FogManager.FogSettings(settings.fogStart(), settings.fogEnd(), fogColorR, fogColorG, fogColorB);
     }
@@ -59,17 +59,17 @@ public class HazeCalculator {
         return hazeValues[hazeValues.length - 1];
     }
 
-    public static void main(String[] args) {
-        // Test the function with different times, draw to an image
-        BufferedImage image = new BufferedImage(2400, 150, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D graphics = image.createGraphics();
-
-        for (int i = 0; i < 2400; i++) {
-            double haze = getHaze(i * 10);
-            graphics.setColor(new Color(0, 0, 0, (int) (255 * haze)));
-            graphics.drawLine(i, 0, i, 150);
-        }
-
-        graphics.dispose();
-    }
+//    public static void main(String[] args) {
+//        // Test the function with different times, draw to an image
+//        BufferedImage image = new BufferedImage(2400, 150, BufferedImage.TYPE_INT_ARGB);
+//        Graphics2D graphics = image.createGraphics();
+//
+//        for (int i = 0; i < 2400; i++) {
+//            double haze = getHaze(i * 10);
+//            graphics.setColor(new Color(0, 0, 0, (int) (255 * haze)));
+//            graphics.drawLine(i, 0, i, 150);
+//        }
+//
+//        graphics.dispose();
+//    }
 }
