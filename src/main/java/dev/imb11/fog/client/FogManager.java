@@ -5,6 +5,7 @@ import dev.imb11.fog.client.resource.CustomFogDefinition;
 import dev.imb11.fog.client.util.color.Color;
 import dev.imb11.fog.client.util.math.DarknessCalculation;
 import dev.imb11.fog.client.util.math.InterpolatedValue;
+import dev.imb11.fog.client.util.math.MathUtil;
 import dev.imb11.fog.client.util.player.PlayerUtil;
 import dev.imb11.fog.client.util.world.ClientWorldUtil;
 import net.minecraft.client.MinecraftClient;
@@ -34,10 +35,6 @@ public class FogManager {
 		return INSTANCE;
 	}
 
-	public boolean shouldApplyHaze(@NotNull ClientWorld clientWorld, float deltaTick) {
-		return this.undergroundness.get(deltaTick) <= 0.25f;
-	}
-
 	public void onEndTick(@NotNull ClientWorld world) {
 		@NotNull final var client = MinecraftClient.getInstance();
 		@Nullable final var clientPlayer = client.player;
@@ -58,9 +55,9 @@ public class FogManager {
 
 		if (PlayerUtil.isPlayerAboveGround(
 				clientPlayer.getEyePos().getY(), world.getSeaLevel(),
-				world.getTopY(Heightmap.Type.WORLD_SURFACE, clientPlayerBlockPosition.getX(), clientPlayerBlockPosition.getZ())
+				world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, clientPlayerBlockPosition.getX(), clientPlayerBlockPosition.getZ())
 		)) {
-			this.undergroundness.interpolate(0.0F, 0.05f);
+			this.undergroundness.interpolate(0.0F);
 		} else {
 			this.undergroundness.interpolate(1.0F);
 		}
@@ -71,6 +68,8 @@ public class FogManager {
 				client, fogStart.getDefaultValue(), fogEnd.getDefaultValue() * density, client.getTickDelta());
 
 		CustomFogDefinition.FogColors defaultColourEntry = FogRegistry.getDefaultBiomeColors();
+
+		// TODO: In the getFogSettings method, need to apply the start and end multipliers.
 		CustomFogDefinition biomeColourEntry = FogRegistry.getBiomeOrDefault(
 				world.getBiome(clientPlayer.getBlockPos()).getKey().get().getValue());
 
@@ -78,15 +77,15 @@ public class FogManager {
 		if(biomeColourEntry.getColors().isPresent()) {
 			CustomFogDefinition.FogColors colors = biomeColourEntry.getColors().get();
 			Color color = world.isNight() ? colors.getNightColor() : colors.getDayColor();
-			this.fogColorBlue.interpolate(color.red / 255f);
+			this.fogColorRed.interpolate(color.red / 255f);
 			this.fogColorGreen.interpolate(color.green / 255f);
-			this.fogColorRed.interpolate(color.blue / 255f);
+			this.fogColorBlue.interpolate(color.blue / 255f);
 		} else {
 			Color color = world.isNight() ? defaultColourEntry.getNightColor() : defaultColourEntry.getDayColor();
 
-			this.fogColorBlue.interpolate(color.red / 255f);
+			this.fogColorRed.interpolate(color.red / 255f);
 			this.fogColorGreen.interpolate(color.green / 255f);
-			this.fogColorRed.interpolate(color.blue / 255f);
+			this.fogColorBlue.interpolate(color.blue / 255f);
 		}
 
 		this.fogStart.interpolate(darknessCalculation.fogStart());
@@ -134,7 +133,11 @@ public class FogManager {
 
 		// Calculate fog end considering raininess and underground fog multiplier
 		float raininessValue = raininess.get(tickDelta);
-		float fogEndValue = viewDistance * (fogEnd.get(tickDelta)) * undergroundFogMultiplier;
+		float fogEndValue = viewDistance * (fogEnd.get(tickDelta));
+
+		if(undergroundFogMultiplier > 0.78f) {
+			fogEndValue /= 1 + undergroundFogMultiplier;
+		}
 
 		float fogRed = fogColorRed.get(tickDelta);
 		float fogGreen = fogColorGreen.get(tickDelta);

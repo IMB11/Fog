@@ -12,12 +12,14 @@ import java.util.Optional;
 @Environment(EnvType.CLIENT)
 public class FogRegistry {
 	private static final CustomFogDefinition.FogColors DEFAULT_BIOME_FOG_COLORS;
+	private static final CustomFogDefinition.FogColors DEFAULT_CAVE_FOG_COLORS;
 	private static final CustomFogDefinition DEFAULT_BIOME_FOG_DEFINITION;
 	private static final Map<Identifier, CustomFogDefinition> STRUCTURE_FOG_REGISTRY = new HashMap<>();
 	private static final Map<Identifier, CustomFogDefinition> BIOME_FOG_REGISTRY = new HashMap<>();
 
 	static {
-		DEFAULT_BIOME_FOG_COLORS = new CustomFogDefinition.FogColors("#add4ff", "#add4ff");
+		DEFAULT_BIOME_FOG_COLORS = new CustomFogDefinition.FogColors("#add4ff", "#384964");
+		DEFAULT_CAVE_FOG_COLORS = new CustomFogDefinition.FogColors("#212121", "#101010");
 		DEFAULT_BIOME_FOG_DEFINITION = new CustomFogDefinition(1.0f, 1.0f, Optional.of(DEFAULT_BIOME_FOG_COLORS));
 	}
 
@@ -41,5 +43,9 @@ public class FogRegistry {
 
 	public static CustomFogDefinition.FogColors getDefaultBiomeColors() {
 		return DEFAULT_BIOME_FOG_COLORS;
+	}
+
+	public static CustomFogDefinition.FogColors getDefaultCaveColors() {
+		return DEFAULT_CAVE_FOG_COLORS;
 	}
 }

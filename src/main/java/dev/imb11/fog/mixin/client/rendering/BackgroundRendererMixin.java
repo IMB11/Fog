@@ -34,10 +34,9 @@ public abstract class BackgroundRendererMixin {
 	private static void fog$modifyFogColors(@NotNull Camera camera, float tickDelta, @NotNull ClientWorld world, int viewDistance, float skyDarkness, @NotNull CallbackInfo ci) {
 		var fogManager = FogManager.getInstance();
 		@NotNull var fogSettings = fogManager.getFogSettings(tickDelta, viewDistance);
+		float undergroundFactor = fogManager.getUndergroundFactor(MinecraftClient.getInstance(), tickDelta);
 
-		if(fogManager.shouldApplyHaze(world, tickDelta)) {
-			fogSettings = HazeCalculator.applyHaze(fogSettings, (int) world.getTimeOfDay());
-		}
+		fogSettings = HazeCalculator.applyHaze(undergroundFactor, fogSettings, (int) world.getTimeOfDay());
 
 		red = fogSettings.fogR();
 		green = fogSettings.fogG();
@@ -68,15 +67,18 @@ public abstract class BackgroundRendererMixin {
 		}
 
 		var fogManager = FogManager.getInstance();
+		float undergroundFactor = fogManager.getUndergroundFactor(client, client.getTickDelta());
 		@NotNull var fogSettings = fogManager.getFogSettings(
 				client.getTickDelta(),
 				client.options.getViewDistance().getValue()
 		);
 
-		if(fogManager.shouldApplyHaze(clientWorld, client.getTickDelta())) {
-			fogSettings = HazeCalculator.applyHaze(fogSettings, (int) clientWorld.getTimeOfDay());
-		}
+		fogSettings = HazeCalculator.applyHaze(undergroundFactor, fogSettings, (int) clientWorld.getTimeOfDay());
 
-		RenderSystem.clearColor(fogSettings.fogR(), fogSettings.fogG(), fogSettings.fogB(), 1.0F);
+		float fogR = fogSettings.fogR();
+		float fogG = fogSettings.fogG();
+		float fogB = fogSettings.fogB();
+
+		RenderSystem.clearColor(fogR, fogB, fogG, 1.0F);
 	}
 }

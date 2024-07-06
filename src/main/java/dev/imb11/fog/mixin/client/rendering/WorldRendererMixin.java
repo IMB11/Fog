@@ -6,6 +6,7 @@ import dev.imb11.fog.client.registry.FogRegistry;
 import dev.imb11.fog.client.resource.CustomFogDefinition;
 import dev.imb11.fog.client.util.color.Color;
 import dev.imb11.fog.client.util.math.HazeCalculator;
+import dev.imb11.fog.client.util.math.MathUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -43,12 +44,13 @@ public class WorldRendererMixin {
 		FogManager fogManager = FogManager.getInstance();
 		FogManager.FogSettings settings = fogManager.getFogSettings(deltaTick, client.options.getViewDistance().getValue());
 
-		settings = HazeCalculator.applyHaze(settings, (int) this.world.getTimeOfDay());
+		settings = HazeCalculator.applyHaze(1f, settings, (int) this.world.getTimeOfDay());
+
 		float fogColorR = settings.fogR();
 		float fogColorG = settings.fogG();
 		float fogColorB = settings.fogB();
 
-		float undergroundFactor = fogManager.getUndergroundFactor(client, deltaTick);
+		float undergroundFactor = MathUtil.cube(fogManager.getUndergroundFactor(client, deltaTick));
 
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();

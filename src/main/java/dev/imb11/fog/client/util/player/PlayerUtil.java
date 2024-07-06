@@ -5,7 +5,9 @@ import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
 public class PlayerUtil {
-	public static boolean isPlayerAboveGround(final double playerEyePositionY, final float worldSeaLevel, final int worldTopYAtPlayerPosition) {
-		return playerEyePositionY + 0.5d > worldTopYAtPlayerPosition || playerEyePositionY + 0.5d > worldSeaLevel;
+	public static boolean isPlayerAboveGround(final double playerEyePositionY, final int seaLevel, final int worldTopYAtPlayerPosition) {
+		// There need to be a minimum of 5 blocks above the player to be considered to be
+		// underground. This is to prevent the fog from changing when the player is in a forest or building etc.
+		return playerEyePositionY > worldTopYAtPlayerPosition - 5;
 	}
 }
