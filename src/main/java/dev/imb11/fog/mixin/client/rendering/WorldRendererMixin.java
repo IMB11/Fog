@@ -1,8 +1,10 @@
 package dev.imb11.fog.mixin.client.rendering;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import dev.imb11.fog.client.resource.BiomeColourEntry;
 import dev.imb11.fog.client.FogManager;
+import dev.imb11.fog.client.registry.FogRegistry;
+import dev.imb11.fog.client.resource.CustomFogDefinition;
+import dev.imb11.fog.client.util.color.Color;
 import dev.imb11.fog.client.util.math.HazeCalculator;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -41,11 +43,10 @@ public class WorldRendererMixin {
 		FogManager fogManager = FogManager.getInstance();
 		FogManager.FogSettings settings = fogManager.getFogSettings(deltaTick, client.options.getViewDistance().getValue());
 
-		double hazeValue = HazeCalculator.getHaze((int) this.world.getTimeOfDay());
-		BiomeColourEntry defaultEntry = new BiomeColourEntry(Identifier.of("default", "default"), 0.68f, 0.83f, 1f);
-		float fogColorR = (float) MathHelper.lerp(hazeValue, defaultEntry.fogR(), settings.fogR());
-		float fogColorG = (float) MathHelper.lerp(hazeValue, defaultEntry.fogG(), settings.fogG());
-		float fogColorB = (float) MathHelper.lerp(hazeValue, defaultEntry.fogB(), settings.fogB());
+		settings = HazeCalculator.applyHaze(settings, (int) this.world.getTimeOfDay());
+		float fogColorR = settings.fogR();
+		float fogColorG = settings.fogG();
+		float fogColorB = settings.fogB();
 
 		float darkness = fogManager.darkness.get(deltaTick);
 		float undergroundFactor = 1 - MathHelper.lerp(darkness, fogManager.getUndergroundFactor(client, deltaTick), 1.0F);
