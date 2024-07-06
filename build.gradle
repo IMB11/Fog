@@ -46,10 +46,11 @@ dependencies {
 	minecraft "com.mojang:minecraft:${property("deps.minecraft")}"
 	mappings "net.fabricmc:yarn:${property("deps.yarn")}:v2"
 
+    modImplementation include("dev.architectury:architectury-${loader}:${property("deps.arch_api")}")
+
 	if (isFabric) {
 		System.out.println(loader)
 		modImplementation "net.fabricmc:fabric-loader:${property("deps.fabric_loader")}"
-		modImplementation "net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}"
 	} else {
 		if (loader == "forge") {
 			"forge"("net.minecraftforge:forge:${mcVersion}-${property("deps.fml")}")

@@ -1,11 +1,13 @@
 package dev.imb11.fog.client;
 
+import dev.imb11.fog.client.registry.FogRegistry;
 import dev.imb11.fog.client.resource.BiomeColourEntry;
+import dev.imb11.fog.client.resource.CustomFogDefinition;
+import dev.imb11.fog.client.util.color.Color;
 import dev.imb11.fog.client.util.math.DarknessCalculation;
 import dev.imb11.fog.client.util.math.InterpolatedValue;
 import dev.imb11.fog.client.util.player.PlayerUtil;
 import dev.imb11.fog.client.util.world.ClientWorldUtil;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.BlockPos;
@@ -15,7 +17,7 @@ import net.minecraft.world.LightType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class FogManager implements ClientTickEvents.EndWorldTick {
+public class FogManager {
 	public static FogManager INSTANCE = new FogManager();
 	public final InterpolatedValue raininess = new InterpolatedValue(0.0f, 0.03f);
 	public final InterpolatedValue undergroundness = new InterpolatedValue(0.0f, 0.25f);
@@ -33,7 +35,6 @@ public class FogManager implements ClientTickEvents.EndWorldTick {
 		return INSTANCE;
 	}
 
-	@Override
 	public void onEndTick(@NotNull ClientWorld world) {
 		@NotNull final var client = MinecraftClient.getInstance();
 		@Nullable final var clientPlayer = client.player;
@@ -66,12 +67,23 @@ public class FogManager implements ClientTickEvents.EndWorldTick {
 		DarknessCalculation darknessCalculation = DarknessCalculation.of(
 				client, fogStart.getDefaultValue(), fogEnd.getDefaultValue() * density, client.getTickDelta());
 
-		BiomeColourEntry biomeColourEntry = BiomeColourEntry.getOrDefault(
+		CustomFogDefinition.FogColors defaultColourEntry = FogRegistry.getDefaultBiomeColors();
+		CustomFogDefinition biomeColourEntry = FogRegistry.getBiomeOrDefault(
 				world.getBiome(clientPlayer.getBlockPos()).getKey().get().getValue());
 
-		this.fogColorRed.interpolate(biomeColourEntry.fogR());
-		this.fogColorGreen.interpolate(biomeColourEntry.fogG());
-		this.fogColorBlue.interpolate(biomeColourEntry.fogB());
+		// TODO: Should interpolate between the day and night colours.
+		if(biomeColourEntry.getColors().isPresent()) {
+			CustomFogDefinition.FogColors colors = biomeColourEntry.getColors().get();
+			Color color = world.isNight() ? colors.getNightColor() : colors.getDayColor();
+			this.fogColorBlue.interpolate(color.red / 255f);
+			this.fogColorGreen.interpolate(color.green / 255f);
+			this.fogColorRed.interpolate(color.blue / 255f);
+		} else {
+			Color color = world.isNight() ? defaultColourEntry.getNightColor() : defaultColourEntry.getDayColor();
+			this.fogColorBlue.interpolate(color.red / 255f);
+			this.fogColorGreen.interpolate(color.green / 255f);
+			this.fogColorRed.interpolate(color.blue / 255f);
+		}
 
 		this.fogStart.interpolate(darknessCalculation.fogStart());
 		this.fogEnd.interpolate(darknessCalculation.fogEnd());

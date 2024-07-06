@@ -53,8 +53,6 @@ public abstract class BackgroundRendererMixin {
 
 	/**
 	 * Changes the color of the seam/transition in the sky.
-	 *
-	 * @param ci The {@link CallbackInfo} for this {@link Inject}.
 	 */
 	@Inject(method = "setFogBlack", at = @At("HEAD"))
 	private static void fog$setFogBlackChangeClearColor(@NotNull CallbackInfo ci) {
