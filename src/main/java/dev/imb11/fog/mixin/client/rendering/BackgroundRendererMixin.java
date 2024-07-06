@@ -32,8 +32,13 @@ public abstract class BackgroundRendererMixin {
 
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;clearColor(FFFF)V", remap = false, shift = At.Shift.BEFORE))
 	private static void fog$modifyFogColors(@NotNull Camera camera, float tickDelta, @NotNull ClientWorld world, int viewDistance, float skyDarkness, @NotNull CallbackInfo ci) {
-		@NotNull var fogSettings = FogManager.getInstance().getFogSettings(tickDelta, viewDistance);
-		fogSettings = HazeCalculator.applyHaze(fogSettings, (int) world.getTimeOfDay());
+		var fogManager = FogManager.getInstance();
+		@NotNull var fogSettings = fogManager.getFogSettings(tickDelta, viewDistance);
+
+		if(fogManager.shouldApplyHaze(world, tickDelta)) {
+			fogSettings = HazeCalculator.applyHaze(fogSettings, (int) world.getTimeOfDay());
+		}
+
 		red = fogSettings.fogR();
 		green = fogSettings.fogG();
 		blue = fogSettings.fogB();
@@ -62,11 +67,16 @@ public abstract class BackgroundRendererMixin {
 			return;
 		}
 
-		@NotNull var fogSettings = FogManager.getInstance().getFogSettings(
+		var fogManager = FogManager.getInstance();
+		@NotNull var fogSettings = fogManager.getFogSettings(
 				client.getTickDelta(),
 				client.options.getViewDistance().getValue()
 		);
-		fogSettings = HazeCalculator.applyHaze(fogSettings, (int) clientWorld.getTimeOfDay());
+
+		if(fogManager.shouldApplyHaze(clientWorld, client.getTickDelta())) {
+			fogSettings = HazeCalculator.applyHaze(fogSettings, (int) clientWorld.getTimeOfDay());
+		}
+
 		RenderSystem.clearColor(fogSettings.fogR(), fogSettings.fogG(), fogSettings.fogB(), 1.0F);
 	}
 }

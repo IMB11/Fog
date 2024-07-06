@@ -48,10 +48,7 @@ public class WorldRendererMixin {
 		float fogColorG = settings.fogG();
 		float fogColorB = settings.fogB();
 
-		float darkness = fogManager.darkness.get(deltaTick);
-		float undergroundFactor = 1 - MathHelper.lerp(darkness, fogManager.getUndergroundFactor(client, deltaTick), 1.0F);
-
-		undergroundFactor *= undergroundFactor * undergroundFactor * undergroundFactor;
+		float undergroundFactor = fogManager.getUndergroundFactor(client, deltaTick);
 
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();

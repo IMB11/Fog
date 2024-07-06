@@ -16,7 +16,7 @@ public class HazeCalculator {
     };
 
     public static FogManager.FogSettings applyHaze(FogManager.FogSettings settings, int timeOfDay) {
-        double hazeValue = getHaze(timeOfDay);
+		double hazeValue = getHaze(timeOfDay);
 
 	    CustomFogDefinition.FogColors defaultEntry = FogRegistry.getDefaultBiomeColors();
 	    Color color = timeOfDay >= 13000 && timeOfDay <= 23000 ? defaultEntry.getNightColor() : defaultEntry.getDayColor();

@@ -34,6 +34,10 @@ public class FogManager {
 		return INSTANCE;
 	}
 
+	public boolean shouldApplyHaze(@NotNull ClientWorld clientWorld, float deltaTick) {
+		return this.undergroundness.get(deltaTick) <= 0.25f;
+	}
+
 	public void onEndTick(@NotNull ClientWorld world) {
 		@NotNull final var client = MinecraftClient.getInstance();
 		@Nullable final var clientPlayer = client.player;
@@ -79,6 +83,7 @@ public class FogManager {
 			this.fogColorRed.interpolate(color.blue / 255f);
 		} else {
 			Color color = world.isNight() ? defaultColourEntry.getNightColor() : defaultColourEntry.getDayColor();
+
 			this.fogColorBlue.interpolate(color.red / 255f);
 			this.fogColorGreen.interpolate(color.green / 255f);
 			this.fogColorRed.interpolate(color.blue / 255f);
