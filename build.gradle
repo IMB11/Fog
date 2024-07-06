@@ -51,6 +51,7 @@ dependencies {
 	if (isFabric) {
 		System.out.println(loader)
 		modImplementation "net.fabricmc:fabric-loader:${property("deps.fabric_loader")}"
+        modLocalRuntime "net.fabricmc.fabric-api:fabric-api:${property("runtime.fabric_api")}"
 	} else {
 		if (loader == "forge") {
 			"forge"("net.minecraftforge:forge:${mcVersion}-${property("deps.fml")}")
@@ -70,9 +71,8 @@ processResources {
 	} else if(loader == "forge") {
 		filesMatching('META-INF/mods.toml') {
 			expand 'mod_version': version,
-					'target_minecraft': property.property("deps.minecraft")
+					'target_minecraft': project.property("deps.minecraft")
 		}
-
 	}
 }
 
