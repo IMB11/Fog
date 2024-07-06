@@ -1,7 +1,6 @@
 package dev.imb11.fog.client;
 
 import dev.imb11.fog.client.registry.FogRegistry;
-import dev.imb11.fog.client.resource.BiomeColourEntry;
 import dev.imb11.fog.client.resource.CustomFogDefinition;
 import dev.imb11.fog.client.util.color.Color;
 import dev.imb11.fog.client.util.math.DarknessCalculation;
