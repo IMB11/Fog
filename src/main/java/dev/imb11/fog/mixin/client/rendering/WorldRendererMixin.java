@@ -10,6 +10,7 @@ import dev.imb11.fog.client.util.math.MathUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.option.CloudRenderMode;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
@@ -32,6 +33,25 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class WorldRendererMixin {
 	@Shadow
 	private @Nullable ClientWorld world;
+
+	@Shadow
+	private int viewDistance;
+
+	@Inject(method = "renderClouds(Lnet/minecraft/client/util/math/MatrixStack;Lorg/joml/Matrix4f;FDDD)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gl/VertexBuffer;draw(Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lnet/minecraft/client/gl/ShaderProgram;)V", shift = At.Shift.BEFORE))
+	public void fog$whiteClouds(MatrixStack matrices, Matrix4f projectionMatrix, float tickDelta, double cameraX, double cameraY, double cameraZ, CallbackInfo ci) {
+		float haze = (float) HazeCalculator.getHaze((int) this.world.getTimeOfDay());
+
+		RenderSystem.setShaderFogStart(10000F);
+//		RenderSystem.colorMask(false, false, false, false);
+//		RenderSystem.setShaderFogEnd(0F);
+
+		if(haze < 0.8f) {
+			haze = 0.8f;
+		}
+
+		// Force clouds to be white.
+		RenderSystem.setShaderFogColor((haze + 0.5F), (haze + 0.5F), (haze + 0.5F));
+	}
 
 	@Inject(method = "renderSky(Lnet/minecraft/client/util/math/MatrixStack;Lorg/joml/Matrix4f;FLnet/minecraft/client/render/Camera;ZLjava/lang/Runnable;)V", at = @At("TAIL"))
 	public void fog$renderSky(@NotNull MatrixStack matrixStack, @NotNull Matrix4f projectionMatrix, float deltaTick, @NotNull Camera camera, boolean isFoggy, @NotNull Runnable setupFog, @NotNull CallbackInfo ci) {

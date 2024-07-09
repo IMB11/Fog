@@ -18,7 +18,7 @@ public class FogRegistry {
 	private static final Map<Identifier, CustomFogDefinition> BIOME_FOG_REGISTRY = new HashMap<>();
 
 	static {
-		DEFAULT_BIOME_FOG_COLORS = new CustomFogDefinition.FogColors("#add4ff", "#384964");
+		DEFAULT_BIOME_FOG_COLORS = new CustomFogDefinition.FogColors("#add4ff", "#181f30");
 		DEFAULT_CAVE_FOG_COLORS = new CustomFogDefinition.FogColors("#212121", "#101010");
 		DEFAULT_BIOME_FOG_DEFINITION = new CustomFogDefinition(1.0f, 1.0f, Optional.of(DEFAULT_BIOME_FOG_COLORS));
 	}

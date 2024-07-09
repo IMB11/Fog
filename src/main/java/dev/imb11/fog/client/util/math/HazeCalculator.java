@@ -17,6 +17,8 @@ public class HazeCalculator {
     };
 
     public static FogManager.FogSettings applyHaze(float undergroundFactor, FogManager.FogSettings settings, int timeOfDay) {
+//		return settings;
+
 		double hazeValue = getHaze(timeOfDay);
 
 		CustomFogDefinition.FogColors belowGroundColors = FogRegistry.getDefaultCaveColors();
