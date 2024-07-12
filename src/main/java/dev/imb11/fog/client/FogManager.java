@@ -8,6 +8,7 @@ import dev.imb11.fog.client.util.math.InterpolatedValue;
 import dev.imb11.fog.client.util.math.MathUtil;
 import dev.imb11.fog.client.util.player.PlayerUtil;
 import dev.imb11.fog.client.util.world.ClientWorldUtil;
+import dev.imb11.fog.config.FogConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.BlockPos;
@@ -30,6 +31,12 @@ public class FogManager {
 	public final InterpolatedValue currentSkyLight = new InterpolatedValue(16.0F);
 	public final InterpolatedValue currentBlockLight = new InterpolatedValue(16.0F);
 	public final InterpolatedValue currentLight = new InterpolatedValue(16.0F);
+
+	public FogManager() {
+		FogConfig config = FogConfig.get();
+		fogStart.resetTo(config.initialFogStart);
+		fogEnd.resetTo(config.initialFogEnd);
+	}
 
 	public static @NotNull FogManager getInstance() {
 		return INSTANCE;
@@ -73,20 +80,20 @@ public class FogManager {
 		CustomFogDefinition biomeColourEntry = FogRegistry.getBiomeOrDefault(
 				world.getBiome(clientPlayer.getBlockPos()).getKey().get().getValue());
 
-		// TODO: Should interpolate between the day and night colours.
+		CustomFogDefinition.FogColors colors = defaultColourEntry;
 		if(biomeColourEntry.getColors().isPresent()) {
-			CustomFogDefinition.FogColors colors = biomeColourEntry.getColors().get();
-			Color color = world.isNight() ? colors.getNightColor() : colors.getDayColor();
-			this.fogColorRed.interpolate(color.red / 255f);
-			this.fogColorGreen.interpolate(color.green / 255f);
-			this.fogColorBlue.interpolate(color.blue / 255f);
-		} else {
-			Color color = world.isNight() ? defaultColourEntry.getNightColor() : defaultColourEntry.getDayColor();
-
-			this.fogColorRed.interpolate(color.red / 255f);
-			this.fogColorGreen.interpolate(color.green / 255f);
-			this.fogColorBlue.interpolate(color.blue / 255f);
+			colors = biomeColourEntry.getColors().get();
 		}
+
+		long time = world.getTimeOfDay();
+		boolean isDay = time < 12000;
+		float blendFactor = isDay ? (time / 12000f) : ((time - 12000) / 12000f);
+		float red = MathHelper.lerp(blendFactor, colors.getDayColor().red / 255f, colors.getNightColor().red / 255f);
+		float green = MathHelper.lerp(blendFactor, colors.getDayColor().green / 255f, colors.getNightColor().green / 255f);
+		float blue = MathHelper.lerp(blendFactor, colors.getDayColor().blue / 255f, colors.getNightColor().blue / 255f);
+		this.fogColorRed.interpolate(red);
+		this.fogColorGreen.interpolate(green);
+		this.fogColorBlue.interpolate(blue);
 
 		this.fogStart.interpolate(darknessCalculation.fogStart());
 		this.fogEnd.interpolate(darknessCalculation.fogEnd());
@@ -125,16 +132,13 @@ public class FogManager {
 
 	public FogSettings getFogSettings(float tickDelta, float viewDistance) {
 		float fogStartValue = fogStart.get(tickDelta) * viewDistance;
+		float undergroundFogMultiplier = 1.0F; // Default to no multiplier
+		if (!FogConfig.get().disableUndergroundFogMultiplier) {
+			undergroundFogMultiplier = MathHelper.lerp(this.undergroundness.get(tickDelta), 0.75F, 1.0F);
+			undergroundFogMultiplier = MathHelper.lerp(this.darkness.get(tickDelta), undergroundFogMultiplier, 1.0F);
+		}
 
-		// Calculate undergroundness fog multiplier
-		// TODO: Add a config option for disabling the undergroundness fog multiplier
-		float undergroundFogMultiplier = MathHelper.lerp(this.undergroundness.get(tickDelta), 0.75F, 1.0F);
-		undergroundFogMultiplier = MathHelper.lerp(this.darkness.get(tickDelta), undergroundFogMultiplier, 1.0F);
-
-		// Calculate fog end considering raininess and underground fog multiplier
-		float raininessValue = raininess.get(tickDelta);
 		float fogEndValue = viewDistance * (fogEnd.get(tickDelta));
-
 		if(undergroundFogMultiplier > 0.78f) {
 			fogEndValue /= 1 + undergroundFogMultiplier;
 		}
@@ -143,8 +147,8 @@ public class FogManager {
 		float fogGreen = fogColorGreen.get(tickDelta);
 		float fogBlue = fogColorBlue.get(tickDelta);
 
-		// Adjust fog end based on raininess
-		if (raininessValue > 0.0f) {
+		float raininessValue = raininess.get(tickDelta);
+		if (!FogConfig.get().disableRaininessEffect && raininessValue > 0.0f) {
 			fogEndValue /= 1.0f + 0.5f * raininessValue;
 
 			// Darken fog colour based on raininess
@@ -153,9 +157,7 @@ public class FogManager {
 			fogBlue *= 0.85f - raininessValue;
 		}
 
-		// Adjust fog color based on darkness
 		float darknessValue = this.darkness.get(tickDelta);
-
 		fogRed *= 1 - darknessValue;
 		fogGreen *= 1 - darknessValue;
 		fogBlue *= 1 - darknessValue;

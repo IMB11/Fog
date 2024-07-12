@@ -1,0 +1,5 @@
+{
+  "fog.config.fog_calculations": "Fog Calculations",
+  "fog.config.fog_calculations.warning": "§6§l§nWarning!§r It is not recommended to touch these constants unless you understand what they do, and how they are used. Consider leaving them as-is for the best experience.",
+
+}

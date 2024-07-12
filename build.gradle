@@ -39,6 +39,29 @@ if (stonecutter.current.active) { // run configs for non-active version would be
 repositories {
 	// TODO: ModMenu and YACL.
 	maven { url "https://maven.neoforged.net/releases/" }
+    mavenCentral()
+    mavenLocal()
+    maven { url = "https://mvn.devos.one/snapshots/" }
+    maven { url 'https://maven.wispforest.io' }
+    maven { url 'https://maven.imb11.dev/releases' }
+    maven {
+        name 'Xander Maven'
+        url 'https://maven.isxander.dev/releases'
+    }
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+    maven { url "https://maven.quiltmc.org/repository/release" }
+    maven { url 'https://maven.terraformersmc.com/releases' }
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "Modrinth"
+                url = "https://api.modrinth.com/maven"
+            }
+        }
+        filter {
+            includeGroup "maven.modrinth"
+        }
+    }
 }
 
 dependencies {
@@ -47,6 +70,7 @@ dependencies {
 	mappings "net.fabricmc:yarn:${property("deps.yarn")}:v2"
 
     modImplementation include("dev.architectury:architectury-${loader}:${property("deps.arch_api")}")
+    modImplementation include("dev.isxander:yet-another-config-lib:${property("deps.yacl")}-${loader}")
 
 	if (isFabric) {
 		System.out.println(loader)

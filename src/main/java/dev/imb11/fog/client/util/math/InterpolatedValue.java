@@ -4,7 +4,7 @@ import net.minecraft.util.math.MathHelper;
 
 public class InterpolatedValue {
     private float defaultValue;
-    private float interpolationSpeed;
+    private final float interpolationSpeed;
     private float previousValue;
     private float currentValue;
 
@@ -61,5 +61,10 @@ public class InterpolatedValue {
 
     public float getDefaultValue() {
         return this.defaultValue;
+    }
+
+    public void resetTo(float initialFogStart) {
+		this.defaultValue = initialFogStart;
+		this.currentValue = initialFogStart;
     }
 }
