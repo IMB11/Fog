@@ -31,7 +31,7 @@ public class FogManager {
 	public final InterpolatedValue currentLight = new InterpolatedValue(16.0F);
 
 	public FogManager() {
-		FogConfig config = FogConfig.getInstance();
+		@NotNull FogConfig config = FogConfig.getInstance();
 		fogStart.resetTo(config.initialFogStart);
 		fogEnd.resetTo(config.initialFogEnd);
 	}
@@ -77,7 +77,8 @@ public class FogManager {
 			return;
 		}
 
-		@Nullable CustomFogDefinition.FogColors colors = FogRegistry.getBiomeFogDefinitionOrDefault(clientPlayerBiomeKeyOptional.get().getValue()).getColors();
+		@Nullable CustomFogDefinition.FogColors colors = FogRegistry.getBiomeFogDefinitionOrDefault(
+				clientPlayerBiomeKeyOptional.get().getValue()).getColors();
 		if (colors == null) {
 			colors = FogRegistry.getDefaultBiomeColors();
 		}
@@ -108,16 +109,12 @@ public class FogManager {
 			return 0.0F;
 		}
 
-		float y = (float) clientCamera.getY();
+		float clientCameraYPosition = (float) clientCamera.getY();
 		float seaLevel = clientWorld.getSeaLevel();
-
-		// Map y to a factor between 0 and 1 based on sea level +/- 32
-		float yFactor = mapRange(seaLevel - 32.0F, seaLevel + 32.0F, 1.0F, 0.0F, y);
-		yFactor = MathHelper.clamp(yFactor, 0.0F, 1.0F); // Clamp yFactor to ensure it's within [0, 1]
-
+		// Map the client camera's Y position to a factor between 0 and 1 based on the sea level (+/- 32)
+		float yFactor = MathHelper.clamp(mapRange(seaLevel - 32.0F, seaLevel + 32.0F, 1.0F, 0.0F, clientCameraYPosition), 0.0F, 1.0F);
 		float undergroundnessValue = this.undergroundness.get(deltaTicks);
 		float skyLight = this.currentSkyLight.get(deltaTicks);
-
 		// Calculate underground factor by lerping between yFactor, undergroundness, and sky light
 		return MathHelper.lerp(yFactor, 1.0F - undergroundnessValue, skyLight / 16.0F);
 	}

@@ -53,16 +53,16 @@ public class WorldRendererMixin {
 			return;
 		}
 
-		MinecraftClient client = MinecraftClient.getInstance();
-		FogManager fogManager = FogManager.getInstance();
-		FogManager.FogSettings settings = fogManager.getFogSettings(deltaTick, client.options.getViewDistance().getValue());
+		@NotNull var fogManager = FogManager.getInstance();
+		@NotNull var client = MinecraftClient.getInstance();
+		@NotNull var fogSettings = HazeCalculator.applyHaze(
+				1f, fogManager.getFogSettings(deltaTick, client.options.getViewDistance().getValue()),
+				(int) this.world.getTimeOfDay()
+		);
 
-		settings = HazeCalculator.applyHaze(1f, settings, (int) this.world.getTimeOfDay());
-
-		float fogColorR = settings.fogRed();
-		float fogColorG = settings.fogGreen();
-		float fogColorB = settings.fogBlue();
-
+		float fogColorRed = fogSettings.fogRed();
+		float fogColorGreen = fogSettings.fogGreen();
+		float fogColorBlue = fogSettings.fogBlue();
 		float undergroundFactor = MathUtil.cube(fogManager.getUndergroundFactor(client, deltaTick));
 
 		RenderSystem.enableBlend();
@@ -71,26 +71,26 @@ public class WorldRendererMixin {
 		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
+		@NotNull var bufferBuilder = Tessellator.getInstance().getBuffer();
+		@NotNull Vec3d samplePosition = camera.getPos().subtract(2.0D, 2.0D, 2.0D).multiply(0.25D);
 		float timeOfDay = MathHelper.clamp(
 				MathHelper.cos(this.world.getSkyAngle(deltaTick) * ((float) Math.PI * 2F)) * 2.0F + 0.5F, 0.0F, 1.0F);
-		Vec3d samplePos = camera.getPos().subtract(2.0D, 2.0D, 2.0D).multiply(0.25D);
-		Vec3d skyFogColor = CubicSampler.sampleColor(
-				samplePos, (x, y, z) -> this.world.getDimensionEffects().adjustFogColor(
+		@NotNull Vec3d skyFogColor = CubicSampler.sampleColor(
+				samplePosition, (x, y, z) -> this.world.getDimensionEffects().adjustFogColor(
 						Vec3d.unpackRgb(this.world.getBiomeAccess().getBiomeForNoiseGen(x, y, z).value().getFogColor()), timeOfDay));
-
-		@NotNull final var bufferbuilder = Tessellator.getInstance().getBuffer();
 		float radius = 5.0F;
-		fog$renderCone(matrixStack, bufferbuilder, 32, true, radius, -30.0F,
-				fogColorR, fogColorG, fogColorB, undergroundFactor,
-				0.0F, (float) (fogColorR * skyFogColor.x), (float) (fogColorG * skyFogColor.y), (float) (fogColorB * skyFogColor.z),
+		fog$renderCone(matrixStack, bufferBuilder, 32, true, radius, -30.0F,
+				fogColorRed, fogColorGreen, fogColorBlue, undergroundFactor,
+				0.0F, (float) (fogColorRed * skyFogColor.x), (float) (fogColorGreen * skyFogColor.y),
+				(float) (fogColorBlue * skyFogColor.z),
 				undergroundFactor
 		);
-		fog$renderCone(matrixStack, bufferbuilder, 32, false, radius, 30.0F,
-				fogColorR, fogColorG, fogColorB, undergroundFactor * 0.2F,
-				0.0F, (float) (fogColorR * skyFogColor.x), (float) (fogColorG * skyFogColor.y), (float) (fogColorB * skyFogColor.z),
+		fog$renderCone(matrixStack, bufferBuilder, 32, false, radius, 30.0F,
+				fogColorRed, fogColorGreen, fogColorBlue, undergroundFactor * 0.2F,
+				0.0F, (float) (fogColorRed * skyFogColor.x), (float) (fogColorGreen * skyFogColor.y),
+				(float) (fogColorBlue * skyFogColor.z),
 				undergroundFactor
 		);
-
 		RenderSystem.depthMask(true);
 	}
 
@@ -105,7 +105,6 @@ public class WorldRendererMixin {
 			float angle = (float) vertex * ((float) Math.PI * 2F) / ((float) resolution);
 			float x = MathHelper.sin(angle) * radius;
 			float z = MathHelper.cos(angle) * radius;
-
 			bufferBuilder.vertex(positionMatrix, x, bottomVertexHeight, normal ? z : -z).color(bottomR, bottomG, bottomB, bottomA).next();
 		}
 
