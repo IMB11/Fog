@@ -78,7 +78,7 @@ public class FogManager {
 			return;
 		}
 
-		@Nullable CustomFogDefinition.FogColors colors = FogRegistry.getBiomeFogDefinitionOrDefault(
+		@Nullable CustomFogDefinition.FogColors colors = FogRegistry.getFogDefinitionOrDefault(
 				clientPlayerBiomeKeyOptional.get().getValue()).colors();
 		if (colors == null) {
 			colors = FogRegistry.getDefaultBiomeColors();
@@ -113,7 +113,8 @@ public class FogManager {
 		float clientCameraYPosition = (float) clientCamera.getY();
 		float seaLevel = clientWorld.getSeaLevel();
 		// Map the client camera's Y position to a factor between 0 and 1 based on the sea level (+/- 32)
-		float yFactor = MathHelper.clamp(MathUtil.mapRange(seaLevel - 32.0F, seaLevel + 32.0F, 1.0F, 0.0F, clientCameraYPosition), 0.0F, 1.0F);
+		float yFactor = MathHelper.clamp(
+				MathUtil.mapRange(seaLevel - 32.0F, seaLevel + 32.0F, 1.0F, 0.0F, clientCameraYPosition), 0.0F, 1.0F);
 		float undergroundnessValue = this.undergroundness.get(deltaTicks);
 		float skyLight = this.currentSkyLight.get(deltaTicks);
 		// Calculate the underground factor by lerping between yFactor, undergroundness, and sky light
