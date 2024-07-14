@@ -1,44 +1,43 @@
 plugins {
-	id "dev.architectury.loom" version "1.7-SNAPSHOT"
+    id "dev.architectury.loom" version "1.7-SNAPSHOT"
 }
 
 def loader = property("loom.platform")
 def isFabric = loader == "fabric"
 def mcVersion = property("deps.minecraft")
 
-version =  property("mod.version")
+version = property("mod.version")
 group = "dev.imb11"
 
 base {
-	archivesName = property("mod.name") + "-" + loader
+    archivesName = property("mod.name") + "-" + loader
 }
 
 loom {
-	// TODO: Better multiversion AW strategy: https://github.com/IMB11/Sounds/blob/main/build.gradle#L86
-	accessWidenerPath = getRootProject().file('src/main/resources/fog.accesswidener')
+    // TODO: Add a better multi-version AW strategy: https://github.com/IMB11/Sounds/blob/main/build.gradle#L86
+    accessWidenerPath = getRootProject().file('src/main/resources/fog.accesswidener')
 
-	if (loader == "forge") {
-		forge {
-			convertAccessWideners.set(true)
-			mixinConfigs(
-					"fog.mixins.json",
-			)
-		}
-	}
+    if (loader == "forge") {
+        forge {
+            convertAccessWideners.set(true)
+            mixinConfigs(
+                    "fog.mixins.json",
+            )
+        }
+    }
 }
 
 if (stonecutter.current.active) { // run configs for non-active version would be invalid
-	loom {
-		runConfigs.all {
-			ideConfigGenerated = true // generate IDE tasks for running client, server and testmod, datagen if those are present
-			runDir "../../run" // use a global run directory for all versions
-		}
-	}
+    loom {
+        runConfigs.all {
+            ideConfigGenerated = true // generate IDE tasks for running client, server and testmod, datagen if those are present
+            runDir "../../run" // use a global run directory for all versions
+        }
+    }
 }
 
 repositories {
-	// TODO: ModMenu and YACL.
-	maven { url "https://maven.neoforged.net/releases/" }
+    maven { url "https://maven.neoforged.net/releases/" }
     mavenCentral()
     mavenLocal()
     maven { url = "https://mvn.devos.one/snapshots/" }
@@ -65,50 +64,53 @@ repositories {
 }
 
 dependencies {
-	// To change the versions see the gradle.properties file
-	minecraft "com.mojang:minecraft:${property("deps.minecraft")}"
-	mappings "net.fabricmc:yarn:${property("deps.yarn")}:v2"
+    // To change the versions see the gradle.properties file
+    minecraft "com.mojang:minecraft:${property("deps.minecraft")}"
+    mappings "net.fabricmc:yarn:${property("deps.yarn")}:v2"
 
-    modImplementation include("dev.architectury:architectury-${loader}:${property("deps.arch_api")}")
-    modImplementation include("dev.isxander:yet-another-config-lib:${property("deps.yacl")}-${loader}")
+    modImplementation(include("dev.architectury:architectury-${loader}:${property("deps.arch_api")}"))
+    modImplementation(include("dev.isxander:yet-another-config-lib:${property("deps.yacl")}-${loader}"))
 
-	if (isFabric) {
-		System.out.println(loader)
-		modImplementation "net.fabricmc:fabric-loader:${property("deps.fabric_loader")}"
-        modLocalRuntime "net.fabricmc.fabric-api:fabric-api:${property("runtime.fabric_api")}"
-	} else {
-		if (loader == "forge") {
-			"forge"("net.minecraftforge:forge:${mcVersion}-${property("deps.fml")}")
-		} else {
-			// TODO: NEOFORGE
-		}
-	}
+    if (isFabric) {
+        System.out.println(loader)
+        modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
+
+        modLocalRuntime("net.fabricmc.fabric-api:fabric-api:${property("runtime.fabric_api")}")
+        modImplementation("maven.modrinth:modmenu:${property("deps.mod_menu")}")
+    } else {
+        if (loader == "forge") {
+            "forge"("net.minecraftforge:forge:${mcVersion}-${property("deps.fml")}")
+        } else {
+            // TODO: NEOFORGE
+        }
+    }
 }
 
 processResources {
-	if(loader == "fabric") {
-		filesMatching('fabric.mod.json') {
-			expand 'mod_version': version,
-					'target_minecraft': project.property('mod.target')
-//				'target_yacl': project.property('deps.yacl')
-		}
-	} else if(loader == "forge") {
-		filesMatching('META-INF/mods.toml') {
-			expand 'mod_version': version,
-					'target_minecraft': project.property("deps.minecraft")
-		}
-	}
+    if (loader == "fabric") {
+        filesMatching('fabric.mod.json') {
+            expand 'mod_version': version,
+                    'target_minecraft': project.property('mod.target'),
+                    'target_mod_menu': project.property('deps.mod_menu'),
+                    'target_yacl': project.property('deps.yacl')
+        }
+    } else if (loader == "forge") {
+        filesMatching('META-INF/mods.toml') {
+            expand 'mod_version': version,
+                    'target_minecraft': project.property("deps.minecraft")
+        }
+    }
 }
 
 java {
-	var version = stonecutter.eval(stonecutter.current.version, ">1.20.4") ? JavaVersion.VERSION_21 : JavaVersion.VERSION_17
+    var version = stonecutter.eval(stonecutter.current.version, ">1.20.4") ? JavaVersion.VERSION_21 : JavaVersion.VERSION_17
 
-	sourceCompatibility = version
-	targetCompatibility = version
+    sourceCompatibility = version
+    targetCompatibility = version
 }
 
 jar {
-	from("LICENSE") {
-		rename { "${it}_${project.base.archivesName.get()}"}
-	}
+    from("LICENSE") {
+        rename { "${it}_${project.base.archivesName.get()}" }
+    }
 }

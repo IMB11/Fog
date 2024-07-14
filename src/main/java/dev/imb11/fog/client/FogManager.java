@@ -31,7 +31,7 @@ public class FogManager {
 	public final InterpolatedValue currentLight = new InterpolatedValue(16.0F);
 
 	public FogManager() {
-		FogConfig config = FogConfig.get();
+		FogConfig config = FogConfig.getInstance();
 		fogStart.resetTo(config.initialFogStart);
 		fogEnd.resetTo(config.initialFogEnd);
 	}
@@ -68,11 +68,10 @@ public class FogManager {
 		}
 
 		float density = ClientWorldUtil.isFogDenseAtPosition(world, clientPlayerBlockPosition) ? 0.9F : 1.0F;
-
+		// TODO: Apply the start and end multipliers in FogManager#getFogSettings
 		DarknessCalculation darknessCalculation = DarknessCalculation.of(
 				client, fogStart.getDefaultValue(), fogEnd.getDefaultValue() * density, client.getTickDelta());
 
-		// TODO: Apply the start and end multipliers in FogManager#getFogSettings
 		@NotNull var clientPlayerBiomeKeyOptional = world.getBiome(clientPlayer.getBlockPos()).getKey();
 		if (clientPlayerBiomeKeyOptional.isEmpty()) {
 			return;
@@ -126,7 +125,7 @@ public class FogManager {
 	public @NotNull FogSettings getFogSettings(float tickDelta, float viewDistance) {
 		float fogStartValue = fogStart.get(tickDelta) * viewDistance;
 		float undergroundFogMultiplier = 1.0F; // Default to no multiplier
-		if (!FogConfig.get().disableUndergroundFogMultiplier) {
+		if (!FogConfig.getInstance().disableUndergroundFogMultiplier) {
 			undergroundFogMultiplier = MathHelper.lerp(this.undergroundness.get(tickDelta), 0.75F, 1.0F);
 			undergroundFogMultiplier = MathHelper.lerp(this.darkness.get(tickDelta), undergroundFogMultiplier, 1.0F);
 		}
@@ -141,7 +140,7 @@ public class FogManager {
 		float fogBlue = fogColorBlue.get(tickDelta);
 
 		float raininessValue = raininess.get(tickDelta);
-		if (!FogConfig.get().disableRaininessEffect && raininessValue > 0.0f) {
+		if (!FogConfig.getInstance().disableRaininessEffect && raininessValue > 0.0f) {
 			fogEndValue /= 1.0f + 0.5f * raininessValue;
 
 			// Darken fog colour based on raininess

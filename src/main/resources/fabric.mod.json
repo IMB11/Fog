@@ -18,6 +18,9 @@
   "entrypoints": {
     "client": [
       "dev.imb11.fog.fabric.client.FogClientFabric"
+    ],
+    "modmenu": [
+      "dev.imb11.fog.client.compat.modmenu.FogClientModMenuCompat"
     ]
   },
   "mixins": [
