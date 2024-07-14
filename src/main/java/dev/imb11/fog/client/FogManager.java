@@ -79,7 +79,7 @@ public class FogManager {
 		}
 
 		@Nullable CustomFogDefinition.FogColors colors = FogRegistry.getBiomeFogDefinitionOrDefault(
-				clientPlayerBiomeKeyOptional.get().getValue()).getColors();
+				clientPlayerBiomeKeyOptional.get().getValue()).colors();
 		if (colors == null) {
 			colors = FogRegistry.getDefaultBiomeColors();
 		}
