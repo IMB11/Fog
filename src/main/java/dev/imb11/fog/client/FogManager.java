@@ -2,10 +2,8 @@ package dev.imb11.fog.client;
 
 import dev.imb11.fog.client.registry.FogRegistry;
 import dev.imb11.fog.client.resource.CustomFogDefinition;
-import dev.imb11.fog.client.util.color.Color;
 import dev.imb11.fog.client.util.math.DarknessCalculation;
 import dev.imb11.fog.client.util.math.InterpolatedValue;
-import dev.imb11.fog.client.util.math.MathUtil;
 import dev.imb11.fog.client.util.player.PlayerUtil;
 import dev.imb11.fog.client.util.world.ClientWorldUtil;
 import dev.imb11.fog.config.FogConfig;
@@ -74,15 +72,15 @@ public class FogManager {
 		DarknessCalculation darknessCalculation = DarknessCalculation.of(
 				client, fogStart.getDefaultValue(), fogEnd.getDefaultValue() * density, client.getTickDelta());
 
-		CustomFogDefinition.FogColors defaultColourEntry = FogRegistry.getDefaultBiomeColors();
+		// TODO: Apply the start and end multipliers in FogManager#getFogSettings
+		@NotNull var clientPlayerBiomeKeyOptional = world.getBiome(clientPlayer.getBlockPos()).getKey();
+		if (clientPlayerBiomeKeyOptional.isEmpty()) {
+			return;
+		}
 
-		// TODO: In the getFogSettings method, need to apply the start and end multipliers.
-		CustomFogDefinition biomeColourEntry = FogRegistry.getBiomeOrDefault(
-				world.getBiome(clientPlayer.getBlockPos()).getKey().get().getValue());
-
-		CustomFogDefinition.FogColors colors = defaultColourEntry;
-		if(biomeColourEntry.getColors().isPresent()) {
-			colors = biomeColourEntry.getColors().get();
+		@Nullable CustomFogDefinition.FogColors colors = FogRegistry.getBiomeFogDefinitionOrDefault(clientPlayerBiomeKeyOptional.get().getValue()).getColors();
+		if (colors == null) {
+			colors = FogRegistry.getDefaultBiomeColors();
 		}
 
 		long time = world.getTimeOfDay();
@@ -102,11 +100,6 @@ public class FogManager {
 		this.currentSkyLight.interpolate(world.getLightLevel(LightType.SKY, clientPlayerBlockPosition));
 		this.currentBlockLight.interpolate(world.getLightLevel(LightType.BLOCK, clientPlayerBlockPosition));
 		this.currentLight.interpolate(world.getBaseLightLevel(clientPlayerBlockPosition, 0));
-	}
-
-	public static float mapRange(float fromMin, float fromMax, float toMin, float toMax, float value) {
-		float clampedValue = MathHelper.clamp(value, fromMin, fromMax);
-		return toMin + (clampedValue - fromMin) * (toMax - toMin) / (fromMax - fromMin);
 	}
 
 	public float getUndergroundFactor(@NotNull MinecraftClient client, float deltaTicks) {
@@ -130,7 +123,7 @@ public class FogManager {
 		return MathHelper.lerp(yFactor, 1.0F - undergroundnessValue, skyLight / 16.0F);
 	}
 
-	public FogSettings getFogSettings(float tickDelta, float viewDistance) {
+	public @NotNull FogSettings getFogSettings(float tickDelta, float viewDistance) {
 		float fogStartValue = fogStart.get(tickDelta) * viewDistance;
 		float undergroundFogMultiplier = 1.0F; // Default to no multiplier
 		if (!FogConfig.get().disableUndergroundFogMultiplier) {
@@ -139,7 +132,7 @@ public class FogManager {
 		}
 
 		float fogEndValue = viewDistance * (fogEnd.get(tickDelta));
-		if(undergroundFogMultiplier > 0.78f) {
+		if (undergroundFogMultiplier > 0.78f) {
 			fogEndValue /= 1 + undergroundFogMultiplier;
 		}
 
@@ -165,5 +158,10 @@ public class FogManager {
 		return new FogSettings(fogStartValue, fogEndValue, fogRed, fogGreen, fogBlue);
 	}
 
-	public record FogSettings(double fogStart, double fogEnd, float fogR, float fogG, float fogB) {}
+	private static float mapRange(float fromMin, float fromMax, float toMin, float toMax, float value) {
+		float clampedValue = MathHelper.clamp(value, fromMin, fromMax);
+		return toMin + (clampedValue - fromMin) * (toMax - toMin) / (fromMax - fromMin);
+	}
+
+	public record FogSettings(double fogStart, double fogEnd, float fogRed, float fogGreen, float fogBlue) {}
 }

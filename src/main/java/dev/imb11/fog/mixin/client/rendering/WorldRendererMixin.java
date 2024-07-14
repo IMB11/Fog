@@ -2,20 +2,15 @@ package dev.imb11.fog.mixin.client.rendering;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.imb11.fog.client.FogManager;
-import dev.imb11.fog.client.registry.FogRegistry;
-import dev.imb11.fog.client.resource.CustomFogDefinition;
-import dev.imb11.fog.client.util.color.Color;
 import dev.imb11.fog.client.util.math.HazeCalculator;
 import dev.imb11.fog.client.util.math.MathUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.CloudRenderMode;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.CubicSampler;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
@@ -34,22 +29,20 @@ public class WorldRendererMixin {
 	@Shadow
 	private @Nullable ClientWorld world;
 
-	@Shadow
-	private int viewDistance;
-
 	@Inject(method = "renderClouds(Lnet/minecraft/client/util/math/MatrixStack;Lorg/joml/Matrix4f;FDDD)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gl/VertexBuffer;draw(Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lnet/minecraft/client/gl/ShaderProgram;)V", shift = At.Shift.BEFORE))
 	public void fog$whiteClouds(MatrixStack matrices, Matrix4f projectionMatrix, float tickDelta, double cameraX, double cameraY, double cameraZ, CallbackInfo ci) {
+		if (this.world == null) {
+			return;
+		}
+
+		// TODO: Put the 3 magic numbers into private static final @Unique fields
 		float haze = (float) HazeCalculator.getHaze((int) this.world.getTimeOfDay());
-
-		RenderSystem.setShaderFogStart(10000F);
-//		RenderSystem.colorMask(false, false, false, false);
-//		RenderSystem.setShaderFogEnd(0F);
-
-		if(haze < 0.8f) {
+		if (haze < 0.8f) {
 			haze = 0.8f;
 		}
 
-		// Force clouds to be white.
+		// Force clouds to be white
+		RenderSystem.setShaderFogStart(10000F);
 		RenderSystem.setShaderFogColor((haze + 0.5F), (haze + 0.5F), (haze + 0.5F));
 	}
 
@@ -66,9 +59,9 @@ public class WorldRendererMixin {
 
 		settings = HazeCalculator.applyHaze(1f, settings, (int) this.world.getTimeOfDay());
 
-		float fogColorR = settings.fogR();
-		float fogColorG = settings.fogG();
-		float fogColorB = settings.fogB();
+		float fogColorR = settings.fogRed();
+		float fogColorG = settings.fogGreen();
+		float fogColorB = settings.fogBlue();
 
 		float undergroundFactor = MathUtil.cube(fogManager.getUndergroundFactor(client, deltaTick));
 

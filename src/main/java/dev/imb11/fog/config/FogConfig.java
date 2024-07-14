@@ -11,13 +11,19 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
+import static dev.imb11.fog.client.FogClient.MOD_ID;
+
 public class FogConfig {
-	public static final ConfigClassHandler<FogConfig> HANDLER = ConfigClassHandler
+	private static final String CONFIG_FILE_NAME = "config";
+	private static final String CONFIG_FILE_EXTENSION = "json";
+	private static final String CONFIG_TRANSLATION_KEY = "config";
+	private static final ConfigClassHandler<FogConfig> HANDLER = ConfigClassHandler
 			.createBuilder(FogConfig.class)
-			.id(Identifier.of("fog", "config"))
+			.id(Identifier.of(MOD_ID, CONFIG_FILE_NAME))
 			.serializer(config -> GsonConfigSerializerBuilder
 					.create(config)
-					.setPath(FabricLoader.getInstance().getConfigDir().resolve("fog/config.json"))
+					.setPath(FabricLoader.getInstance().getConfigDir().resolve(
+							String.format("%s/%s.%s", MOD_ID, CONFIG_FILE_NAME, CONFIG_FILE_EXTENSION)))
 					.appendGsonBuilder(GsonBuilder::setPrettyPrinting)
 					.build())
 			.build();
@@ -39,12 +45,17 @@ public class FogConfig {
 		HANDLER.load();
 	}
 
+	public static void save() {
+		HANDLER.save();
+	}
+
 	public static YetAnotherConfigLib getInstance() {
 		return YetAnotherConfigLib.create(HANDLER, ((defaults, config, builder) -> builder
 				.title(Text.empty())
 				.category(ConfigCategory.createBuilder()
-						.name(Text.translatable("fog.config.fog_calculations"))
-						.option(LabelOption.create(Text.translatable("fog.config.fog_calculations.warning")))
+				                        .name(Text.translatable("%s.%s.fog_calculations", MOD_ID, CONFIG_TRANSLATION_KEY))
+				                        .option(LabelOption.create(
+						                        Text.translatable("%s.%s.fog_calculations.warning", MOD_ID, CONFIG_TRANSLATION_KEY)))
 				                        .build())
 		));
 	}

@@ -32,15 +32,13 @@ public abstract class BackgroundRendererMixin {
 
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;clearColor(FFFF)V", remap = false, shift = At.Shift.BEFORE))
 	private static void fog$modifyFogColors(@NotNull Camera camera, float tickDelta, @NotNull ClientWorld world, int viewDistance, float skyDarkness, @NotNull CallbackInfo ci) {
-		var fogManager = FogManager.getInstance();
+		@NotNull var fogManager = FogManager.getInstance();
 		@NotNull var fogSettings = fogManager.getFogSettings(tickDelta, viewDistance);
-		float undergroundFactor = fogManager.getUndergroundFactor(MinecraftClient.getInstance(), tickDelta);
-
-		fogSettings = HazeCalculator.applyHaze(undergroundFactor, fogSettings, (int) world.getTimeOfDay());
-
-		red = fogSettings.fogR();
-		green = fogSettings.fogG();
-		blue = fogSettings.fogB();
+		fogSettings = HazeCalculator.applyHaze(
+				fogManager.getUndergroundFactor(MinecraftClient.getInstance(), tickDelta), fogSettings, (int) world.getTimeOfDay());
+		red = fogSettings.fogRed();
+		green = fogSettings.fogGreen();
+		blue = fogSettings.fogBlue();
 	}
 
 	@Inject(method = "applyFog", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderFogStart(F)V", remap = false, shift = At.Shift.BEFORE))
@@ -66,19 +64,13 @@ public abstract class BackgroundRendererMixin {
 			return;
 		}
 
-		var fogManager = FogManager.getInstance();
-		float undergroundFactor = fogManager.getUndergroundFactor(client, client.getTickDelta());
+		@NotNull var fogManager = FogManager.getInstance();
 		@NotNull var fogSettings = fogManager.getFogSettings(
 				client.getTickDelta(),
 				client.options.getViewDistance().getValue()
 		);
-
-		fogSettings = HazeCalculator.applyHaze(undergroundFactor, fogSettings, (int) clientWorld.getTimeOfDay());
-
-		float fogR = fogSettings.fogR();
-		float fogG = fogSettings.fogG();
-		float fogB = fogSettings.fogB();
-
-		RenderSystem.clearColor(fogR, fogB, fogG, 1.0F);
+		fogSettings = HazeCalculator.applyHaze(
+				fogManager.getUndergroundFactor(client, client.getTickDelta()), fogSettings, (int) clientWorld.getTimeOfDay());
+		RenderSystem.clearColor(fogSettings.fogRed(), fogSettings.fogGreen(), fogSettings.fogBlue(), 1.0F);
 	}
 }

@@ -22,13 +22,11 @@ public class FogClient {
 
 		ReloadListenerRegistry.register(ResourceType.CLIENT_RESOURCES, new FogResourceReloader());
 		ClientTickEvent.CLIENT_LEVEL_POST.register((world) -> FogManager.getInstance().onEndTick(world));
-
 		// TODO: Add a client-side command for reloading the config
-		ClientCommandRegistrationEvent.EVENT.register((dispatcher, context) -> {
-			dispatcher.register(ClientCommandRegistrationEvent.literal("resetFog").executes((e) -> {
-				FogManager.INSTANCE = new FogManager();
-				return 1;
-			}));
-		});
+		ClientCommandRegistrationEvent.EVENT.register(
+				(dispatcher, context) -> dispatcher.register(ClientCommandRegistrationEvent.literal("resetFog").executes((e) -> {
+					FogManager.INSTANCE = new FogManager();
+					return 1;
+				})));
 	}
 }

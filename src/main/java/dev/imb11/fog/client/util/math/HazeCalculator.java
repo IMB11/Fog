@@ -4,7 +4,6 @@ import dev.imb11.fog.client.FogManager;
 import dev.imb11.fog.client.registry.FogRegistry;
 import dev.imb11.fog.client.resource.CustomFogDefinition;
 import dev.imb11.fog.client.util.color.Color;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.math.MathHelper;
 
 public class HazeCalculator {
@@ -26,9 +25,9 @@ public class HazeCalculator {
 	    Color aboveColor = timeOfDay >= 13000 && timeOfDay <= 23000 ? aboveGroundColors.getNightColor() : aboveGroundColors.getDayColor();
 		Color belowColor = timeOfDay >= 13000 && timeOfDay <= 23000 ? belowGroundColors.getNightColor() : belowGroundColors.getDayColor();
 
-        float fogColorR = (float) MathHelper.lerp(hazeValue, aboveColor.red / 255f, settings.fogR());
-        float fogColorG = (float) MathHelper.lerp(hazeValue, aboveColor.green / 255f, settings.fogG());
-        float fogColorB = (float) MathHelper.lerp(hazeValue, aboveColor.blue / 255f, settings.fogB());
+        float fogColorR = (float) MathHelper.lerp(hazeValue, aboveColor.red / 255f, settings.fogRed());
+        float fogColorG = (float) MathHelper.lerp(hazeValue, aboveColor.green / 255f, settings.fogGreen());
+        float fogColorB = (float) MathHelper.lerp(hazeValue, aboveColor.blue / 255f, settings.fogBlue());
 
 	    fogColorR = MathHelper.lerp(undergroundFactor, belowColor.red / 255f, fogColorR);
 	    fogColorG = MathHelper.lerp(undergroundFactor, belowColor.green / 255f, fogColorG);

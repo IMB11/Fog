@@ -5,16 +5,15 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.imb11.fog.client.util.color.Color;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Optional;
 
 @Environment(EnvType.CLIENT)
 public class CustomFogDefinition {
 	public static final Codec<CustomFogDefinition> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Codec.FLOAT.fieldOf("start_multiplier").forGetter(CustomFogDefinition::getStartMultiplier),
 			Codec.FLOAT.fieldOf("end_multiplier").forGetter(CustomFogDefinition::getEndMultiplier),
-			FogColors.CODEC.optionalFieldOf("colors").forGetter(CustomFogDefinition::getColors)
+			FogColors.CODEC.optionalFieldOf("colors", null).forGetter(CustomFogDefinition::getColors)
 	).apply(instance, CustomFogDefinition::new));
 
 	private final float startMultiplier;
@@ -29,14 +28,14 @@ public class CustomFogDefinition {
 		return endMultiplier;
 	}
 
-	public Optional<FogColors> getColors() {
-		return Optional.ofNullable(colors);
+	public @Nullable FogColors getColors() {
+		return colors;
 	}
 
-	public CustomFogDefinition(float startMultiplier, float endMultiplier, Optional<FogColors> colors) {
+	public CustomFogDefinition(float startMultiplier, float endMultiplier, @Nullable FogColors colors) {
 		this.startMultiplier = startMultiplier;
 		this.endMultiplier = endMultiplier;
-		this.colors = colors.orElse(null);
+		this.colors = colors;
 	}
 
 	@Environment(EnvType.CLIENT)
@@ -46,26 +45,18 @@ public class CustomFogDefinition {
 				Codec.STRING.fieldOf("night").forGetter(FogColors::getNight)
 		).apply(instance, FogColors::new));
 
-		public FogColors(String day, String night) {
+		public FogColors(@NotNull String day, @NotNull String night) {
 			this.day = day;
 			this.night = night;
 		}
 
-		private final String day;
-		private final String night;
+		private final @NotNull String day;
+		private final @NotNull String night;
 
 		private transient @Nullable Color dayCached;
 		private transient @Nullable Color nightCached;
 
-		private String getDay() {
-			return day;
-		}
-
-		private String getNight() {
-			return night;
-		}
-
-		public  Color getDayColor() {
+		public Color getDayColor() {
 			if (dayCached == null) {
 				dayCached = Color.parse(day);
 			}
@@ -80,5 +71,15 @@ public class CustomFogDefinition {
 
 			return nightCached;
 		}
+
+		private @NotNull String getDay() {
+			return day;
+		}
+
+		private @NotNull String getNight() {
+			return night;
+		}
+
+
 	}
 }
