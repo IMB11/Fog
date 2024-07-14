@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Environment(EnvType.CLIENT)
 @Mixin(WorldRenderer.class)
-public class WorldRendererMixin {
+public abstract class WorldRendererMixin {
 	@Shadow
 	private @Nullable ClientWorld world;
 
