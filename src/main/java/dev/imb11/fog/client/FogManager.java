@@ -4,6 +4,7 @@ import dev.imb11.fog.client.registry.FogRegistry;
 import dev.imb11.fog.client.resource.CustomFogDefinition;
 import dev.imb11.fog.client.util.math.DarknessCalculation;
 import dev.imb11.fog.client.util.math.InterpolatedValue;
+import dev.imb11.fog.client.util.math.MathUtil;
 import dev.imb11.fog.client.util.player.PlayerUtil;
 import dev.imb11.fog.client.util.world.ClientWorldUtil;
 import dev.imb11.fog.config.FogConfig;
@@ -112,7 +113,7 @@ public class FogManager {
 		float clientCameraYPosition = (float) clientCamera.getY();
 		float seaLevel = clientWorld.getSeaLevel();
 		// Map the client camera's Y position to a factor between 0 and 1 based on the sea level (+/- 32)
-		float yFactor = MathHelper.clamp(mapRange(seaLevel - 32.0F, seaLevel + 32.0F, 1.0F, 0.0F, clientCameraYPosition), 0.0F, 1.0F);
+		float yFactor = MathHelper.clamp(MathUtil.mapRange(seaLevel - 32.0F, seaLevel + 32.0F, 1.0F, 0.0F, clientCameraYPosition), 0.0F, 1.0F);
 		float undergroundnessValue = this.undergroundness.get(deltaTicks);
 		float skyLight = this.currentSkyLight.get(deltaTicks);
 		// Calculate the underground factor by lerping between yFactor, undergroundness, and sky light
@@ -153,11 +154,6 @@ public class FogManager {
 		fogBlue *= 1 - darknessValue;
 
 		return new FogSettings(fogStartValue, fogEndValue, fogRed, fogGreen, fogBlue);
-	}
-
-	private static float mapRange(float fromMin, float fromMax, float toMin, float toMax, float value) {
-		float clampedValue = MathHelper.clamp(value, fromMin, fromMax);
-		return toMin + (clampedValue - fromMin) * (toMax - toMin) / (fromMax - fromMin);
 	}
 
 	public record FogSettings(double fogStart, double fogEnd, float fogRed, float fogGreen, float fogBlue) {}
