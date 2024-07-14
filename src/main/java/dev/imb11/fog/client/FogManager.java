@@ -115,13 +115,14 @@ public class FogManager {
 		float yFactor = MathHelper.clamp(mapRange(seaLevel - 32.0F, seaLevel + 32.0F, 1.0F, 0.0F, clientCameraYPosition), 0.0F, 1.0F);
 		float undergroundnessValue = this.undergroundness.get(deltaTicks);
 		float skyLight = this.currentSkyLight.get(deltaTicks);
-		// Calculate underground factor by lerping between yFactor, undergroundness, and sky light
+		// Calculate the underground factor by lerping between yFactor, undergroundness, and sky light
 		return MathHelper.lerp(yFactor, 1.0F - undergroundnessValue, skyLight / 16.0F);
 	}
 
 	public @NotNull FogSettings getFogSettings(float tickDelta, float viewDistance) {
 		float fogStartValue = fogStart.get(tickDelta) * viewDistance;
-		float undergroundFogMultiplier = 1.0F; // Default to no multiplier
+		// Default to no multiplier
+		float undergroundFogMultiplier = 1.0F;
 		if (!FogConfig.getInstance().disableUndergroundFogMultiplier) {
 			undergroundFogMultiplier = MathHelper.lerp(this.undergroundness.get(tickDelta), 0.75F, 1.0F);
 			undergroundFogMultiplier = MathHelper.lerp(this.darkness.get(tickDelta), undergroundFogMultiplier, 1.0F);
@@ -140,7 +141,7 @@ public class FogManager {
 		if (!FogConfig.getInstance().disableRaininessEffect && raininessValue > 0.0f) {
 			fogEndValue /= 1.0f + 0.5f * raininessValue;
 
-			// Darken fog colour based on raininess
+			// Darken the fog colour based on raininess
 			fogRed *= 1f - raininessValue;
 			fogGreen *= 1f - raininessValue;
 			fogBlue *= 0.85f - raininessValue;
