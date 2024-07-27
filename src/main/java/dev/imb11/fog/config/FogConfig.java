@@ -1,6 +1,7 @@
 package dev.imb11.fog.config;
 
 import com.google.gson.GsonBuilder;
+import dev.imb11.fog.client.FogManager;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
@@ -52,6 +53,10 @@ public class FogConfig {
 	public @NotNull YetAnotherConfigLib getYetAnotherConfigLibInstance() {
 		return YetAnotherConfigLib.create(HANDLER, ((defaults, config, builder) -> builder
 				.title(Text.empty())
+				.save(() -> {
+					FogManager.INSTANCE = new FogManager();
+					HANDLER.save();
+				})
 				.category(ConfigCategory.createBuilder()
 				                        .name(getText(EntryType.CATEGORY_NAME, "fog_calculations"))
 				                        .option(LabelOption.create(getText(EntryType.OPTION_NAME, "fog_calculations.warning")))
