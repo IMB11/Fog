@@ -44,7 +44,10 @@ public class HazeCalculator {
 	}
 
     public static FogManager.FogSettings applyHaze(float undergroundFactor, FogManager.FogSettings settings, int timeOfDay) {
-//		return settings;
+		if(FogConfig.getInstance().disableHazeCalculation) {
+			return settings;
+		}
+
 	    MinecraftClient client = MinecraftClient.getInstance();
 	    ClientWorld world = client.world;
 		ClientPlayerEntity player = client.player;

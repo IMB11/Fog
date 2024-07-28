@@ -14,6 +14,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serial;
 import java.util.Map;
 
 import static dev.imb11.fog.client.FogClient.MOD_ID;
@@ -51,6 +52,10 @@ public class FogConfig {
 	public boolean disableRaininessEffect = false;
 	@SerialEntry
 	public boolean disableUndergroundFogMultiplier = false;
+	@SerialEntry
+	public boolean disableBiomeFogColour = false;
+	@SerialEntry
+	public boolean disableHazeCalculation = false;
 
 	private enum EntryType {
 		CATEGORY_NAME,
@@ -116,6 +121,26 @@ public class FogConfig {
 								                        )).build()).binding(
 						                        defaults.disableRaininessEffect, () -> disableRaininessEffect,
 						                        newDisableRaininessEffect -> disableRaininessEffect = newDisableRaininessEffect
+				                        ).controller(BooleanControllerBuilder::create).build())
+				                        .option(Option.<Boolean>createBuilder().name(
+						                        getText(EntryType.OPTION_NAME, "disable_biome_fog_colour")).description(
+						                        initialFogStart -> OptionDescription.createBuilder().text(
+								                        getText(
+										                        EntryType.OPTION_DESCRIPTION,
+										                        "disable_biome_fog_colour"
+								                        )).build()).binding(
+						                        defaults.disableBiomeFogColour, () -> disableBiomeFogColour,
+						                        newDisableBiomeFogColour -> disableBiomeFogColour = newDisableBiomeFogColour
+				                        ).controller(BooleanControllerBuilder::create).build())
+				                        .option(Option.<Boolean>createBuilder().name(
+						                        getText(EntryType.OPTION_NAME, "disable_haze_calculation")).description(
+						                        initialFogStart -> OptionDescription.createBuilder().text(
+								                        getText(
+										                        EntryType.OPTION_DESCRIPTION,
+										                        "disable_haze_calculation"
+								                        )).build()).binding(
+						                        defaults.disableHazeCalculation, () -> disableHazeCalculation,
+						                        newDisableHazeCalculation -> disableHazeCalculation = newDisableHazeCalculation
 				                        ).controller(BooleanControllerBuilder::create).build())
 				                        .build())
 		));
