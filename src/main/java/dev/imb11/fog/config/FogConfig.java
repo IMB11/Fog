@@ -2,6 +2,7 @@ package dev.imb11.fog.config;
 
 import com.google.gson.GsonBuilder;
 import dev.imb11.fog.client.FogManager;
+import dev.imb11.fog.client.util.math.HazeCalculator;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
@@ -12,6 +13,8 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 import static dev.imb11.fog.client.FogClient.MOD_ID;
 
@@ -29,7 +32,17 @@ public class FogConfig {
 					.appendGsonBuilder(GsonBuilder::setPrettyPrinting)
 					.build())
 			.build();
-
+	@SerialEntry
+	public Map<Integer, Float> timeToHazeMap = Map.of(
+			0, 0.85f,
+			500, 0.25f,
+			1500, 0.25f,
+			11500, 0.25f,
+			12500, 0.85f,
+			13500, 0.5f,
+			22500, 0.5f,
+			23500, 0.85f
+	);
 	@SerialEntry
 	public float initialFogStart = 0.1f;
 	@SerialEntry
@@ -50,12 +63,20 @@ public class FogConfig {
 		return HANDLER.instance();
 	}
 
+	public static void load() {
+		HANDLER.load();
+
+		HazeCalculator.initialize();
+	}
+
 	public @NotNull YetAnotherConfigLib getYetAnotherConfigLibInstance() {
 		return YetAnotherConfigLib.create(HANDLER, ((defaults, config, builder) -> builder
 				.title(Text.empty())
 				.save(() -> {
-					FogManager.INSTANCE = new FogManager();
 					HANDLER.save();
+
+					FogManager.INSTANCE = new FogManager();
+					HazeCalculator.initialize();
 				})
 				.category(ConfigCategory.createBuilder()
 				                        .name(getText(EntryType.CATEGORY_NAME, "fog_calculations"))

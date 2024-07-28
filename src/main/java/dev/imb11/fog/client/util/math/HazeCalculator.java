@@ -4,6 +4,7 @@ import dev.imb11.fog.client.FogManager;
 import dev.imb11.fog.client.registry.FogRegistry;
 import dev.imb11.fog.client.resource.CustomFogDefinition;
 import dev.imb11.fog.client.util.color.Color;
+import dev.imb11.fog.config.FogConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
@@ -11,16 +12,36 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Heightmap;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 public class HazeCalculator {
-    private static final int[] times = {
-            0, 500, 1500, 11500, 12500, 13500, 22500, 23500
-    };
-
-    private static final double[] hazeValues = {
-            0.85, 0.25, 0.25, 0.25, 0.85, 0.5, 0.5, 0.85
-    };
-
 	private static float timeAboveSurface = 0;
+	public static int[] times = null;
+	public static float[] hazeValues = null;
+
+	public static void initialize() {
+		ArrayList<Integer> timesList = new ArrayList<>();
+		ArrayList<Float> hazeValuesList = new ArrayList<>();
+
+		var timeHazeEntries = FogConfig.getInstance().timeToHazeMap.entrySet();
+
+		// Sort timeHazeEntries by time
+		timeHazeEntries = timeHazeEntries.stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toCollection(LinkedHashSet::new));
+
+		for (Map.Entry<Integer, Float> integerFloatEntry : timeHazeEntries) {
+			timesList.add(integerFloatEntry.getKey());
+			hazeValuesList.add(integerFloatEntry.getValue());
+		}
+		times = new int[timesList.size()];
+		hazeValues = new float[hazeValuesList.size()];
+		for (int i = 0; i < timesList.size(); i++) {
+			times[i] = timesList.get(i);
+			hazeValues[i] = hazeValuesList.get(i);
+		}
+	}
 
     public static FogManager.FogSettings applyHaze(float undergroundFactor, FogManager.FogSettings settings, int timeOfDay) {
 //		return settings;
@@ -62,6 +83,10 @@ public class HazeCalculator {
     }
 
     public static double getHaze(int time) {
+		if(times == null || hazeValues == null) {
+			initialize();
+		}
+
         // Ensure time is within the valid range
         if (time < 0 || time > 24000) {
             throw new IllegalArgumentException("Time must be between 0 and 24000 ticks.");
