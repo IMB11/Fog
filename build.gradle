@@ -27,7 +27,7 @@ loom {
     if (loader == "forge") {
         forge {
             convertAccessWideners = true
-            mixinConfig "src/main/resources/fog.mixins.json"
+            mixinConfig "fog.mixins.json"
         }
     }
 

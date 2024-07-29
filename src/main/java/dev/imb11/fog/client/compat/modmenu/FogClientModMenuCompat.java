@@ -1,5 +1,5 @@
 /*? if fabric {*/
-/*package dev.imb11.fog.client.compat.modmenu;
+package dev.imb11.fog.client.compat.modmenu;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
@@ -14,4 +14,4 @@ public class FogClientModMenuCompat implements ModMenuApi {
 		return parent -> FogConfig.getInstance().getYetAnotherConfigLibInstance().generateScreen(parent);
 	}
 }
-*//*?}*/
+/*?}*/
