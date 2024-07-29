@@ -24,3 +24,6 @@ mandatory=true
 versionRange="${target_minecraft}"
 ordering="NONE"
 side="BOTH"
+
+[[mixins]]
+config="fog.mixins.json"

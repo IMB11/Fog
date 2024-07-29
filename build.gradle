@@ -1,5 +1,5 @@
 plugins {
-    id "dev.architectury.loom" version "1.6-SNAPSHOT"
+    id "dev.architectury.loom" version "1.7-SNAPSHOT"
 }
 
 def loader = property("loom.platform")
@@ -26,10 +26,8 @@ loom {
 
     if (loader == "forge") {
         forge {
-            convertAccessWideners.set(true)
-            mixinConfigs(
-                    "fog.mixins.json",
-            )
+            convertAccessWideners = true
+            mixinConfig "src/main/resources/fog.mixins.json"
         }
     }
 
@@ -38,6 +36,7 @@ loom {
         runDir "../../run"
     }
 }
+
 repositories {
     maven { url "https://maven.neoforged.net/releases/" }
     mavenCentral()
@@ -71,7 +70,9 @@ dependencies {
     mappings "net.fabricmc:yarn:${property("deps.yarn")}:v2"
 
     modImplementation(include("dev.architectury:architectury-${loader}:${property("deps.arch_api")}"))
-    modImplementation(include("dev.isxander:yet-another-config-lib:${property("deps.yacl")}-${loader}"))
+    modImplementation(include("dev.isxander:yet-another-config-lib:${property("deps.yacl")}-${loader}"), {
+        transitive = false
+    })
 
     if (isFabric) {
         System.out.println(loader)

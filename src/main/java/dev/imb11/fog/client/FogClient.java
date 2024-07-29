@@ -19,10 +19,10 @@ public class FogClient {
 
 	public static Path getConfigPath(String configFileName, String configExtension) {
 		/*? if fabric {*/
-		return net.fabricmc.loader.api.FabricLoader.getInstance().getConfigDir().resolve(MOD_ID).resolve(configFileName + "." + configExtension);
-		/*?} elif forge {*/
-		/*return net.minecraftforge.fml.loading.FMLLoader.getGamePath().resolve("config").resolve(MOD_ID).resolve(configFileName + "." + configExtension);
-		*//*?}*/
+		/*return net.fabricmc.loader.api.FabricLoader.getInstance().getConfigDir().resolve(MOD_ID).resolve(configFileName + "." + configExtension);
+		*//*?} elif forge {*/
+		return net.minecraftforge.fml.loading.FMLLoader.getGamePath().resolve("config").resolve(MOD_ID).resolve(configFileName + "." + configExtension);
+		/*?}*/
 	}
 	
 	public static void initialize() {
