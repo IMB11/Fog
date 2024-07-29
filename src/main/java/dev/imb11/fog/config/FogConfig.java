@@ -1,6 +1,7 @@
 package dev.imb11.fog.config;
 
 import com.google.gson.GsonBuilder;
+import dev.imb11.fog.client.FogClient;
 import dev.imb11.fog.client.FogManager;
 import dev.imb11.fog.client.util.math.HazeCalculator;
 import dev.isxander.yacl3.api.*;
@@ -9,12 +10,9 @@ import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.Serial;
 import java.util.Map;
 
 import static dev.imb11.fog.client.FogClient.MOD_ID;
@@ -28,8 +26,7 @@ public class FogConfig {
 			.id(Identifier.of(MOD_ID, CONFIG_FILE_NAME))
 			.serializer(config -> GsonConfigSerializerBuilder
 					.create(config)
-					.setPath(FabricLoader.getInstance().getConfigDir().resolve(
-							String.format("%s/%s.%s", MOD_ID, CONFIG_FILE_NAME, CONFIG_FILE_EXTENSION)))
+					.setPath(FogClient.getConfigPath(CONFIG_FILE_NAME, CONFIG_FILE_EXTENSION))
 					.appendGsonBuilder(GsonBuilder::setPrettyPrinting)
 					.build())
 			.build();

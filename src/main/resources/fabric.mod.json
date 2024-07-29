@@ -3,9 +3,10 @@
   "id": "fog",
   "version": "${mod_version}",
   "name": "Fog",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "description": "An expansive and dynamic overhaul to Minecraft's fog rendering system.",
   "authors": [
-    "Me!"
+    "IMB11",
+    "Steveplays"
   ],
   "contact": {
     "homepage": "https://fabricmc.net/",

@@ -1,9 +1,5 @@
 package dev.imb11.fog.client.util.player;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
-@Environment(EnvType.CLIENT)
 public class PlayerUtil {
 	public static boolean isPlayerAboveGround(final double playerEyePositionY, final int seaLevel, final int worldTopYAtPlayerPosition) {
 		// There need to be a minimum of 5 blocks above the player to be considered to be

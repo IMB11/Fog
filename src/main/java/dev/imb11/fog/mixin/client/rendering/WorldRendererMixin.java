@@ -4,8 +4,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import dev.imb11.fog.client.FogManager;
 import dev.imb11.fog.client.util.math.HazeCalculator;
 import dev.imb11.fog.client.util.math.MathUtil;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Environment(EnvType.CLIENT)
+
 @Mixin(WorldRenderer.class)
 public abstract class WorldRendererMixin {
 	@Shadow

@@ -1,0 +1,26 @@
+modLoader="javafml"
+loaderVersion="${target_forge}"
+issueTrackerURL="https://github.com/IMB11/Fog/issues"
+displayURL="http://IMB11.dev/"
+logoFile="assets/fog/icon.png"
+authors="IMB11,Steveplays"
+
+[[mods]]
+modId="fog"
+version="${mod_version}"
+displayName="Fog"
+description="An expansive and dynamic overhaul to Minecraft's fog rendering system."
+
+[[dependencies.fog]]
+modId="forge"
+mandatory=true
+versionRange="${target_forge}"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.fog]]
+modId="minecraft"
+mandatory=true
+versionRange="${target_minecraft}"
+ordering="NONE"
+side="BOTH"

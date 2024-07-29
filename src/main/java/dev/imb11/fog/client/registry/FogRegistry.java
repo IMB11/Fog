@@ -1,8 +1,8 @@
 package dev.imb11.fog.client.registry;
 
 import dev.imb11.fog.client.resource.CustomFogDefinition;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+
+
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-@Environment(EnvType.CLIENT)
+
 public class FogRegistry {
 	private static final CustomFogDefinition.FogColors DEFAULT_BIOME_FOG_COLORS = new CustomFogDefinition.FogColors("#add4ff", "#181f30");
 	private static final CustomFogDefinition.FogColors DEFAULT_CAVE_FOG_COLORS = new CustomFogDefinition.FogColors("#212121", "#101010");

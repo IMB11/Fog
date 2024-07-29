@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
 import dev.imb11.fog.client.registry.FogRegistry;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+
+
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceReloader;
 import net.minecraft.util.Identifier;
@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-@Environment(EnvType.CLIENT)
+
 public class FogResourceReloader implements ResourceReloader {
 	private static final @NotNull Gson GSON = new Gson();
 	private static final @NotNull String JSON_FILE_SUFFIX = ".json";

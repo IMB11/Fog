@@ -5,19 +5,26 @@ import dev.architectury.event.events.client.ClientTickEvent;
 import dev.architectury.registry.ReloadListenerRegistry;
 import dev.imb11.fog.client.resource.FogResourceReloader;
 import dev.imb11.fog.config.FogConfig;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.resource.ResourceType;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Environment(EnvType.CLIENT)
+import java.nio.file.Path;
+
 public class FogClient {
 	public static final @NotNull String MOD_ID = "fog";
 	public static final @NotNull String MOD_NAME = "Fog";
 	public static final @NotNull Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
+	public static Path getConfigPath(String configFileName, String configExtension) {
+		/*? if fabric {*/
+		return net.fabricmc.loader.api.FabricLoader.getInstance().getConfigDir().resolve(MOD_ID).resolve(configFileName + "." + configExtension);
+		/*?} elif forge {*/
+		/*return net.minecraftforge.fml.loading.FMLLoader.getGamePath().resolve("config").resolve(MOD_ID).resolve(configFileName + "." + configExtension);
+		*//*?}*/
+	}
+	
 	public static void initialize() {
 		LOGGER.info("Loading {}.", MOD_NAME);
 

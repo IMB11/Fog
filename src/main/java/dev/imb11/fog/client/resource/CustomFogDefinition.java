@@ -3,12 +3,12 @@ package dev.imb11.fog.client.resource;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.imb11.fog.client.util.color.Color;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@Environment(EnvType.CLIENT)
+
 public record CustomFogDefinition(float startMultiplier, float endMultiplier, @Nullable FogColors colors) {
 	public static final Codec<CustomFogDefinition> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Codec.FLOAT.fieldOf("start_multiplier").forGetter(CustomFogDefinition::startMultiplier),
@@ -16,7 +16,7 @@ public record CustomFogDefinition(float startMultiplier, float endMultiplier, @N
 			FogColors.CODEC.optionalFieldOf("colors", null).forGetter(CustomFogDefinition::colors)
 	).apply(instance, CustomFogDefinition::new));
 
-	@Environment(EnvType.CLIENT)
+	
 	public static class FogColors {
 		public static final Codec<FogColors> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				Codec.STRING.fieldOf("day").forGetter(FogColors::getDay),
