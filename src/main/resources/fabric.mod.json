@@ -12,7 +12,7 @@
     "homepage": "https://fabricmc.net/",
     "sources": "https://github.com/FabricMC/fabric-example-mod"
   },
-  "license": "ARR",
+  "license": "All-Rights-Reserved",
   "accessWidener": "fog.accesswidener",
   "icon": "assets/fog/icon.png",
   "environment": "*",

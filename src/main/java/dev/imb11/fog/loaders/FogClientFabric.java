@@ -1,5 +1,5 @@
 /*? if fabric {*/
-package dev.imb11.fog.fabric.client;
+package dev.imb11.fog.loaders;
 
 import dev.imb11.fog.client.FogClient;
 import net.fabricmc.api.ClientModInitializer;

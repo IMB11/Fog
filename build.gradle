@@ -1,5 +1,5 @@
 plugins {
-    id "dev.architectury.loom" version "1.7-SNAPSHOT"
+    id "dev.architectury.loom" version "1.6-SNAPSHOT"
 }
 
 def loader = property("loom.platform")
@@ -85,6 +85,15 @@ dependencies {
             "forge"("net.minecraftforge:forge:${mcVersion}-${property("deps.fml")}")
             compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.0"))
             implementation(include("io.github.llamalad7:mixinextras-forge:0.4.0"))
+
+            def quiltParsersDependencies = [
+                    "json",
+                    "gson"
+            ]
+            quiltParsersDependencies.each {
+                "forgeRuntimeLibrary"(implementation include("org.quiltmc.parsers:$it:0.2.1"))
+            }
+
         } else {
             // TODO: NEOFORGE
         }
@@ -92,17 +101,25 @@ dependencies {
 }
 
 processResources {
+    def props = [
+            mod_version: version,
+            target_minecraft: project.property("mod.target"),
+    ]
+
+    if (loader == "forge") {
+        props.target_forge = project.property("fml.target")
+    }
+
+    props.each { key, value -> inputs.property(key, value) }
+
     if (loader == "fabric") {
-        filesMatching('fabric.mod.json') {
-            expand 'mod_version': version,
-                    'target_minecraft': project.property('mod.target')
-        }
-    } else if (loader == "forge") {
-        filesMatching('META-INF/mods.toml') {
-            expand 'mod_version': version,
-                    'target_minecraft': project.property("mod.target"),
-                    'target_forge': project.property("fml.target")
-        }
+        filesMatching("fabric.mod.json") { expand(props) }
+        exclude(["META-INF/mods.toml"])
+    }
+
+    if (loader == "forge") {
+        filesMatching(["META-INF/mods.toml"]) { expand(props) }
+        exclude("fabric.mod.json")
     }
 }
 

@@ -4,6 +4,7 @@ issueTrackerURL="https://github.com/IMB11/Fog/issues"
 displayURL="http://IMB11.dev/"
 logoFile="assets/fog/icon.png"
 authors="IMB11,Steveplays"
+license="All-Rights-Reserved"
 
 [[mods]]
 modId="fog"
