@@ -70,9 +70,6 @@ dependencies {
     mappings "net.fabricmc:yarn:${property("deps.yarn")}:v2"
 
     modImplementation(include("dev.architectury:architectury-${loader}:${property("deps.arch_api")}"))
-    modImplementation(include("dev.isxander:yet-another-config-lib:${property("deps.yacl")}-${loader}"), {
-        transitive = false
-    })
 
     if (isFabric) {
         System.out.println(loader)
@@ -80,11 +77,17 @@ dependencies {
 
         modLocalRuntime("net.fabricmc.fabric-api:fabric-api:${property("runtime.fabric_api")}")
         modImplementation("maven.modrinth:modmenu:${property("deps.mod_menu")}")
+
+        modImplementation(include("dev.isxander:yet-another-config-lib:${property("deps.yacl")}-${loader}"))
     } else {
         if (loader == "forge") {
             "forge"("net.minecraftforge:forge:${mcVersion}-${property("deps.fml")}")
             compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.0"))
             implementation(include("io.github.llamalad7:mixinextras-forge:0.4.0"))
+
+            modImplementation(include("dev.isxander:yet-another-config-lib:${property("deps.yacl")}-${loader}"), {
+                transitive = false
+            })
 
             def quiltParsersDependencies = [
                     "json",
@@ -93,7 +96,6 @@ dependencies {
             quiltParsersDependencies.each {
                 "forgeRuntimeLibrary"(implementation include("org.quiltmc.parsers:$it:0.2.1"))
             }
-
         } else {
             // TODO: NEOFORGE
         }

@@ -18,7 +18,7 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "dev.imb11.fog.fabric.client.FogClientFabric"
+      "dev.imb11.fog.loaders.FogClientFabric"
     ],
     "modmenu": [
       "dev.imb11.fog.client.compat.modmenu.FogClientModMenuCompat"
