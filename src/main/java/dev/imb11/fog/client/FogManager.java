@@ -30,6 +30,8 @@ public class FogManager {
 	public final InterpolatedValue currentSkyLight = new InterpolatedValue(16.0F);
 	public final InterpolatedValue currentBlockLight = new InterpolatedValue(16.0F);
 	public final InterpolatedValue currentLight = new InterpolatedValue(16.0F);
+	public final InterpolatedValue currentStartMultiplier = new InterpolatedValue(1.0F);
+	public final InterpolatedValue currentEndMultiplier = new InterpolatedValue(1.0F);
 
 	public FogManager() {
 		@NotNull FogConfig config = FogConfig.getInstance();
@@ -78,8 +80,9 @@ public class FogManager {
 			return;
 		}
 
-		@Nullable CustomFogDefinition.FogColors colors = FogRegistry.getFogDefinitionOrDefault(
-				clientPlayerBiomeKeyOptional.get().getValue()).colors();
+		CustomFogDefinition fogDefinition = FogRegistry.getFogDefinitionOrDefault(
+				clientPlayerBiomeKeyOptional.get().getValue());
+		@Nullable CustomFogDefinition.FogColors colors = fogDefinition.colors();
 		if (colors == null || FogConfig.getInstance().disableBiomeFogColour) {
 			colors = FogRegistry.getDefaultBiomeColors();
 		}
@@ -93,6 +96,9 @@ public class FogManager {
 		this.fogColorRed.interpolate(red);
 		this.fogColorGreen.interpolate(green);
 		this.fogColorBlue.interpolate(blue);
+
+		this.currentStartMultiplier.interpolate(fogDefinition.startMultiplier());
+		this.currentEndMultiplier.interpolate(fogDefinition.endMultiplier());
 
 		this.fogStart.interpolate(darknessCalculation.fogStart());
 		this.fogEnd.interpolate(darknessCalculation.fogEnd());
@@ -153,6 +159,9 @@ public class FogManager {
 		fogRed *= 1 - darknessValue;
 		fogGreen *= 1 - darknessValue;
 		fogBlue *= 1 - darknessValue;
+
+		fogStartValue *= this.currentStartMultiplier.get(tickDelta);
+		fogEndValue *= this.currentEndMultiplier.get(tickDelta);
 
 		return new FogSettings(fogStartValue, fogEndValue, fogRed, fogGreen, fogBlue);
 	}
