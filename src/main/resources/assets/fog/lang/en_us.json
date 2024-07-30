@@ -20,5 +20,6 @@
 
   "fog.command.toggle.enabled": "Fog engine modifications have now been re-enabled.",
   "fog.command.toggle.disabled": "Fog engine modifications have now been disabled.",
-  "fog.command.reset": "Fog engine modifications have been reloaded and reset to the default values specified in the config."
+  "fog.command.reset": "Fog engine modifications have been reloaded and reset to the default values specified in the config.",
+  "fog.command.debug.failure": "An error occurred while getting debug information."
 }

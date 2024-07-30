@@ -1,13 +1,17 @@
-package dev.imb11.fog.client;
+package dev.imb11.fog.client.command;
 
 import com.mojang.brigadier.context.CommandContext;
 import dev.architectury.event.events.client.ClientCommandRegistrationEvent;
+import dev.imb11.fog.client.FogManager;
 import dev.imb11.fog.client.util.color.Color;
 import dev.imb11.fog.client.util.math.HazeCalculator;
 import dev.imb11.fog.config.FogConfig;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class FogClientCommands {
 	public static void register() {
@@ -24,15 +28,24 @@ public class FogClientCommands {
 		});
 	}
 
-	private static int outputDebug(CommandContext<ClientCommandRegistrationEvent.ClientCommandSourceStack> e) {
+	private static int outputDebug(CommandContext<ClientCommandRegistrationEvent.ClientCommandSourceStack> commandContext) {
 		MinecraftClient client = MinecraftClient.getInstance();
 		float tickDelta = client.getTickDelta();
 		FogManager manager = FogManager.INSTANCE;
 
-		String hexColor = Integer.toHexString(new Color((int) (manager.fogColorRed.get(tickDelta) * 255), (int) (manager.fogColorGreen.get(tickDelta) * 255), (int) (manager.fogColorBlue.get(tickDelta) * 255)).toInt());
+		String hexColor = Integer.toHexString(
+				new Color((int) (manager.fogColorRed.get(tickDelta) * 255), (int) (manager.fogColorGreen.get(tickDelta) * 255),
+						(int) (manager.fogColorBlue.get(tickDelta) * 255)
+				).toInt());
 		hexColor = "§c" + hexColor.substring(0, 2) + "§a" + hexColor.substring(2, 4) + "§9" + hexColor.substring(4);
 
-		String table = String.format(
+		@Nullable ClientWorld clientWorld = client.world;
+		if (clientWorld == null) {
+			commandContext.getSource().arch$sendFailure(Text.translatable("fog.command.debug.failure"));
+			return 0;
+		}
+
+		@SuppressWarnings("TextBlockMigration") @NotNull String debugInfoTable = String.format(
 				"§b§7[§rFog§b§7]§r Current Fog Manager State:\n" +
 						"§b§7[§rFog§b§7]§r Raininess: §6%.2f§r\n" +
 						"§b§7[§rFog§b§7]§r \"Undergroundness\": §6%.2f§r\n" +
@@ -52,7 +65,7 @@ public class FogClientCommands {
 				manager.fogEnd.get(tickDelta),
 				manager.darkness.get(tickDelta),
 				hexColor,
-				HazeCalculator.getHaze((int) client.world.getTimeOfDay()),
+				HazeCalculator.getHaze((int) clientWorld.getTimeOfDay()),
 				manager.currentSkyLight.get(tickDelta),
 				manager.currentBlockLight.get(tickDelta),
 				manager.currentLight.get(tickDelta),
@@ -60,24 +73,24 @@ public class FogClientCommands {
 				manager.currentEndMultiplier.get(tickDelta)
 		);
 
-		e.getSource().arch$sendSuccess(() -> Text.literal(table), false);
-
+		commandContext.getSource().arch$sendSuccess(() -> Text.literal(debugInfoTable), false);
 		return 1;
 	}
 
-	private static int reset(CommandContext<ClientCommandRegistrationEvent.ClientCommandSourceStack> e) {
+	private static int reset(@NotNull CommandContext<ClientCommandRegistrationEvent.ClientCommandSourceStack> commandContext) {
 		FogManager.INSTANCE = new FogManager();
-		e.getSource().arch$sendSuccess(() -> Text.literal("§b§7[§rFog§b§7]§r ").append(Text.translatable("fog.command.reset").formatted(Formatting.GOLD)), false);
+		commandContext.getSource().arch$sendSuccess(
+				() -> Text.literal("§b§7[§rFog§b§7]§r ").append(Text.translatable("fog.command.reset").formatted(Formatting.GOLD)), false);
 		return 1;
 	}
 
-	private static int toggle(CommandContext<ClientCommandRegistrationEvent.ClientCommandSourceStack> e) {
+	private static int toggle(@NotNull CommandContext<ClientCommandRegistrationEvent.ClientCommandSourceStack> commandContext) {
 		FogConfig config = FogConfig.getInstance();
 		config.disableMod = !config.disableMod;
 
 		FogConfig.save();
 
-		e.getSource().arch$sendSuccess(() -> Text.literal("§b§7[§rFog§b§7]§r ").append(
+		commandContext.getSource().arch$sendSuccess(() -> Text.literal("§b§7[§rFog§b§7]§r ").append(
 				Text.translatable("fog.command.toggle." + (config.disableMod ? "disabled" : "enabled")).formatted(Formatting.GOLD)), false);
 
 		return 1;

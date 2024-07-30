@@ -1,14 +1,13 @@
 package dev.imb11.fog.client;
 
-import dev.architectury.event.events.client.ClientCommandRegistrationEvent;
 import dev.architectury.event.events.client.ClientPlayerEvent;
 import dev.architectury.event.events.client.ClientTickEvent;
 import dev.architectury.registry.ReloadListenerRegistry;
+import dev.imb11.fog.client.command.FogClientCommands;
 import dev.imb11.fog.client.registry.FogRegistry;
 import dev.imb11.fog.client.resource.FogResourceReloader;
 import dev.imb11.fog.config.FogConfig;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

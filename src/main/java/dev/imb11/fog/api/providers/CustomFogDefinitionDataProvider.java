@@ -2,7 +2,6 @@
 package dev.imb11.fog.api.providers;
 
 import dev.imb11.fog.api.CustomFogDefinition;
-import dev.imb11.fog.client.registry.FogRegistry;
 import dev.imb11.fog.client.resource.FogResourceReloader;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricCodecDataProvider;
@@ -25,27 +24,29 @@ public abstract class CustomFogDefinitionDataProvider extends FabricCodecDataPro
 	 * Accepts all custom fog definitions for biomes.
 	 * @param provider A consumer that accepts the {@link Identifier} of the biome, and {@link CustomFogDefinition} to apply.
 	 */
-	public void acceptBiomes(BiConsumer<Identifier, CustomFogDefinition> provider) {};
+	public void acceptBiomes(BiConsumer<Identifier, CustomFogDefinition> provider) {}
 	
 	/**
 	 * Accepts all custom fog definitions for biome tags.
 	 * @param provider A consumer that accepts the {@link Identifier} of the biome tag, and {@link CustomFogDefinition} to apply.
 	 */
-	public void acceptBiomeTags(BiConsumer<TagKey<Biome>, CustomFogDefinition> provider) {};
+	public void acceptBiomeTags(BiConsumer<TagKey<Biome>, CustomFogDefinition> provider) {}
 
 	/**
 	 * @deprecated Not yet implemented, structure fog definitions are loaded, but are not applied to the game.
 	 * @param provider A consumer that accepts the {@link Identifier} of the structure, and the {@link CustomFogDefinition} to apply.
 	 */
+	@SuppressWarnings("DeprecatedIsStillUsed")
 	@Deprecated
-	public void acceptStructures(BiConsumer<Identifier, CustomFogDefinition> provider) {};
+	public void acceptStructures(BiConsumer<Identifier, CustomFogDefinition> provider) {}
 
 	/**
 	 * @deprecated Not yet implemented, structure fog definitions are loaded, but are not applied to the game.
 	 * @param provider A consumer that accepts the {@link Identifier} of the structure tag, and {@link CustomFogDefinition} to apply.
 	 */
+	@SuppressWarnings("DeprecatedIsStillUsed")
 	@Deprecated
-	public void acceptStructureTags(BiConsumer<TagKey<Structure>, CustomFogDefinition> provider) {};
+	public void acceptStructureTags(BiConsumer<TagKey<Structure>, CustomFogDefinition> provider) {}
 
 	@Override
 	protected void configure(BiConsumer<Identifier, CustomFogDefinition> provider) {
