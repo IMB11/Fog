@@ -25,7 +25,7 @@ import java.util.function.Function;
 public class FogResourceReloader implements ResourceReloader {
 	private static final @NotNull Gson GSON = new Gson();
 	private static final @NotNull String JSON_FILE_SUFFIX = ".json";
-	public static final @NotNull String FOG_FOLDER_NAME = "fog_definitions";
+	public static final @NotNull String FOG_DEFINITIONS_FOLDER_NAME = "fog_definitions";
 	private static final @NotNull String TAG_FOLDER_NAME = "tag";
 	public static final @NotNull String STRUCTURE_FOLDER_NAME = "structure";
 	public static final @NotNull String STRUCTURE_TAGS_FOLDER_NAME = String.format("%s/%s", TAG_FOLDER_NAME, STRUCTURE_FOLDER_NAME);
@@ -59,7 +59,7 @@ public class FogResourceReloader implements ResourceReloader {
 		fogRegistry.clear();
 
 		@NotNull var jsonFogs = resourceManager.findResources(
-				String.format("%s/%s", FOG_FOLDER_NAME, folderName),
+				String.format("%s/%s", FOG_DEFINITIONS_FOLDER_NAME, folderName),
 				identifier -> identifier.toString().endsWith(JSON_FILE_SUFFIX)
 		);
 		for (@NotNull var jsonFog : jsonFogs.entrySet()) {

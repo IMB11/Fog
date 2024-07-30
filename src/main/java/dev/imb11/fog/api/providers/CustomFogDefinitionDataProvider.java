@@ -13,10 +13,12 @@ import net.minecraft.world.gen.structure.Structure;
 
 import java.util.function.BiConsumer;
 
+import static dev.imb11.fog.client.resource.FogResourceReloader.FOG_DEFINITIONS_FOLDER_NAME;
+
 public abstract class CustomFogDefinitionDataProvider extends FabricCodecDataProvider<CustomFogDefinition> {
 	private final FabricDataOutput output;
 	public CustomFogDefinitionDataProvider(FabricDataOutput dataOutput) {
-		super(dataOutput, DataOutput.OutputType.RESOURCE_PACK, "fog_definitions", CustomFogDefinition.CODEC);
+		super(dataOutput, DataOutput.OutputType.RESOURCE_PACK, FOG_DEFINITIONS_FOLDER_NAME, CustomFogDefinition.CODEC);
 		output = dataOutput;
 	}
 
