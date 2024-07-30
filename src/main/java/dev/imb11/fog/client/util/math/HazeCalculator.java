@@ -1,5 +1,6 @@
 package dev.imb11.fog.client.util.math;
 
+import dev.imb11.fog.client.FogClient;
 import dev.imb11.fog.client.FogManager;
 import dev.imb11.fog.client.registry.FogRegistry;
 import dev.imb11.fog.client.resource.CustomFogDefinition;
@@ -92,7 +93,10 @@ public class HazeCalculator {
 
         // Ensure time is within the valid range
         if (time < 0 || time > 24000) {
-            throw new IllegalArgumentException("Time must be between 0 and 24000 ticks.");
+	        time = time % 24000;
+			if (time < 0) {
+				time = 0;
+			}
         }
 
         // Handle exact matches or boundaries

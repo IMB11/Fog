@@ -35,15 +35,14 @@ public abstract class WorldRendererMixin {
 			return;
 		}
 
-		// TODO: Put the 3 magic numbers into private static final @Unique fields
-		float haze = (float) HazeCalculator.getHaze((int) this.world.getTimeOfDay());
-		if (haze < 0.8f) {
-			haze = 0.8f;
-		}
-
 		// Force clouds to be white
 		RenderSystem.setShaderFogStart(10000F);
-		RenderSystem.setShaderFogColor((haze + 0.5F), (haze + 0.5F), (haze + 0.5F));
+
+		// TODO: Put the 3 magic numbers into private static final @Unique fields
+		if (!world.getDimension().hasFixedTime()) {
+			float haze = (float) HazeCalculator.getHaze((int) this.world.getTimeOfDay());
+			RenderSystem.setShaderFogColor((haze + 0.5F), (haze + 0.5F), (haze + 0.5F));
+		}
 	}
 
 	/**
