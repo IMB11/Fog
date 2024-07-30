@@ -53,6 +53,8 @@ public class FogConfig {
 	public boolean disableBiomeFogColour = false;
 	@SerialEntry
 	public boolean disableHazeCalculation = false;
+	@SerialEntry
+	public boolean disableMod = false;
 
 	private enum EntryType {
 		CATEGORY_NAME,
@@ -69,6 +71,10 @@ public class FogConfig {
 		HANDLER.load();
 
 		HazeCalculator.initialize();
+	}
+
+	public static void save() {
+		HANDLER.save();
 	}
 
 	public @NotNull YetAnotherConfigLib getYetAnotherConfigLibInstance() {
@@ -138,6 +144,16 @@ public class FogConfig {
 								                        )).build()).binding(
 						                        defaults.disableHazeCalculation, () -> disableHazeCalculation,
 						                        newDisableHazeCalculation -> disableHazeCalculation = newDisableHazeCalculation
+				                        ).controller(BooleanControllerBuilder::create).build())
+				                        .option(Option.<Boolean>createBuilder().name(
+						                        getText(EntryType.OPTION_NAME, "disable_mod")).description(
+						                        initialFogStart -> OptionDescription.createBuilder().text(
+								                        getText(
+										                        EntryType.OPTION_DESCRIPTION,
+										                        "disable_mod"
+								                        )).build()).binding(
+						                        defaults.disableMod, () -> disableMod,
+						                        newDisableMod -> disableMod = newDisableMod
 				                        ).controller(BooleanControllerBuilder::create).build())
 				                        .build())
 		));

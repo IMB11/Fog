@@ -80,12 +80,6 @@ public class FogRegistry {
 		return CustomFogDefinition.DEFAULT;
 	}
 
-	public static void initialize() {
-		ClientPlayerEvent.CLIENT_PLAYER_JOIN.register((clientPlayerEntity) -> {
-			FogRegistry.resetCaches();
-		});
-	}
-
 	public static void resetCaches() {
 		TAGGED_BIOME_TO_FOG_CACHE.clear();
 		TAGGED_BIOME_SKIP_LIST.clear();

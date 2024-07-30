@@ -5,7 +5,7 @@ import dev.imb11.fog.client.FogManager;
 import dev.imb11.fog.client.util.math.HazeCalculator;
 import dev.imb11.fog.client.util.math.MathUtil;
 
-
+import dev.imb11.fog.config.FogConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
@@ -31,6 +31,8 @@ public abstract class WorldRendererMixin {
 
 	@Inject(method = "renderClouds(Lnet/minecraft/client/util/math/MatrixStack;Lorg/joml/Matrix4f;FDDD)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gl/VertexBuffer;draw(Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lnet/minecraft/client/gl/ShaderProgram;)V", shift = At.Shift.BEFORE))
 	public void fog$whiteClouds(MatrixStack matrices, Matrix4f projectionMatrix, float tickDelta, double cameraX, double cameraY, double cameraZ, CallbackInfo ci) {
+		if(FogConfig.getInstance().disableMod) return;
+
 		if (this.world == null) {
 			return;
 		}
@@ -39,7 +41,7 @@ public abstract class WorldRendererMixin {
 		RenderSystem.setShaderFogStart(10000F);
 
 		// TODO: Put the 3 magic numbers into private static final @Unique fields
-		if (!world.getDimension().hasFixedTime()) {
+		if (!world.getDimension().hasFixedTime() || !(world.getDimensionEffects() instanceof DimensionEffects.End)) {
 			float haze = (float) HazeCalculator.getHaze((int) this.world.getTimeOfDay());
 			RenderSystem.setShaderFogColor((haze + 0.5F), (haze + 0.5F), (haze + 0.5F));
 		}
@@ -51,7 +53,7 @@ public abstract class WorldRendererMixin {
 	 */
 //	@Inject(method = "renderSky(Lnet/minecraft/client/util/math/MatrixStack;Lorg/joml/Matrix4f;FLnet/minecraft/client/render/Camera;ZLjava/lang/Runnable;)V", at = @At("TAIL"))
 //	public void fog$renderSky(@NotNull MatrixStack matrixStack, @NotNull Matrix4f projectionMatrix, float deltaTick, @NotNull Camera camera, boolean isFoggy, @NotNull Runnable setupFog, @NotNull CallbackInfo ci) {
-//		// TODO: Check if Iris shaders active before rendering here
+//		// TOD: Check if Iris shaders active before rendering here
 //		if (world == null || true) {
 //			return;
 //		}

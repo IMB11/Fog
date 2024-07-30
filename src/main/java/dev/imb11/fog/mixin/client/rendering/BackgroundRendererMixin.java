@@ -4,11 +4,9 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.imb11.fog.client.FogManager;
 import dev.imb11.fog.client.util.math.HazeCalculator;
+import dev.imb11.fog.config.FogConfig;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.BackgroundRenderer;
-import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.CameraSubmersionType;
-import net.minecraft.client.render.FogShape;
+import net.minecraft.client.render.*;
 import net.minecraft.client.world.ClientWorld;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,10 +28,15 @@ public abstract class BackgroundRendererMixin {
 
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;clearColor(FFFF)V", remap = false, shift = At.Shift.BEFORE))
 	private static void fog$modifyFogColors(@NotNull Camera camera, float tickDelta, @NotNull ClientWorld world, int viewDistance, float skyDarkness, @NotNull CallbackInfo ci) {
+		if(FogConfig.getInstance().disableMod) return;
 		@NotNull var fogManager = FogManager.getInstance();
 		@NotNull var fogSettings = fogManager.getFogSettings(tickDelta, viewDistance);
-		fogSettings = HazeCalculator.applyHaze(
-				fogManager.getUndergroundFactor(MinecraftClient.getInstance(), tickDelta), fogSettings, (int) world.getTimeOfDay());
+
+		if (!world.getDimension().hasFixedTime() || !(world.getDimensionEffects() instanceof DimensionEffects.End)) {
+			fogSettings = HazeCalculator.applyHaze(
+					fogManager.getUndergroundFactor(MinecraftClient.getInstance(), tickDelta), fogSettings, (int) world.getTimeOfDay());
+		}
+
 		red = fogSettings.fogRed();
 		green = fogSettings.fogGreen();
 		blue = fogSettings.fogBlue();
@@ -41,6 +44,7 @@ public abstract class BackgroundRendererMixin {
 
 	@Inject(method = "applyFog", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderFogStart(F)V", remap = false, shift = At.Shift.BEFORE))
 	private static void fog$fogRenderEvent(@NotNull Camera camera, @NotNull BackgroundRenderer.FogType fogType, float viewDistance, boolean thickFog, float deltaTick, @NotNull CallbackInfo ci, @Local @NotNull BackgroundRenderer.FogData fogData) {
+		if(FogConfig.getInstance().disableMod) return;
 		if (camera.getSubmersionType() != CameraSubmersionType.NONE) {
 			return;
 		}
@@ -56,6 +60,7 @@ public abstract class BackgroundRendererMixin {
 	 */
 	@Inject(method = "setFogBlack", at = @At("HEAD"))
 	private static void fog$setFogBlackChangeClearColor(@NotNull CallbackInfo ci) {
+		if(FogConfig.getInstance().disableMod) return;
 		@NotNull final var client = MinecraftClient.getInstance();
 		@Nullable final var clientWorld = client.world;
 		if (clientWorld == null) {
@@ -67,8 +72,11 @@ public abstract class BackgroundRendererMixin {
 				client.getTickDelta(),
 				client.options.getViewDistance().getValue()
 		);
-		fogSettings = HazeCalculator.applyHaze(
-				fogManager.getUndergroundFactor(client, client.getTickDelta()), fogSettings, (int) clientWorld.getTimeOfDay());
+
+		if (!clientWorld.getDimension().hasFixedTime() || !(clientWorld.getDimensionEffects() instanceof DimensionEffects.End)) {
+			fogSettings = HazeCalculator.applyHaze(
+					fogManager.getUndergroundFactor(client, client.getTickDelta()), fogSettings, (int) clientWorld.getTimeOfDay());
+		}
 		RenderSystem.clearColor(fogSettings.fogRed(), fogSettings.fogGreen(), fogSettings.fogBlue(), 1.0F);
 	}
 }

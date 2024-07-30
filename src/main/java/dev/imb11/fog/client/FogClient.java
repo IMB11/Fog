@@ -1,12 +1,14 @@
 package dev.imb11.fog.client;
 
 import dev.architectury.event.events.client.ClientCommandRegistrationEvent;
+import dev.architectury.event.events.client.ClientPlayerEvent;
 import dev.architectury.event.events.client.ClientTickEvent;
 import dev.architectury.registry.ReloadListenerRegistry;
 import dev.imb11.fog.client.registry.FogRegistry;
 import dev.imb11.fog.client.resource.FogResourceReloader;
 import dev.imb11.fog.config.FogConfig;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,14 +32,13 @@ public class FogClient {
 		LOGGER.info("Loading {}.", MOD_NAME);
 
 		FogConfig.load();
-		FogRegistry.initialize();
+		FogClientCommands.register();
+
 		ReloadListenerRegistry.register(ResourceType.CLIENT_RESOURCES, new FogResourceReloader());
 		ClientTickEvent.CLIENT_LEVEL_POST.register((world) -> FogManager.getInstance().onEndTick(world));
-		// TODO: Add a client-side command for reloading the config
-		ClientCommandRegistrationEvent.EVENT.register(
-				(dispatcher, context) -> dispatcher.register(ClientCommandRegistrationEvent.literal("resetFog").executes((e) -> {
-					FogManager.INSTANCE = new FogManager();
-					return 1;
-				})));
+		ClientPlayerEvent.CLIENT_PLAYER_JOIN.register((clientPlayerEntity) -> {
+			FogManager.INSTANCE = new FogManager();
+			FogRegistry.resetCaches();
+		});
 	}
 }

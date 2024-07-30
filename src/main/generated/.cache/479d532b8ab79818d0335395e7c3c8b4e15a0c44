@@ -1,13 +1,11 @@
-// 1.20.1	2024-07-30T20:09:22.901724282	Fog/Custom Fog Definition:fog
+// 1.20.1	2024-07-30T21:00:24.061864445	Fog/Custom Fog Definition:fog
 cec5a114c64799c038d4bc8f87b0678ca8c75b99 assets/c/fog_definitions/tag/biome/swamp.json
-2eedd3cc242d4a5bf11012c706791a0bf59cc142 assets/c/fog_definitions/tag/biome/desert.json
-3b5fd294d3320a255e15f6df53bce521f83c41d7 assets/c/fog_definitions/tag/biome/in_the_end.json
-6ac85c0d082824d7b4d420d7590d7fb340853414 assets/c/fog_definitions/tag/biome/jungle.json
-6e835700021ce71eaa54ed496384391711df0e73 assets/minecraft/fog_definitions/biome/nether_wastes.json
 c44acf070f8bc256a1e050d27589770dbbc231c2 assets/c/fog_definitions/tag/biome/aquatic_icy.json
-536b5d991c3d38df19efeb33acda6e0dde6afeda assets/c/fog_definitions/tag/biome/mountain_peak.json
+2eedd3cc242d4a5bf11012c706791a0bf59cc142 assets/c/fog_definitions/tag/biome/desert.json
 0b33b2fd5c9394ca4a0c538b1064b03b1f19c8e6 assets/minecraft/fog_definitions/biome/basalt_deltas.json
-e229b56b2c0f829d8ff702ce816fc0b57944cc62 assets/c/fog_definitions/tag/biome/snowy.json
-c44acf070f8bc256a1e050d27589770dbbc231c2 assets/c/fog_definitions/tag/biome/mountain_slope.json
-e229b56b2c0f829d8ff702ce816fc0b57944cc62 assets/c/fog_definitions/tag/biome/beach.json
+6ac85c0d082824d7b4d420d7590d7fb340853414 assets/c/fog_definitions/tag/biome/jungle.json
+4a095b16c1146432aee0cd907ceb87d33c031738 assets/c/fog_definitions/tag/biome/in_the_end.json
+ff9939863833df7f1cc8b94bec65cb20c1272cce assets/c/fog_definitions/tag/biome/snowy.json
+2eedd3cc242d4a5bf11012c706791a0bf59cc142 assets/c/fog_definitions/tag/biome/beach.json
 3db914b006fd089cee5246445cc9a06e805a9663 assets/c/fog_definitions/tag/biome/badlands.json
+6e835700021ce71eaa54ed496384391711df0e73 assets/minecraft/fog_definitions/biome/nether_wastes.json

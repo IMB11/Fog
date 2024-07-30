@@ -27,9 +27,6 @@ public class VanillaFogDefinitionProvider extends CustomFogDefinitionDataProvide
 
 	@Override
 	public void acceptBiomeTags(BiConsumer<TagKey<Biome>, CustomFogDefinition> provider) {
-		provider.accept(ConventionalBiomeTags.SNOWY, CustomFogDefinition.Builder.create()
-				.colors("#F4F9EF", "#8B8F88").build());
-
 		provider.accept(ConventionalBiomeTags.JUNGLE, CustomFogDefinition.Builder.create()
 				.colors("#35422f", "#252924").build());
 
@@ -42,20 +39,18 @@ public class VanillaFogDefinitionProvider extends CustomFogDefinitionDataProvide
 		provider.accept(ConventionalBiomeTags.DESERT, CustomFogDefinition.Builder.create()
 				.colors("#D6C699", "#BFAA7F").build());
 
-		provider.accept(ConventionalBiomeTags.MOUNTAIN_PEAK, CustomFogDefinition.Builder.create()
-				.colors("#D6D6D6", "#A0A0A0").build());
-
-		provider.accept(ConventionalBiomeTags.MOUNTAIN_SLOPE, CustomFogDefinition.Builder.create()
-				.colors("#bfded7", "#83a099").build());
+		provider.accept(ConventionalBiomeTags.SNOWY, CustomFogDefinition.Builder.create()
+				.colors("#F4F9EF", "#F4F9EF").build());
 
 		provider.accept(ConventionalBiomeTags.AQUATIC_ICY, CustomFogDefinition.Builder.create()
 				.colors("#bfded7", "#83a099").build());
 
 		provider.accept(ConventionalBiomeTags.BEACH, CustomFogDefinition.Builder.create()
-				.colors("#F4F9EF", "#8B8F88").build());
+				.colors("#D6C699", "#BFAA7F").build());
 
 		provider.accept(ConventionalBiomeTags.IN_THE_END, CustomFogDefinition.Builder.create()
-				.colors("#220021", "#220021").build());
+				.colors("#291d26", "#291d26")
+				.startMultiplier(0.5f).endMultiplier(0.5f).build());
 	}
 }
 /*?}*/
