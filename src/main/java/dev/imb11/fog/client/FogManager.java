@@ -51,7 +51,7 @@ public class FogManager {
 			return;
 		}
 
-		if (world.isRaining()) {
+		if (world.hasRain(clientPlayer.getBlockPos())) {
 			raininess.interpolate(1.0f);
 		} else {
 			raininess.interpolate(0.0f);
@@ -87,7 +87,7 @@ public class FogManager {
 			colors = FogColors.DEFAULT;
 		}
 
-		long time = world.getTimeOfDay();
+		long time = world.getTimeOfDay() % 24000;
 		boolean isDay = time < 12000;
 		float blendFactor = isDay ? (time / 12000f) : ((time - 12000) / 12000f);
 		float red = MathHelper.lerp(blendFactor, colors.getDayColor().red / 255f, colors.getNightColor().red / 255f);

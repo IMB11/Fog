@@ -53,6 +53,11 @@ public class FogConfig {
 	public boolean disableBiomeFogColour = false;
 	@SerialEntry
 	public boolean disableHazeCalculation = false;
+	/**
+	 * Nether has pretty good Fog, it doesn't need changing unless player really wants to.
+	 */
+	@SerialEntry
+	public boolean disableNether = true;
 	@SerialEntry
 	public boolean disableMod = false;
 
@@ -144,6 +149,16 @@ public class FogConfig {
 								                        )).build()).binding(
 						                        defaults.disableHazeCalculation, () -> disableHazeCalculation,
 						                        newDisableHazeCalculation -> disableHazeCalculation = newDisableHazeCalculation
+				                        ).controller(BooleanControllerBuilder::create).build())
+				                        .option(Option.<Boolean>createBuilder().name(
+						                        getText(EntryType.OPTION_NAME, "disable_nether")).description(
+						                        initialFogStart -> OptionDescription.createBuilder().text(
+								                        getText(
+										                        EntryType.OPTION_DESCRIPTION,
+										                        "disable_nether"
+								                        )).build()).binding(
+						                        defaults.disableNether, () -> disableNether,
+						                        newDisableNether -> disableNether = newDisableNether
 				                        ).controller(BooleanControllerBuilder::create).build())
 				                        .option(Option.<Boolean>createBuilder().name(
 						                        getText(EntryType.OPTION_NAME, "disable_mod")).description(

@@ -31,11 +31,11 @@ public abstract class WorldRendererMixin {
 
 	@Inject(method = "renderClouds(Lnet/minecraft/client/util/math/MatrixStack;Lorg/joml/Matrix4f;FDDD)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gl/VertexBuffer;draw(Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lnet/minecraft/client/gl/ShaderProgram;)V", shift = At.Shift.BEFORE))
 	public void fog$whiteClouds(MatrixStack matrices, Matrix4f projectionMatrix, float tickDelta, double cameraX, double cameraY, double cameraZ, CallbackInfo ci) {
-		if(FogConfig.getInstance().disableMod) return;
-
 		if (this.world == null) {
 			return;
 		}
+
+		if(FogConfig.getInstance().disableMod || (world.getDimensionEffects() instanceof DimensionEffects.Nether && FogConfig.getInstance().disableNether)) return;
 
 		// Force clouds to be white
 		RenderSystem.setShaderFogStart(10000F);

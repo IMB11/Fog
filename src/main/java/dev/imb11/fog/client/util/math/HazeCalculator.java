@@ -42,7 +42,7 @@ public class HazeCalculator {
 		}
 	}
 
-    public static FogManager.FogSettings applyHaze(float undergroundFactor, FogManager.FogSettings settings, int timeOfDay) {
+    public static FogManager.FogSettings applyHaze(float undergroundFactor, FogManager.FogSettings settings, int time) {
 		if(FogConfig.getInstance().disableHazeCalculation) {
 			return settings;
 		}
@@ -50,12 +50,12 @@ public class HazeCalculator {
 	    MinecraftClient client = MinecraftClient.getInstance();
 	    ClientWorld world = client.world;
 		ClientPlayerEntity player = client.player;
-		double hazeValue = getHaze(timeOfDay);
+		double hazeValue = getHaze(time);
 
 	    FogColors belowGroundColors = FogColors.DEFAULT_CAVE;
 	    FogColors aboveGroundColors = FogColors.DEFAULT;
-	    Color aboveColor = timeOfDay >= 13000 && timeOfDay <= 23000 ? aboveGroundColors.getNightColor() : aboveGroundColors.getDayColor();
-		Color belowColor = timeOfDay >= 13000 && timeOfDay <= 23000 ? belowGroundColors.getNightColor() : belowGroundColors.getDayColor();
+	    Color aboveColor = time >= 13000 && time <= 23000 ? aboveGroundColors.getNightColor() : aboveGroundColors.getDayColor();
+		Color belowColor = time >= 13000 && time <= 23000 ? belowGroundColors.getNightColor() : belowGroundColors.getDayColor();
 
         float fogColorR = (float) MathHelper.lerp(hazeValue, aboveColor.red / 255f, settings.fogRed());
         float fogColorG = (float) MathHelper.lerp(hazeValue, aboveColor.green / 255f, settings.fogGreen());

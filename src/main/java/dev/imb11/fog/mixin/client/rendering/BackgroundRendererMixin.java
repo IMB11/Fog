@@ -1,5 +1,6 @@
 package dev.imb11.fog.mixin.client.rendering;
 
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.imb11.fog.client.FogManager;
@@ -28,13 +29,14 @@ public abstract class BackgroundRendererMixin {
 
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;clearColor(FFFF)V", remap = false, shift = At.Shift.BEFORE))
 	private static void fog$modifyFogColors(@NotNull Camera camera, float tickDelta, @NotNull ClientWorld world, int viewDistance, float skyDarkness, @NotNull CallbackInfo ci) {
-		if(FogConfig.getInstance().disableMod) return;
+		if(FogConfig.getInstance().disableMod || (world.getDimensionEffects() instanceof DimensionEffects.Nether && FogConfig.getInstance().disableNether)) return;
+
 		@NotNull var fogManager = FogManager.getInstance();
 		@NotNull var fogSettings = fogManager.getFogSettings(tickDelta, viewDistance);
 
 		if (!world.getDimension().hasFixedTime() || !(world.getDimensionEffects() instanceof DimensionEffects.End)) {
 			fogSettings = HazeCalculator.applyHaze(
-					fogManager.getUndergroundFactor(MinecraftClient.getInstance(), tickDelta), fogSettings, (int) world.getTimeOfDay());
+					fogManager.getUndergroundFactor(MinecraftClient.getInstance(), tickDelta), fogSettings, (int) world.getTimeOfDay() % 24000);
 		}
 
 		red = fogSettings.fogRed();
@@ -44,7 +46,13 @@ public abstract class BackgroundRendererMixin {
 
 	@Inject(method = "applyFog", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderFogStart(F)V", remap = false, shift = At.Shift.BEFORE))
 	private static void fog$fogRenderEvent(@NotNull Camera camera, @NotNull BackgroundRenderer.FogType fogType, float viewDistance, boolean thickFog, float deltaTick, @NotNull CallbackInfo ci, @Local @NotNull BackgroundRenderer.FogData fogData) {
-		if(FogConfig.getInstance().disableMod) return;
+		@NotNull final var client = MinecraftClient.getInstance();
+		@Nullable final var clientWorld = client.world;
+		if (clientWorld == null) {
+			return;
+		}
+
+		if(FogConfig.getInstance().disableMod || (clientWorld.getDimensionEffects() instanceof DimensionEffects.Nether && FogConfig.getInstance().disableNether)) return;
 		if (camera.getSubmersionType() != CameraSubmersionType.NONE) {
 			return;
 		}
@@ -58,13 +66,32 @@ public abstract class BackgroundRendererMixin {
 	/**
 	 * Changes the color of the seam/transition in the sky.
 	 */
+	/*? if <1.20.4 {*/
 	@Inject(method = "setFogBlack", at = @At("HEAD"))
 	private static void fog$setFogBlackChangeClearColor(@NotNull CallbackInfo ci) {
 		if(FogConfig.getInstance().disableMod) return;
+	/*?} else {*/
+	/*@WrapWithCondition(method = "render", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;clearColor(FFFF)V"))
+	private static boolean fog$setFogBlackChangeClearColor(float red, float green, float blue, float alpha) {
+		if(FogConfig.getInstance().disableMod) return true;
+	*//*?}*/
+
 		@NotNull final var client = MinecraftClient.getInstance();
 		@Nullable final var clientWorld = client.world;
 		if (clientWorld == null) {
+			/*? if <1.20.4 {*/
 			return;
+			/*?} else {*/
+			/*return true;
+			*//*?}*/
+		}
+
+		if(clientWorld.getDimensionEffects() instanceof DimensionEffects.Nether && FogConfig.getInstance().disableNether) {
+			/*? if <1.20.4 {*/
+			return;
+			/*?} else {*/
+			/*return true;
+			*//*?}*/
 		}
 
 		@NotNull var fogManager = FogManager.getInstance();
@@ -75,8 +102,12 @@ public abstract class BackgroundRendererMixin {
 
 		if (!clientWorld.getDimension().hasFixedTime() || !(clientWorld.getDimensionEffects() instanceof DimensionEffects.End)) {
 			fogSettings = HazeCalculator.applyHaze(
-					fogManager.getUndergroundFactor(client, client.getTickDelta()), fogSettings, (int) clientWorld.getTimeOfDay());
+					fogManager.getUndergroundFactor(client, client.getTickDelta()), fogSettings, (int) clientWorld.getTimeOfDay() % 24000);
 		}
 		RenderSystem.clearColor(fogSettings.fogRed(), fogSettings.fogGreen(), fogSettings.fogBlue(), 1.0F);
+
+		/*? if >=1.20.4 {*/
+		/*return false;
+		*//*?}*/
 	}
 }
