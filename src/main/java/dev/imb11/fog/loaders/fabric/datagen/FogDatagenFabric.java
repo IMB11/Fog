@@ -1,5 +1,5 @@
-/*? if fabric {*/
-package dev.imb11.fog.loaders.fabric.datagen;
+/*? if fabric && >1.20.4 {*/
+/*package dev.imb11.fog.loaders.fabric.datagen;
 
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
@@ -17,4 +17,4 @@ public class FogDatagenFabric implements DataGeneratorEntrypoint {
 		return "fog";
 	}
 }
-/*?}*/
+*//*?}*/

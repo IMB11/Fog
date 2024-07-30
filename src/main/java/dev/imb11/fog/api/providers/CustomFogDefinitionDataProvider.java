@@ -60,4 +60,4 @@ public abstract class CustomFogDefinitionDataProvider extends FabricCodecDataPro
 		return "Custom Fog Definition:" + this.output.getModId();
 	}
 }
-/*? } */
+/*?}*/

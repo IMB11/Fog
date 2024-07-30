@@ -1,5 +1,5 @@
-/*? if fabric {*/
-package dev.imb11.fog.loaders.fabric.datagen;
+/*? if fabric && >1.20.4 {*/
+/*package dev.imb11.fog.loaders.fabric.datagen;
 
 import dev.imb11.fog.api.CustomFogDefinition;
 import dev.imb11.fog.api.providers.CustomFogDefinitionDataProvider;
@@ -53,4 +53,4 @@ public class VanillaFogDefinitionProvider extends CustomFogDefinitionDataProvide
 				.startMultiplier(0.5f).endMultiplier(0.5f).build());
 	}
 }
-/*?}*/
+*//*?}*/
