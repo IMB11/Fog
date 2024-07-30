@@ -1,9 +1,7 @@
 package dev.imb11.fog.client.util.math;
 
-import dev.imb11.fog.client.FogClient;
+import dev.imb11.fog.api.FogColors;
 import dev.imb11.fog.client.FogManager;
-import dev.imb11.fog.client.registry.FogRegistry;
-import dev.imb11.fog.client.resource.CustomFogDefinition;
 import dev.imb11.fog.client.util.color.Color;
 import dev.imb11.fog.config.FogConfig;
 import net.minecraft.client.MinecraftClient;
@@ -54,8 +52,8 @@ public class HazeCalculator {
 		ClientPlayerEntity player = client.player;
 		double hazeValue = getHaze(timeOfDay);
 
-		CustomFogDefinition.FogColors belowGroundColors = FogRegistry.getDefaultCaveColors();
-	    CustomFogDefinition.FogColors aboveGroundColors = FogRegistry.getDefaultBiomeColors();
+	    FogColors belowGroundColors = FogColors.DEFAULT_CAVE;
+	    FogColors aboveGroundColors = FogColors.DEFAULT;
 	    Color aboveColor = timeOfDay >= 13000 && timeOfDay <= 23000 ? aboveGroundColors.getNightColor() : aboveGroundColors.getDayColor();
 		Color belowColor = timeOfDay >= 13000 && timeOfDay <= 23000 ? belowGroundColors.getNightColor() : belowGroundColors.getDayColor();
 

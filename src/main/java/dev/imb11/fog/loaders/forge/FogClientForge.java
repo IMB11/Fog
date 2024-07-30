@@ -1,5 +1,5 @@
 /*? if forge {*/
-/*package dev.imb11.fog.loaders;
+/*package dev.imb11.fog.loaders.forge;
 
 import dev.imb11.fog.client.FogClient;
 import dev.imb11.fog.config.FogConfig;

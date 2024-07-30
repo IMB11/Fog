@@ -1,7 +1,8 @@
 package dev.imb11.fog.client;
 
+import dev.imb11.fog.api.FogColors;
 import dev.imb11.fog.client.registry.FogRegistry;
-import dev.imb11.fog.client.resource.CustomFogDefinition;
+import dev.imb11.fog.api.CustomFogDefinition;
 import dev.imb11.fog.client.util.math.DarknessCalculation;
 import dev.imb11.fog.client.util.math.InterpolatedValue;
 import dev.imb11.fog.client.util.math.MathUtil;
@@ -80,11 +81,10 @@ public class FogManager {
 			return;
 		}
 
-		CustomFogDefinition fogDefinition = FogRegistry.getFogDefinitionOrDefault(
-				clientPlayerBiomeKeyOptional.get().getValue());
-		@Nullable CustomFogDefinition.FogColors colors = fogDefinition.colors();
+		CustomFogDefinition fogDefinition = FogRegistry.getFogDefinitionOrDefault(clientPlayerBiomeKeyOptional.get().getValue(), world);
+		@Nullable FogColors colors = fogDefinition.colors();
 		if (colors == null || FogConfig.getInstance().disableBiomeFogColour) {
-			colors = FogRegistry.getDefaultBiomeColors();
+			colors = FogColors.DEFAULT;
 		}
 
 		long time = world.getTimeOfDay();

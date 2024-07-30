@@ -13,6 +13,16 @@ base {
     archivesName = property("mod.name") + "-" + loader
 }
 
+sourceSets {
+    main {
+        resources {
+            srcDirs += [
+                    file('src/main/generated')
+            ]
+        }
+    }
+}
+
 stonecutter {
     def platform = project.property("loom.platform")
     stonecutter.const("fabric", platform == "fabric")
@@ -29,6 +39,25 @@ loom {
             convertAccessWideners = true
             mixinConfig "fog.mixins.json"
         }
+    }
+
+    if (loader == "fabric") {
+        runs {
+            datagenClient {
+                client()
+                name "Data Generation Client"
+                vmArg "-Dfabric-api.datagen"
+                vmArg "-Dfabric-api.datagen.output-dir=" + getRootDir().toPath().resolve("src/main/generated")
+                vmArg "-Dfabric-api.datagen.modid=fog"
+
+                ideConfigGenerated = false
+                runDir "build/datagen"
+            }
+        }
+    }
+
+    runs {
+        remove server
     }
 
     runConfigs.all {
@@ -75,7 +104,7 @@ dependencies {
         System.out.println(loader)
         modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
 
-        modLocalRuntime("net.fabricmc.fabric-api:fabric-api:${property("runtime.fabric_api")}")
+        modImplementation("net.fabricmc.fabric-api:fabric-api:${property("runtime.fabric_api")}")
         modImplementation("maven.modrinth:modmenu:${property("deps.mod_menu")}")
 
         modImplementation(include("dev.isxander:yet-another-config-lib:${property("deps.yacl")}-${loader}"))

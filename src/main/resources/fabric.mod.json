@@ -15,13 +15,16 @@
   "license": "All-Rights-Reserved",
   "accessWidener": "fog.accesswidener",
   "icon": "assets/fog/icon.png",
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
     "client": [
-      "dev.imb11.fog.loaders.FogClientFabric"
+        "dev.imb11.fog.loaders.fabric.FogClientFabric"
     ],
     "modmenu": [
       "dev.imb11.fog.client.compat.modmenu.FogClientModMenuCompat"
+    ],
+    "fabric-datagen": [
+      "dev.imb11.fog.loaders.fabric.datagen.FogDatagenFabric"
     ]
   },
   "mixins": [
