@@ -80,7 +80,7 @@ public class FogResourceUnpacker {
 		List<Path> result = new ArrayList<>();
 
 		// Get the base directory from the resources folder
-		Path basePath = Paths.get(FileUtils.class.getClassLoader().getResource(resourceFolder).toURI());
+		Path basePath = Paths.get(FogResourceUnpacker.class.getClassLoader().getResource(resourceFolder).toURI());
 
 		// Create a PathMatcher for the glob pattern
 		PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
