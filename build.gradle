@@ -93,6 +93,13 @@ repositories {
     }
 }
 
+tasks.register('buildAndCollect', Copy) {
+    group = "build"
+    from(tasks.remapJar.archiveFile)
+    into(rootProject.layout.buildDirectory.file("libs"))
+    dependsOn("build")
+}
+
 dependencies {
     // To change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${property("deps.minecraft")}"
