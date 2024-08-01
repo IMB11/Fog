@@ -162,7 +162,7 @@ public class FogConfig {
 								                        )).build()).binding(
 						                        defaults.disableCloudWhitening, () -> disableCloudWhitening,
 						                        newDisableCloudWhitening -> disableCloudWhitening = newDisableCloudWhitening
-				                        ).controller(BooleanControllerBuilder::create).available(!FogClient.isModInstalled("sodium")).flag(OptionFlag.GAME_RESTART).build())
+				                        ).controller(BooleanControllerBuilder::create).available(!FogClient.isModInstalled("sodium")).build())
 				                        .option(Option.<Boolean>createBuilder().name(
 						                        getText(EntryType.OPTION_NAME, "disable_nether")).description(
 						                        initialFogStart -> OptionDescription.createBuilder().text(

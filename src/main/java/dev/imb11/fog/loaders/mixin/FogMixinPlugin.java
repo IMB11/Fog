@@ -19,10 +19,8 @@ public class FogMixinPlugin implements IMixinConfigPlugin {
 
 	@Override
 	public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-		FogConfig.load();
 		return !FogClient.isModInstalled("sodium")
-				|| !mixinClassName.startsWith("dev.imb11.fog.mixin.client.rendering.WorldRendererMixin")
-				|| FogConfig.getInstance().disableCloudWhitening;
+				|| !mixinClassName.startsWith("dev.imb11.fog.mixin.client.rendering.WorldRendererMixin");
 	}
 
 	@Override

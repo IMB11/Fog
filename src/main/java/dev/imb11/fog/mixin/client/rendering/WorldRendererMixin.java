@@ -42,6 +42,7 @@ public abstract class WorldRendererMixin {
 	public void fog$whiteClouds(MatrixStack matrices, Matrix4f projectionMatrix, float tickDelta, double cameraX, double cameraY, double cameraZ, CallbackInfo ci) {
 		if (this.world == null
 			|| FogConfig.getInstance().disableMod
+			|| FogConfig.getInstance().disableCloudWhitening
 			|| !(world.getDimensionEffects() instanceof DimensionEffects.Overworld)
 			|| world.getDimension().hasFixedTime()) {
 			return;
@@ -63,6 +64,7 @@ public abstract class WorldRendererMixin {
 		if (this.world == null
 				|| FogConfig.getInstance().disableMod
 				|| !(world.getDimensionEffects() instanceof DimensionEffects.Overworld)
+				|| FogConfig.getInstance().disableCloudWhitening
 				|| world.getDimension().hasFixedTime()) {
 			return;
 		}
@@ -80,6 +82,7 @@ public abstract class WorldRendererMixin {
 		if (this.world == null
 				|| FogConfig.getInstance().disableMod
 				|| !(world.getDimensionEffects() instanceof DimensionEffects.Overworld)
+				|| FogConfig.getInstance().disableCloudWhitening
 				|| world.getDimension().hasFixedTime()) {
 			return;
 		}
