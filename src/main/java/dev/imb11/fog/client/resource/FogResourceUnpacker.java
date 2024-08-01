@@ -1,6 +1,7 @@
 package dev.imb11.fog.client.resource;
 
 import dev.imb11.fog.client.FogClient;
+import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;
 import java.net.URI;
@@ -8,10 +9,14 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class FogResourceUnpacker {
-	private static final Path UNPACKED_PATH = FogClient.getConfigFolder().resolve("fog_definitions");
+	public static final Set<String> NAMESPACES = new HashSet<>();
+	public static final Path UNPACKED_PATH = FogClient.getConfigFolder().resolve("fog_definitions");
 	private static final Path README_PATH = UNPACKED_PATH.resolve("README.txt");
 	private static final Path META_PATH = UNPACKED_PATH.resolve("pack.mcmeta");
 	public static void tryUnpack() throws IOException, URISyntaxException {
@@ -36,47 +41,60 @@ public class FogResourceUnpacker {
 
 		// Get all files that match glob `packed/assets/*/fog_definitions/**/*.json` within this jar.
 		// If a file already exists, we will ignore it.
-		List<Path> files = getFilesFromResourceFolder("assets", "packed/assets/*/fog_definitions/**/*.json");
-		for(Path file : files) {
-			Path unpackedFile = UNPACKED_PATH.resolve(file.getFileName());
-			if(!unpackedFile.toFile().exists()) {
-				Files.copy(file, unpackedFile);
+		List<Path> files = getFilesFromResourceFolder("packed", "assets/*/fog_definitions/**/*.json");
+		for (Path file : files) {
+			// Create a relative path for the file in the destination directory
+			String relativePath = "assets/" + file.toString().split("assets/")[1];
+			Path fullPath = UNPACKED_PATH.resolve(relativePath);
+
+			// Create directories if they don't exist
+			Path parentDir = fullPath.getParent();
+			if (!Files.exists(parentDir)) {
+				Files.createDirectories(parentDir);
 			}
+
+			// Copy the file
+			if (!Files.exists(fullPath)) {
+				Files.copy(file, fullPath);
+			}
+		}
+
+		walkNamespaces();
+	}
+
+	public static void walkNamespaces()  {
+		try {
+			NAMESPACES.clear();
+			try (var stream = Files.walk(UNPACKED_PATH)) {
+				stream.filter(Files::isRegularFile)
+				      .filter(path -> path.toString().endsWith(".json"))
+				      .forEach(path -> {
+					      String[] parts = path.toString().split("/");
+					      String namespace = parts[parts.length - 2];
+					      NAMESPACES.add(namespace);
+				      });
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
-	private static List<Path> getFilesFromResourceFolder(String folder, String globPattern) throws IOException, URISyntaxException {
+	public static List<Path> getFilesFromResourceFolder(String resourceFolder, String pattern) throws IOException, URISyntaxException {
 		List<Path> result = new ArrayList<>();
-		URL resource = FogResourceUnpacker.class.getClassLoader().getResource(folder);
-		if (resource == null) {
-			throw new IllegalArgumentException("Resource folder not found: " + folder);
-		}
 
-		// Determine if the resource is in a JAR file or filesystem
-		if (resource.toURI().getScheme().equals("jar")) {
-			// Resource is in a JAR file
-			try (FileSystem fileSystem = getOrCreateFileSystem(resource.toURI())) {
-				Path resourcePath = fileSystem.getPath(folder);
-				try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(resourcePath, globPattern)) {
-					directoryStream.forEach(result::add);
-				}
-			}
-		} else {
-			// Resource is in the filesystem
-			Path resourcePath = Paths.get(resource.toURI());
-			try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(resourcePath, globPattern)) {
-				directoryStream.forEach(result::add);
-			}
+		// Get the base directory from the resources folder
+		Path basePath = Paths.get(FileUtils.class.getClassLoader().getResource(resourceFolder).toURI());
+
+		// Create a PathMatcher for the glob pattern
+		PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
+
+		try (var stream = Files.walk(basePath)) {
+			result = stream
+					.filter(Files::isRegularFile)
+					.filter(path -> matcher.matches(basePath.relativize(path)))
+					.collect(Collectors.toList());
 		}
 
 		return result;
-	}
-
-	private static FileSystem getOrCreateFileSystem(URI uri) throws IOException {
-		try {
-			return FileSystems.newFileSystem(uri, java.util.Collections.emptyMap());
-		} catch (FileSystemAlreadyExistsException e) {
-			return FileSystems.getFileSystem(uri);
-		}
 	}
 }
