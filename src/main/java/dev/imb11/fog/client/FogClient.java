@@ -30,6 +30,14 @@ public class FogClient {
 		*//*?}*/
 	}
 
+	public static boolean isModInstalled(String modid) {
+		/*? if fabric {*/
+		return net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded(modid);
+		/*?} elif forge {*/
+		/*return net.minecraftforge.fml.loading.FMLLoader.getLoadingModList().getModFileById(modid) != null;
+		*//*?}*/
+	}
+
 	public static Path getConfigFolder() {
 		/*? if fabric {*/
 		return net.fabricmc.loader.api.FabricLoader.getInstance().getGameDir().resolve("config").resolve(MOD_ID);

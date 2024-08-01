@@ -1,12 +1,9 @@
 package dev.imb11.fog.client.resource;
 
 import dev.imb11.fog.client.FogClient;
-import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -62,14 +59,16 @@ public class FogResourceUnpacker {
 	public static void walkNamespaces()  {
 		try {
 			NAMESPACES.clear();
-			try (var stream = Files.walk(UNPACKED_PATH)) {
-				stream.filter(Files::isRegularFile)
-				      .filter(path -> path.toString().endsWith(".json"))
-				      .forEach(path -> {
-					      String relativePath = path.toString().split(UNPACKED_PATH.toString())[1];
-						  String[] split = relativePath.split("/");
-					      NAMESPACES.add(split[2]);
-				      });
+			Path assetsFolder = UNPACKED_PATH.resolve("assets");
+			if(assetsFolder.toFile().exists()) {
+				if(assetsFolder.toFile().isDirectory()) {
+					Files.list(assetsFolder).forEach(namespace -> {
+						if(namespace.toFile().isDirectory()) {
+							NAMESPACES.add(namespace.getFileName().toString());
+							FogClient.LOGGER.info("Found namespace: {}", namespace.getFileName().toString());
+						}
+					});
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
