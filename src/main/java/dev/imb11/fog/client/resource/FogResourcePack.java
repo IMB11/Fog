@@ -4,12 +4,8 @@ import net.minecraft.resource.*;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import org.apache.commons.io.Charsets;
-import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,29 +18,25 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * Credits to CrowdinTranslate, Loqui.
+ * Attribution: <a href="https://github.com/gbl/CrowdinTranslate">CrowdinTranslate</a> and <a href="https://github.com/IMB11/Loqui">Loqui</a>.
  */
 public class FogResourcePack implements ResourcePack {
-	private static final Logger LOGGER = LoggerFactory.getLogger("Fog/ResourcePack");
-
-	@Nullable
 	@Override
-	public InputSupplier<InputStream> openRoot(String... strings) {
+	public @Nullable InputSupplier<InputStream> openRoot(String... strings) {
 		String fileName = String.join("/", strings);
 
 		Path packPath = FogResourceUnpacker.UNPACKED_PATH;
 		Path filePath = packPath.resolve(fileName);
 
-		if(filePath.toFile().exists()) {
+		if (filePath.toFile().exists()) {
 			return () -> Files.newInputStream(filePath);
 		}
 
 		return null;
 	}
 
-	@Nullable
 	@Override
-	public InputSupplier<InputStream> open(ResourceType type, Identifier id) {
+	public @Nullable InputSupplier<InputStream> open(ResourceType type, Identifier id) {
 		return this.openRoot(type.getDirectory() + "/" + id.getNamespace() + "/" + id.getPath());
 	}
 
@@ -68,12 +60,11 @@ public class FogResourcePack implements ResourcePack {
 
 	@Override
 	public @NotNull Set<String> getNamespaces(ResourceType packType) {
-		return FogResourceUnpacker.NAMESPACES;
+		return FogResourceUnpacker.getNamespaces();
 	}
 
-	@Nullable
 	@Override
-	public <T> T parseMetadata(ResourceMetadataReader<T> metaReader) throws IOException {
+	public @Nullable <T> T parseMetadata(ResourceMetadataReader<T> metaReader) throws IOException {
 		InputSupplier<InputStream> inputSupplier = this.openRoot("pack.mcmeta");
 
 		if (inputSupplier != null) {
@@ -93,11 +84,13 @@ public class FogResourcePack implements ResourcePack {
 	/*?}*/
 
 	/*? if <=1.20.4 {*/
-	/*@Override
+	/*@SuppressWarnings("CommentedOutCode")
+	@Override
 	public String getName() {
 		return "Fog Definitions";
 	}
 	*//*?} else {*/
+	@SuppressWarnings("CommentedOutCode")
 	@Override
 	public String getId() {
 		return "fog";
