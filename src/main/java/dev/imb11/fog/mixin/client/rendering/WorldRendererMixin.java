@@ -70,6 +70,7 @@ public abstract class WorldRendererMixin {
 		args.set(0, color);
 		args.set(1, color);
 		args.set(2, color);
+		args.set(3, 0.75F);
 	}
 
 	@Inject(method = "renderClouds(Lnet/minecraft/client/util/math/MatrixStack;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;FDDD)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gl/VertexBuffer;draw(Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lnet/minecraft/client/gl/ShaderProgram;)V", shift = At.Shift.BEFORE))
