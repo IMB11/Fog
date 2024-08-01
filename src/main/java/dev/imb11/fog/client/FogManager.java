@@ -72,9 +72,16 @@ public class FogManager {
 		}
 
 		float density = ClientWorldUtil.isFogDenseAtPosition(world, clientPlayerBlockPosition) ? 0.9F : 1.0F;
+
+		/*? if <1.21 {*/
+		/*float tickDelta = client.getTickDelta();
+		*//*?} else {*/
+		float tickDelta = client.getRenderTickCounter().getTickDelta(true);
+		/*?}*/
+
 		// TODO: Apply the start and end multipliers in FogManager#getFogSettings
 		DarknessCalculation darknessCalculation = DarknessCalculation.of(
-				client, fogStart.getDefaultValue(), fogEnd.getDefaultValue() * density, client.getTickDelta());
+				client, fogStart.getDefaultValue(), fogEnd.getDefaultValue() * density, tickDelta);
 
 		@NotNull var clientPlayerBiomeKeyOptional = world.getBiome(clientPlayer.getBlockPos()).getKey();
 		if (clientPlayerBiomeKeyOptional.isEmpty()) {

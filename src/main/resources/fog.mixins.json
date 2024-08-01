@@ -6,7 +6,9 @@
     "injectors": {
         "defaultRequire": 1
     },
-    "mixins": [],
+    "mixins": [
+        "fabric.FabricDatagenHelperMixin"
+    ],
     "client": [
         "client.rendering.BackgroundRendererMixin",
         "client.rendering.WorldRendererMixin"

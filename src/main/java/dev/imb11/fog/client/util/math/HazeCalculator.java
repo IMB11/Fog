@@ -42,7 +42,7 @@ public class HazeCalculator {
 		}
 	}
 
-    public static FogManager.FogSettings applyHaze(float undergroundFactor, FogManager.FogSettings settings, int time) {
+    public static FogManager.FogSettings applyHaze(float undergroundFactor, FogManager.FogSettings settings, int time, float tickDelta) {
 		if(FogConfig.getInstance().disableHazeCalculation) {
 			return settings;
 		}
@@ -74,7 +74,7 @@ public class HazeCalculator {
 	    if (client.player.getY() > viewCutoff) {
 		    // Range from viewCutoff to viewCutoff + 25
 		    float percentageCutoff = MathHelper.clamp(distancePastCutoff / 25f, 0, 1);
-		    Vec3d skyColour = client.world.getSkyColor(player.getPos(), client.getTickDelta());
+		    Vec3d skyColour = client.world.getSkyColor(player.getPos(), tickDelta);
 		    // Lerp between the fog color and the sky color
 		    fogColorR = (float) MathHelper.lerp(percentageCutoff, fogColorR, skyColour.x);
 		    fogColorG = (float) MathHelper.lerp(percentageCutoff, fogColorG, skyColour.y);

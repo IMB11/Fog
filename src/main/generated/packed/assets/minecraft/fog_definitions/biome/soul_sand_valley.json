@@ -3,6 +3,6 @@
     "day": "#005157",
     "night": "#005157"
   },
-  "end_multiplier": 1,
-  "start_multiplier": 0.01
+  "end_multiplier": 0.01,
+  "start_multiplier": 1.0
 }

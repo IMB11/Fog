@@ -30,7 +30,13 @@ public class FogClientCommands {
 
 	private static int outputDebug(CommandContext<ClientCommandRegistrationEvent.ClientCommandSourceStack> commandContext) {
 		MinecraftClient client = MinecraftClient.getInstance();
-		float tickDelta = client.getTickDelta();
+
+		/*? if <1.21 {*/
+		/*float tickDelta = client.getTickDelta();
+		*//*?} else {*/
+		float tickDelta = client.getRenderTickCounter().getTickDelta(true);
+		/*?}*/
+
 		FogManager manager = FogManager.INSTANCE;
 
 		String hexColor = Integer.toHexString(

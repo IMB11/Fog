@@ -21,10 +21,20 @@ public record DarknessCalculation(float fogStart, float fogEnd, float darknessVa
                 darknessValue = 1.0F;
             } else if (e.hasStatusEffect(StatusEffects.DARKNESS)) {
                 StatusEffectInstance effect = e.getStatusEffect(StatusEffects.DARKNESS);
-                if (effect != null && effect.getFactorCalculationData().isPresent()) {
+				/*? if >=1.20.6 {*/
+                if (effect != null) {
+				/*?} else {*/
+				/*if (effect != null && effect.getFactorCalculationData().isPresent()) {
+				*//*?}*/
                     float factor = client.options.getDarknessEffectScale().getValue().floatValue();
-                    float intensity = effect.getFactorCalculationData().get().lerp(e, deltaTick) * factor;
-                    float darknessScale = calculateDarknessScale(e, deltaTick);
+
+					/*? if <1.20.6 {*/
+					/*float intensity = effect.getFactorCalculationData().get().lerp(e, deltaTick) * factor;
+                    *//*?} else {*/
+	                float intensity = effect.getFadeFactor(e, deltaTick) * factor;
+					/*?}*/
+
+					float darknessScale = calculateDarknessScale(e, deltaTick);
                     fogStart = ((8.0F * 16) / renderDistance) * (1 - darknessScale);
                     fogEnd = (15.0F * 16) / renderDistance;
                     darknessValue = intensity;
@@ -36,10 +46,14 @@ public record DarknessCalculation(float fogStart, float fogEnd, float darknessVa
     }
 
     private static float calculateDarknessScale(@NotNull LivingEntity entity, float deltaTick) {
-        float darknessFactor = entity.getStatusEffect(StatusEffects.DARKNESS)
+        /*? if <1.20.6 {*/
+        /*float darknessFactor = entity.getStatusEffect(StatusEffects.DARKNESS)
                 .getFactorCalculationData()
                 .get()
                 .lerp(entity, deltaTick);
+		*//*?} else {*/
+	    float darknessFactor = entity.getStatusEffect(StatusEffects.DARKNESS).getFadeFactor(entity, deltaTick);
+		/*?}*/
 
         float factor = 0.45F * darknessFactor;
         return Math.max(0.0F, MathHelper.cos((entity.age - deltaTick) * (float) Math.PI * 0.025F) * factor);

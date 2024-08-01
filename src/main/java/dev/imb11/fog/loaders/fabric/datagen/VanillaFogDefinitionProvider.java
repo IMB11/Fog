@@ -1,56 +1,67 @@
-/*? if fabric && >1.20.4 {*/
-/*package dev.imb11.fog.loaders.fabric.datagen;
+/*? if fabric && >=1.20.6 {*/
+package dev.imb11.fog.loaders.fabric.datagen;
 
 import dev.imb11.fog.api.CustomFogDefinition;
 import dev.imb11.fog.api.providers.CustomFogDefinitionDataProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.fabricmc.fabric.api.tag.convention.v1.ConventionalBiomeTags;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBiomeTags;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.biome.Biome;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
 public class VanillaFogDefinitionProvider extends CustomFogDefinitionDataProvider {
-	public VanillaFogDefinitionProvider(FabricDataOutput dataOutput) {
-		super(dataOutput);
+	public VanillaFogDefinitionProvider(FabricDataOutput dataOutput, CompletableFuture<RegistryWrapper.WrapperLookup> lookup) {
+		super(dataOutput, lookup);
 	}
 
 	@Override
 	public void acceptBiomes(BiConsumer<Identifier, CustomFogDefinition> provider) {
-		provider.accept(Identifier.of("minecraft", "nether_wastes"), CustomFogDefinition.Builder.create()
-				.colors("#420000", "#420000").build());
+		provider.accept(Identifier.tryParse("basalt_deltas"), CustomFogDefinition.Builder.create()
+				.colors("#36292B", "#36292B").startMultiplier(0.8f).endMultiplier(0.01f).build());
 
-		provider.accept(Identifier.of("minecraft", "basalt_deltas"), CustomFogDefinition.Builder.create()
-				.colors("#36292B", "#36292B").build());
+		provider.accept(Identifier.tryParse("crimson_forest"), CustomFogDefinition.Builder.create()
+				.colors("#700f18", "#700f18").startMultiplier(0.8f).endMultiplier(0.01f).build());
+
+		provider.accept(Identifier.tryParse("warped_forest"), CustomFogDefinition.Builder.create()
+		        .colors("#0f4c4c", "#0f4c4c").startMultiplier(0.8f).endMultiplier(0.01f).build());
+
+		provider.accept(Identifier.tryParse("soul_sand_valley"), CustomFogDefinition.Builder.create()
+		        .colors("#005157", "#005157").startMultiplier(1.0f).endMultiplier(0.01f).build());
+
+		provider.accept(Identifier.tryParse("nether_wastes"), CustomFogDefinition.Builder.create()
+				.colors("#330808", "#330808").startMultiplier(1.0f).endMultiplier(0.01f).build());
 	}
 
 	@Override
 	public void acceptBiomeTags(BiConsumer<TagKey<Biome>, CustomFogDefinition> provider) {
-		provider.accept(ConventionalBiomeTags.JUNGLE, CustomFogDefinition.Builder.create()
-				.colors("#35422f", "#252924").build());
+		provider.accept(ConventionalBiomeTags.IS_JUNGLE, CustomFogDefinition.Builder.create()
+		        .colors("#35422f", "#252924").build());
 
-		provider.accept(ConventionalBiomeTags.SWAMP, CustomFogDefinition.Builder.create()
+		provider.accept(ConventionalBiomeTags.IS_SWAMP, CustomFogDefinition.Builder.create()
 				.colors("#393d32", "#272922").build());
 
-		provider.accept(ConventionalBiomeTags.BADLANDS, CustomFogDefinition.Builder.create()
+		provider.accept(ConventionalBiomeTags.IS_BADLANDS, CustomFogDefinition.Builder.create()
 				.colors("#BF6621", "#8e4a19").build());
 
-		provider.accept(ConventionalBiomeTags.DESERT, CustomFogDefinition.Builder.create()
+		provider.accept(ConventionalBiomeTags.IS_DESERT, CustomFogDefinition.Builder.create()
 				.colors("#D6C699", "#BFAA7F").build());
 
-		provider.accept(ConventionalBiomeTags.SNOWY, CustomFogDefinition.Builder.create()
+		provider.accept(ConventionalBiomeTags.IS_SNOWY, CustomFogDefinition.Builder.create()
 				.colors("#F4F9EF", "#F4F9EF").build());
 
-		provider.accept(ConventionalBiomeTags.AQUATIC_ICY, CustomFogDefinition.Builder.create()
+		provider.accept(ConventionalBiomeTags.IS_AQUATIC_ICY, CustomFogDefinition.Builder.create()
 				.colors("#bfded7", "#83a099").build());
 
-		provider.accept(ConventionalBiomeTags.BEACH, CustomFogDefinition.Builder.create()
+		provider.accept(ConventionalBiomeTags.IS_BEACH, CustomFogDefinition.Builder.create()
 				.colors("#D6C699", "#BFAA7F").build());
 
-		provider.accept(ConventionalBiomeTags.IN_THE_END, CustomFogDefinition.Builder.create()
+		provider.accept(ConventionalBiomeTags.IS_END, CustomFogDefinition.Builder.create()
 				.colors("#291d26", "#291d26")
 				.startMultiplier(0.5f).endMultiplier(0.5f).build());
 	}
 }
-*//*?}*/
+/*?}*/

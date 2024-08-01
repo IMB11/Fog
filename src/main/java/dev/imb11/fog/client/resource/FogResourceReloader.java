@@ -65,7 +65,7 @@ public class FogResourceReloader implements ResourceReloader {
 		for (@NotNull var jsonFog : jsonFogs.entrySet()) {
 			@NotNull var jsonFogPath = jsonFog.getKey();
 			@NotNull var jsonFogPathSplit = jsonFogPath.getPath().replace(JSON_FILE_SUFFIX, "").split("/");
-			@NotNull var fogIdentifier = new Identifier(jsonFogPath.getNamespace(), jsonFogPathSplit[jsonFogPathSplit.length - 1]);
+			@NotNull var fogIdentifier = Identifier.of(jsonFogPath.getNamespace(), jsonFogPathSplit[jsonFogPathSplit.length - 1]);
 			K fogKey = keyGenerator.apply(fogIdentifier.toString());
 
 			if (fogRegistry.containsKey(fogKey)) {
@@ -88,7 +88,7 @@ public class FogResourceReloader implements ResourceReloader {
 				resourceManager,
 				folderName,
 				fogRegistry,
-				identifier -> TagKey.of(registryKey, new Identifier(identifier))
+				identifier -> TagKey.of(registryKey, Identifier.tryParse(identifier))
 		);
 	}
 
@@ -97,7 +97,7 @@ public class FogResourceReloader implements ResourceReloader {
 				resourceManager,
 				folderName,
 				fogRegistry,
-				Identifier::new
+				Identifier::tryParse
 		);
 	}
 }

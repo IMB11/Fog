@@ -6,12 +6,15 @@ import dev.architectury.registry.ReloadListenerRegistry;
 import dev.imb11.fog.client.command.FogClientCommands;
 import dev.imb11.fog.client.registry.FogRegistry;
 import dev.imb11.fog.client.resource.FogResourceReloader;
+import dev.imb11.fog.client.resource.FogResourceUnpacker;
 import dev.imb11.fog.config.FogConfig;
 import net.minecraft.resource.ResourceType;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 
 public class FogClient {
@@ -26,9 +29,23 @@ public class FogClient {
 		/*return net.minecraftforge.fml.loading.FMLLoader.getGamePath().resolve("config").resolve(MOD_ID).resolve(configFileName + "." + configExtension);
 		*//*?}*/
 	}
+
+	public static Path getConfigFolder() {
+		/*? if fabric {*/
+		return net.fabricmc.loader.api.FabricLoader.getInstance().getGameDir().resolve("config").resolve(MOD_ID);
+		/*?} elif forge {*/
+		/*return net.minecraftforge.fml.loading.FMLLoader.getGamePath().resolve("config").resolve(MOD_ID);
+		*//*?}*/
+	}
 	
 	public static void initialize() {
 		LOGGER.info("Loading {}.", MOD_NAME);
+
+		try {
+			FogResourceUnpacker.tryUnpack();
+		} catch (IOException | URISyntaxException e) {
+			throw new RuntimeException(e);
+		}
 
 		FogConfig.load();
 		FogClientCommands.register();

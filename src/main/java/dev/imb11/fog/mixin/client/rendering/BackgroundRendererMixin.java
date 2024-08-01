@@ -17,6 +17,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+/*? if >=1.21 {*/
+import net.minecraft.block.enums.CameraSubmersionType;
+/*?}*/
+
 
 @Mixin(BackgroundRenderer.class)
 public abstract class BackgroundRendererMixin {
@@ -36,7 +40,7 @@ public abstract class BackgroundRendererMixin {
 
 		if (!world.getDimension().hasFixedTime() || !(world.getDimensionEffects() instanceof DimensionEffects.End)) {
 			fogSettings = HazeCalculator.applyHaze(
-					fogManager.getUndergroundFactor(MinecraftClient.getInstance(), tickDelta), fogSettings, (int) world.getTimeOfDay() % 24000);
+					fogManager.getUndergroundFactor(MinecraftClient.getInstance(), tickDelta), fogSettings, (int) world.getTimeOfDay() % 24000, tickDelta);
 		}
 
 		red = fogSettings.fogRed();
@@ -67,47 +71,53 @@ public abstract class BackgroundRendererMixin {
 	 * Changes the color of the seam/transition in the sky.
 	 */
 	/*? if <1.20.4 {*/
-	@Inject(method = "setFogBlack", at = @At("HEAD"))
+	/*@Inject(method = "setFogBlack", at = @At("HEAD"))
 	private static void fog$setFogBlackChangeClearColor(@NotNull CallbackInfo ci) {
 		if(FogConfig.getInstance().disableMod) return;
-	/*?} else {*/
-	/*@WrapWithCondition(method = "render", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;clearColor(FFFF)V"))
+	*//*?} else {*/
+	@WrapWithCondition(method = "render", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;clearColor(FFFF)V"))
 	private static boolean fog$setFogBlackChangeClearColor(float red, float green, float blue, float alpha) {
 		if(FogConfig.getInstance().disableMod) return true;
-	*//*?}*/
+	/*?}*/
 
 		@NotNull final var client = MinecraftClient.getInstance();
 		@Nullable final var clientWorld = client.world;
 		if (clientWorld == null) {
 			/*? if <1.20.4 {*/
-			return;
-			/*?} else {*/
-			/*return true;
-			*//*?}*/
+			/*return;
+			*//*?} else {*/
+			return true;
+			/*?}*/
 		}
 
 		if(clientWorld.getDimensionEffects() instanceof DimensionEffects.Nether && FogConfig.getInstance().disableNether) {
 			/*? if <1.20.4 {*/
-			return;
-			/*?} else {*/
-			/*return true;
-			*//*?}*/
+			/*return;
+			*//*?} else {*/
+			return true;
+			/*?}*/
 		}
+
+		/*? if <1.21 {*/
+		/*float tickDelta = client.getTickDelta();
+		*//*?} else {*/
+		float tickDelta = client.getRenderTickCounter().getTickDelta(true);
+		/*?}*/
 
 		@NotNull var fogManager = FogManager.getInstance();
 		@NotNull var fogSettings = fogManager.getFogSettings(
-				client.getTickDelta(),
+				tickDelta,
 				client.options.getViewDistance().getValue()
 		);
 
 		if (!clientWorld.getDimension().hasFixedTime() || !(clientWorld.getDimensionEffects() instanceof DimensionEffects.End)) {
 			fogSettings = HazeCalculator.applyHaze(
-					fogManager.getUndergroundFactor(client, client.getTickDelta()), fogSettings, (int) clientWorld.getTimeOfDay() % 24000);
+					fogManager.getUndergroundFactor(client, tickDelta), fogSettings, (int) clientWorld.getTimeOfDay() % 24000, tickDelta);
 		}
 		RenderSystem.clearColor(fogSettings.fogRed(), fogSettings.fogGreen(), fogSettings.fogBlue(), 1.0F);
 
 		/*? if >=1.20.4 {*/
-		/*return false;
-		*//*?}*/
+		return false;
+		/*?}*/
 	}
 }

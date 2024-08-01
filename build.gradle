@@ -6,7 +6,7 @@ def loader = property("loom.platform")
 def isFabric = loader == "fabric"
 def mcVersion = property("deps.minecraft")
 
-version = property("mod.version")
+version = property("mod.version") + "-" + mcVersion
 group = "dev.imb11"
 
 base {

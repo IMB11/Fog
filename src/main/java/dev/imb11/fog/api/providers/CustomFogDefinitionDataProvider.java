@@ -1,4 +1,4 @@
-/*? if fabric {*/
+/*? if fabric && >=1.20.6 {*/
 package dev.imb11.fog.api.providers;
 
 import dev.imb11.fog.api.CustomFogDefinition;
@@ -6,19 +6,21 @@ import dev.imb11.fog.client.resource.FogResourceReloader;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricCodecDataProvider;
 import net.minecraft.data.DataOutput;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.structure.Structure;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
 import static dev.imb11.fog.client.resource.FogResourceReloader.FOG_DEFINITIONS_FOLDER_NAME;
 
 public abstract class CustomFogDefinitionDataProvider extends FabricCodecDataProvider<CustomFogDefinition> {
 	private final FabricDataOutput output;
-	public CustomFogDefinitionDataProvider(FabricDataOutput dataOutput) {
-		super(dataOutput, DataOutput.OutputType.RESOURCE_PACK, FOG_DEFINITIONS_FOLDER_NAME, CustomFogDefinition.CODEC);
+	public CustomFogDefinitionDataProvider(FabricDataOutput dataOutput, CompletableFuture<RegistryWrapper.WrapperLookup> lookup) {
+		super(dataOutput, lookup, DataOutput.OutputType.RESOURCE_PACK, FOG_DEFINITIONS_FOLDER_NAME, CustomFogDefinition.CODEC);
 		output = dataOutput;
 	}
 
@@ -50,8 +52,7 @@ public abstract class CustomFogDefinitionDataProvider extends FabricCodecDataPro
 	@Deprecated
 	public void acceptStructureTags(BiConsumer<TagKey<Structure>, CustomFogDefinition> provider) {}
 
-	@Override
-	protected void configure(BiConsumer<Identifier, CustomFogDefinition> provider) {
+	protected void configure(BiConsumer<Identifier, CustomFogDefinition> provider, RegistryWrapper.WrapperLookup lookup) {
 		acceptBiomes((id, fog) -> provider.accept(id.withPrefixedPath(FogResourceReloader.BIOME_FOLDER_NAME + "/"), fog));
 		acceptBiomeTags((tag, fog) -> provider.accept(tag.id().withPrefixedPath(FogResourceReloader.BIOME_TAGS_FOLDER_NAME + "/"), fog));
 		acceptStructures((id, fog) -> provider.accept(id.withPrefixedPath(FogResourceReloader.STRUCTURE_FOLDER_NAME + "/"), fog));
