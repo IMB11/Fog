@@ -21,6 +21,10 @@ public class MathUtil {
 		return Math.round(start * (1.0f - t) + (end * t));
 	}
 
+	public static float lerp(float start, float end, float t) {
+		return start * (1.0f - t) + (end * t);
+	}
+
 	/**
 	 * Maps a value between a range, from a starting minimum/maximum value to an ending maximum/maximum value.
 	 *

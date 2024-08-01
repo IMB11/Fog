@@ -1,15 +1,18 @@
 package dev.imb11.fog.mixin.client.rendering;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import dev.imb11.fog.client.util.math.CloudCalculator;
 import dev.imb11.fog.client.util.math.HazeCalculator;
 
 import dev.imb11.fog.config.FogConfig;
 
 import net.minecraft.client.render.*;
 
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -17,7 +20,10 @@ import org.spongepowered.asm.mixin.injection.At;
 
 /*? if >=1.20.6 {*/
 import net.minecraft.util.math.Vec3d;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 /*?} else {*/
 /*import net.minecraft.client.util.math.MatrixStack;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -29,9 +35,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class WorldRendererMixin {
 	@Shadow
 	private @Nullable ClientWorld world;
-
-	@Unique
-	private static final float HAZE_COLOR_ADDITION = 0.5F;
 
 	/*? if <1.20.6 {*/
 	/*@Inject(method = "renderClouds(Lnet/minecraft/client/util/math/MatrixStack;Lorg/joml/Matrix4f;FDDD)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gl/VertexBuffer;draw(Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lnet/minecraft/client/gl/ShaderProgram;)V", shift = At.Shift.BEFORE))
@@ -46,26 +49,39 @@ public abstract class WorldRendererMixin {
 		// Force clouds to be white
 		RenderSystem.setShaderFogStart(10000F);
 
-		float haze = (float) HazeCalculator.getHaze((int) this.world.getTimeOfDay());
-		RenderSystem.setShaderFogColor(haze + HAZE_COLOR_ADDITION, haze + HAZE_COLOR_ADDITION, haze + HAZE_COLOR_ADDITION);
+		float color = CloudCalculator.getCloudColor(this.world.getTimeOfDay() % 24000);
+		RenderSystem.setShaderFogColor(color, color, color);
 	}
 	*//*?} else {*/
 	/*? if =1.20.6 {*/
-	/*@ModifyVariable(method = "renderClouds(Lnet/minecraft/client/render/BufferBuilder;DDDLnet/minecraft/util/math/Vec3d;)Lnet/minecraft/client/render/BufferBuilder$BuiltBuffer;", at = @At("HEAD"), argsOnly = true)
+	/*@ModifyArgs(method = "renderClouds(Lnet/minecraft/client/render/BufferBuilder;DDDLnet/minecraft/util/math/Vec3d;)Lnet/minecraft/client/render/BufferBuilder$BuiltBuffer;", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/VertexConsumer;color(FFFF)Lnet/minecraft/client/render/VertexConsumer;"))
 	*//*?} else {*/
-	@ModifyVariable(method = "renderClouds(Lnet/minecraft/client/render/Tessellator;DDDLnet/minecraft/util/math/Vec3d;)Lnet/minecraft/client/render/BuiltBuffer;", at = @At("HEAD"), argsOnly = true)
+	@ModifyArgs(method = "renderClouds(Lnet/minecraft/client/render/Tessellator;DDDLnet/minecraft/util/math/Vec3d;)Lnet/minecraft/client/render/BuiltBuffer;", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/VertexConsumer;color(FFFF)Lnet/minecraft/client/render/VertexConsumer;"))
 	/*?}*/
-	public Vec3d fog$whiteClouds(Vec3d ignored) {
+	public void fog$whiteClouds(Args args) {
 		if (this.world == null
 				|| FogConfig.getInstance().disableMod
 				|| !(world.getDimensionEffects() instanceof DimensionEffects.Overworld)
 				|| world.getDimension().hasFixedTime()) {
-			return ignored;
+			return;
+		}
+
+		float color = CloudCalculator.getCloudColor(this.world.getTimeOfDay() % 24000);
+		args.set(0, color);
+		args.set(1, color);
+		args.set(2, color);
+	}
+
+	@Inject(method = "renderClouds(Lnet/minecraft/client/util/math/MatrixStack;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;FDDD)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gl/VertexBuffer;draw(Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lnet/minecraft/client/gl/ShaderProgram;)V", shift = At.Shift.BEFORE))
+	public void fog$whiteCloudsDisableFog(MatrixStack matrices, Matrix4f matrix4f, Matrix4f matrix4f2, float tickDelta, double cameraX, double cameraY, double cameraZ, CallbackInfo ci) {
+		if (this.world == null
+				|| FogConfig.getInstance().disableMod
+				|| !(world.getDimensionEffects() instanceof DimensionEffects.Overworld)
+				|| world.getDimension().hasFixedTime()) {
+			return;
 		}
 
 		RenderSystem.setShaderFogStart(10000F);
-		float haze = (float) HazeCalculator.getHaze((int) this.world.getTimeOfDay());
-		return new Vec3d(haze + HAZE_COLOR_ADDITION, haze + HAZE_COLOR_ADDITION, haze + HAZE_COLOR_ADDITION);
 	}
 	/*?}*/
 }
