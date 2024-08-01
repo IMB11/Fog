@@ -25,7 +25,7 @@ import java.util.Set;
  * Credits to CrowdinTranslate, Loqui.
  */
 public class FogResourcePack implements ResourcePack {
-	private static final Logger LOGGER = LoggerFactory.getLogger("Loqui/ResourcePack");
+	private static final Logger LOGGER = LoggerFactory.getLogger("Fog/ResourcePack");
 
 	@Nullable
 	@Override
