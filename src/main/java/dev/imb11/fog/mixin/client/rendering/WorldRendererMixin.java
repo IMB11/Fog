@@ -50,8 +50,8 @@ public abstract class WorldRendererMixin {
 		RenderSystem.setShaderFogColor(haze + HAZE_COLOR_ADDITION, haze + HAZE_COLOR_ADDITION, haze + HAZE_COLOR_ADDITION);
 	}
 	*//*?} else {*/
-	/*? if =1.20.6 {*//*
-	@ModifyVariable(method = "renderClouds(Lnet/minecraft/client/render/BufferBuilder;DDDLnet/minecraft/util/math/Vec3d;)Lnet/minecraft/client/render/BufferBuilder$BuiltBuffer;", at = @At("HEAD"), argsOnly = true)
+	/*? if =1.20.6 {*/
+	/*@ModifyVariable(method = "renderClouds(Lnet/minecraft/client/render/BufferBuilder;DDDLnet/minecraft/util/math/Vec3d;)Lnet/minecraft/client/render/BufferBuilder$BuiltBuffer;", at = @At("HEAD"), argsOnly = true)
 	*//*?} else {*/
 	@ModifyVariable(method = "renderClouds(Lnet/minecraft/client/render/Tessellator;DDDLnet/minecraft/util/math/Vec3d;)Lnet/minecraft/client/render/BuiltBuffer;", at = @At("HEAD"), argsOnly = true)
 	/*?}*/

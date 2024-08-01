@@ -85,23 +85,24 @@ public class FogResourcePack implements ResourcePack {
 		}
 	}
 
-	/*? >=1.20.6 {*/
+	/*? if >=1.20.6 {*/
 	@Override
 	public ResourcePackInfo getInfo() {
 		return new ResourcePackInfo("fog", Text.literal("Fog Definitions"), ResourcePackSource.BUILTIN, Optional.empty());
 	}
 	/*?}*/
 
-	// 1.20.5: This will be required.
-//    @Override
-//    public @NotNull PackLocationInfo location() {
-//        return new PackLocationInfo("loqui", Component.literal("Loqui Translations"), PackSource.DEFAULT, Optional.empty());
-//    }
-
+	/*? if <=1.20.4 {*/
+	/*@Override
+	public String getName() {
+		return "Fog Definitions";
+	}
+	*//*?} else {*/
 	@Override
 	public String getId() {
 		return "fog";
 	}
+	/*?}*/
 
 	@Override
 	public void close() {
