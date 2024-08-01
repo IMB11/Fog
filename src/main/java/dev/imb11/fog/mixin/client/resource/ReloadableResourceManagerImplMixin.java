@@ -1,4 +1,4 @@
-package dev.imb11.fog.mixin.client.resources;
+package dev.imb11.fog.mixin.client.resource;
 
 import dev.imb11.fog.client.resource.FogResourcePack;
 import dev.imb11.fog.client.resource.FogResourceUnpacker;

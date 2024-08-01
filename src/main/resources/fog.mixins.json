@@ -1,18 +1,18 @@
 {
-    "required": true,
-    "package": "dev.imb11.fog.mixin",
-    "compatibilityLevel": "JAVA_17",
-    "minVersion": "0.7.11",
-    "plugin": "dev.imb11.fog.loaders.mixin.FogMixinPlugin",
-    "injectors": {
-        "defaultRequire": 1
-    },
-    "mixins": [
-        "client.resources.ReloadableResourceManagerImplMixin",
-        "fabric.FabricDatagenHelperMixin"
-    ],
-    "client": [
-        "client.rendering.BackgroundRendererMixin",
-        "client.rendering.WorldRendererMixin"
-    ]
+  "required": true,
+  "package": "dev.imb11.fog.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.7.11",
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "plugin": "dev.imb11.fog.loaders.mixin.FogMixinPlugin",
+  "mixins": [
+    "fabric.FabricDatagenHelperMixin"
+  ],
+  "client": [
+    "client.resource.ReloadableResourceManagerImplMixin",
+    "client.rendering.BackgroundRendererMixin",
+    "client.rendering.WorldRendererMixin"
+  ]
 }

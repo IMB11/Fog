@@ -101,7 +101,7 @@ public class FogResourceUnpacker {
 
 	public static @NotNull List<Path> getFilesFromResourceFolder(@NotNull String resourceFolder, @NotNull String pattern) throws IOException, URISyntaxException {
 		@NotNull List<Path> result = new ArrayList<>();
-		// Get the base directory from the resources folder
+		// Get the base directory from the resource folder
 		@Nullable var resource = FogResourceUnpacker.class.getClassLoader().getResource(resourceFolder);
 		if (resource == null) {
 			return result;
