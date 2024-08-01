@@ -1,6 +1,5 @@
 package dev.imb11.fog.mixin.client.rendering;
 
-import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.imb11.fog.client.FogManager;
@@ -18,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /*? if >=1.21 {*/
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import net.minecraft.block.enums.CameraSubmersionType;
 /*?}*/
 
