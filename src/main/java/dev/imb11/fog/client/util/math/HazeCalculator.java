@@ -12,34 +12,31 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Heightmap;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class HazeCalculator {
-	private static float timeAboveSurface = 0;
 	public static int[] times = null;
 	public static float[] hazeValues = null;
+	private static int lastTime = -1;
 
 	public static void initialize() {
 		ArrayList<Integer> timesList = new ArrayList<>();
 		ArrayList<Float> hazeValuesList = new ArrayList<>();
 
 		var timeHazeEntries = FogConfig.getInstance().timeToHazeMap.entrySet();
+		timeHazeEntries.forEach(entry -> {
+			timesList.add(entry.getKey());
+			hazeValuesList.add(entry.getValue());
+		});
 
-		// Sort timeHazeEntries by time
-		timeHazeEntries = timeHazeEntries.stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toCollection(LinkedHashSet::new));
-
-		for (Map.Entry<Integer, Float> integerFloatEntry : timeHazeEntries) {
-			timesList.add(integerFloatEntry.getKey());
-			hazeValuesList.add(integerFloatEntry.getValue());
-		}
-		times = new int[timesList.size()];
-		hazeValues = new float[hazeValuesList.size()];
+		int[] ttimes = new int[timesList.size()];
+		float[] thazeValues = new float[hazeValuesList.size()];
 		for (int i = 0; i < timesList.size(); i++) {
-			times[i] = timesList.get(i);
-			hazeValues[i] = hazeValuesList.get(i);
+			ttimes[i] = timesList.get(i);
+			thazeValues[i] = hazeValuesList.get(i);
 		}
+
+		times = ttimes;
+		hazeValues = thazeValues;
 	}
 
     public static FogManager.FogSettings applyHaze(float undergroundFactor, FogManager.FogSettings settings, int time, float tickDelta) {
@@ -54,8 +51,29 @@ public class HazeCalculator {
 
 	    FogColors belowGroundColors = FogColors.DEFAULT_CAVE;
 	    FogColors aboveGroundColors = FogColors.DEFAULT;
-	    Color aboveColor = time >= 13000 && time <= 23000 ? aboveGroundColors.getNightColor() : aboveGroundColors.getDayColor();
-		Color belowColor = time >= 13000 && time <= 23000 ? belowGroundColors.getNightColor() : belowGroundColors.getDayColor();
+	    if (lastTime == -1) {
+		    lastTime = time;
+	    }
+
+	    float transitionFactor = (time - lastTime) / 10000.0f;
+	    lastTime = time;
+
+	    Color aboveDayColor = aboveGroundColors.getDayColor();
+	    Color aboveNightColor = aboveGroundColors.getNightColor();
+	    Color belowDayColor = belowGroundColors.getDayColor();
+	    Color belowNightColor = belowGroundColors.getNightColor();
+
+	    Color aboveColor = new Color(
+			    MathHelper.lerp(transitionFactor, aboveDayColor.red, aboveNightColor.red),
+			    MathHelper.lerp(transitionFactor, aboveDayColor.green, aboveNightColor.green),
+			    MathHelper.lerp(transitionFactor, aboveDayColor.blue, aboveNightColor.blue)
+	    );
+
+	    Color belowColor = new Color(
+			    MathHelper.lerp(transitionFactor, belowDayColor.red, belowNightColor.red),
+			    MathHelper.lerp(transitionFactor, belowDayColor.green, belowNightColor.green),
+			    MathHelper.lerp(transitionFactor, belowDayColor.blue, belowNightColor.blue)
+	    );
 
         float fogColorR = (float) MathHelper.lerp(hazeValue, aboveColor.red / 255f, settings.fogRed());
         float fogColorG = (float) MathHelper.lerp(hazeValue, aboveColor.green / 255f, settings.fogGreen());
@@ -118,8 +136,19 @@ public class HazeCalculator {
             }
         }
 
-        // If time doesn't fit into any interval, it means it matches exactly the last point
-        return hazeValues[hazeValues.length - 1];
+	    int lastIndex = times.length - 1;
+	    double t1 = times[lastIndex];
+	    double t2 = times[0];
+	    double h1 = hazeValues[lastIndex];
+	    double h2 = hazeValues[0];
+
+	    if (time > t1) {
+		    // Time is beyond the last interval, so interpolate towards the start
+		    return h1 + (h2 - h1) * (time - t1) / (24000 - t1 + t2);
+	    } else {
+		    // Time is before the first interval, so interpolate from end to start
+		    return h1 + (h2 - h1) * (time + (24000 - t2)) / (24000 - t2 + t1);
+	    }
     }
 
 //    public static void main(String[] args) {

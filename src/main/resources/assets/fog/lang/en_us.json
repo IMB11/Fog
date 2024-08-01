@@ -14,6 +14,8 @@
   "fog.config.option.disable_haze_calculation": "Disable Haze Calculation",
   "fog.config.option.description.disable_haze_calculation": "Disables the haze calculation, haze is the change in the fog colour based on the time of day.",
   "fog.config.option.disable_nether": "Disable In Nether",
+  "fog.config.option.disable_cloud_whitening": "Disable Cloud Whitening",
+  "fog.config.option.description.disable_cloud_whitening": "Disables the cloud whitening effect, which unlinks cloud color from fog color. This is disabled when Sodium is present as Sodium does this by default.",
   "fog.config.option.description.disable_nether": "Disables the fog engine modifications in the Nether dimension - Vanilla does a pretty darn good job with the Nether biomes, there isn't a need to modify them.",
   "fog.config.option.disable_mod": "Disable Mod Entirely",
   "fog.config.option.description.disable_mod": "Disables the mod entirely, useful if you want to make comparisons to vanilla.",

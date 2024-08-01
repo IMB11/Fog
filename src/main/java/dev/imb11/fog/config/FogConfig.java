@@ -14,6 +14,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static dev.imb11.fog.client.FogClient.MOD_ID;
 
@@ -31,16 +32,16 @@ public class FogConfig {
 					.build())
 			.build();
 	@SerialEntry
-	public Map<Integer, Float> timeToHazeMap = Map.of(
+	public TreeMap<Integer, Float> timeToHazeMap = new TreeMap<>(Map.of(
 			0, 0.85f,
-			500, 0.25f,
-			1500, 0.25f,
-			11500, 0.25f,
+			500, 0.45f,
+			1500, 0.45f,
+			11500, 0.45f,
 			12500, 0.85f,
 			13500, 0.5f,
 			22500, 0.5f,
 			23500, 0.85f
-	);
+	));
 	@SerialEntry
 	public float initialFogStart = 0.1f;
 	@SerialEntry
@@ -53,6 +54,8 @@ public class FogConfig {
 	public boolean disableBiomeFogColour = false;
 	@SerialEntry
 	public boolean disableHazeCalculation = false;
+	@SerialEntry
+	public boolean disableCloudWhitening = false;
 	/**
 	 * Nether has pretty good Fog, it doesn't need changing unless player really wants to.
 	 */
@@ -150,6 +153,16 @@ public class FogConfig {
 						                        defaults.disableHazeCalculation, () -> disableHazeCalculation,
 						                        newDisableHazeCalculation -> disableHazeCalculation = newDisableHazeCalculation
 				                        ).controller(BooleanControllerBuilder::create).build())
+				                        .option(Option.<Boolean>createBuilder().name(
+						                        getText(EntryType.OPTION_NAME, "disable_cloud_whitening")).description(
+						                        initialFogStart -> OptionDescription.createBuilder().text(
+								                        getText(
+										                        EntryType.OPTION_DESCRIPTION,
+										                        "disable_cloud_whitening"
+								                        )).build()).binding(
+						                        defaults.disableCloudWhitening, () -> disableCloudWhitening,
+						                        newDisableCloudWhitening -> disableCloudWhitening = newDisableCloudWhitening
+				                        ).controller(BooleanControllerBuilder::create).available(!FogClient.isModInstalled("sodium")).flag(OptionFlag.GAME_RESTART).build())
 				                        .option(Option.<Boolean>createBuilder().name(
 						                        getText(EntryType.OPTION_NAME, "disable_nether")).description(
 						                        initialFogStart -> OptionDescription.createBuilder().text(

@@ -1,6 +1,7 @@
 package dev.imb11.fog.client.util.color;
 
 import dev.imb11.fog.client.util.math.MathUtil;
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 
 import static dev.imb11.fog.client.util.math.MathUtil.clamp;
