@@ -74,7 +74,15 @@ public class FogResourcePack implements ResourcePack {
 	@Nullable
 	@Override
 	public <T> T parseMetadata(ResourceMetadataReader<T> metaReader) throws IOException {
-		return null;
+		InputSupplier<InputStream> inputSupplier = this.openRoot("pack.mcmeta");
+
+		if (inputSupplier != null) {
+			try (InputStream input = inputSupplier.get()) {
+				return AbstractFileResourcePack.parseMetadata(metaReader, input);
+			}
+		} else {
+			return null;
+		}
 	}
 
 	/*? >=1.20.6 {*/

@@ -8,10 +8,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class FogResourceUnpacker {
@@ -69,9 +66,9 @@ public class FogResourceUnpacker {
 				stream.filter(Files::isRegularFile)
 				      .filter(path -> path.toString().endsWith(".json"))
 				      .forEach(path -> {
-					      String[] parts = path.toString().split("/");
-					      String namespace = parts[parts.length - 2];
-					      NAMESPACES.add(namespace);
+					      String relativePath = path.toString().split(UNPACKED_PATH.toString())[1];
+						  String[] split = relativePath.split("/");
+					      NAMESPACES.add(split[2]);
 				      });
 			}
 		} catch (IOException e) {
