@@ -47,7 +47,7 @@ public class FogResourceUnpacker {
 					{
 					  "pack": {
 					    "description": "An expansive and dynamic overhaul to Minecraft's fog rendering system.",
-					    "pack_format": 14"
+					    "pack_format": 14
 					  }
 					}
 					"""
