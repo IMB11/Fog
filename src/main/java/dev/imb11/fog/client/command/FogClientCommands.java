@@ -84,6 +84,7 @@ public class FogClientCommands {
 	}
 
 	private static int reset(@NotNull CommandContext<ClientCommandRegistrationEvent.ClientCommandSourceStack> commandContext) {
+		FogConfig.load();
 		FogManager.INSTANCE = new FogManager();
 		commandContext.getSource().arch$sendSuccess(
 				() -> Text.literal("§b§7[§rFog§b§7]§r ").append(Text.translatable("fog.command.reset").formatted(Formatting.GOLD)), false);

@@ -33,14 +33,22 @@ public class FogConfig {
 			.build();
 	@SerialEntry
 	public TreeMap<Integer, Float> timeToHazeMap = new TreeMap<>(Map.of(
-			0, 0.85f,
-			500, 0.45f,
-			1500, 0.45f,
+			// Sunrise Preparation (Sun appears on horizon)
+			22300, 0.45f,
+			// Sunrise Starts (Sun glare shader kicks in)
+			23000, 0.1f,
+			// Sunrise Ends (Sun glare shader ends)
+			23981, 0.45f,
+			// Noon
+			6000, 0.8f,
+			// Sunset Preparation (Moon appears on horizon)
 			11500, 0.45f,
-			12500, 0.85f,
-			13500, 0.5f,
-			22500, 0.5f,
-			23500, 0.85f
+			// Sunset Starts (Sun glare shader kicks in)
+			12000, 0.1f,
+			// Sunset Ends (Sun glare shader ends)
+			12969, 0.45f,
+			// Midnight
+			18000, 0.9f
 	));
 	@SerialEntry
 	public float initialFogStart = 0.1f;

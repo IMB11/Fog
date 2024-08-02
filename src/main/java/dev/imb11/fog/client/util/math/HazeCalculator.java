@@ -75,9 +75,9 @@ public class HazeCalculator {
 			    MathHelper.lerp(transitionFactor, belowDayColor.blue, belowNightColor.blue)
 	    );
 
-        float fogColorR = (float) MathHelper.lerp(hazeValue, aboveColor.red / 255f, settings.fogRed());
-        float fogColorG = (float) MathHelper.lerp(hazeValue, aboveColor.green / 255f, settings.fogGreen());
-        float fogColorB = (float) MathHelper.lerp(hazeValue, aboveColor.blue / 255f, settings.fogBlue());
+        float fogColorR = (float) MathHelper.lerp(hazeValue, settings.fogRed(), aboveColor.red / 255f);
+        float fogColorG = (float) MathHelper.lerp(hazeValue, settings.fogGreen(), aboveColor.green / 255f);
+        float fogColorB = (float) MathHelper.lerp(hazeValue, settings.fogBlue(), aboveColor.blue / 255f);
 
 	    fogColorR = MathHelper.lerp(undergroundFactor, belowColor.red / 255f, fogColorR);
 	    fogColorG = MathHelper.lerp(undergroundFactor, belowColor.green / 255f, fogColorG);
