@@ -105,3 +105,9 @@ Server owners can adjust fog start/end points and biome colors to match their se
 ## License
 
 This project is licensed under All Rights Reserved, see [LICENSE](https://github.com/IMB11/Fog/blob/master/LICENSE).
+
+## Credits
+
+- [birsy](https://modrinth.com/user/birsy), the original author of [Fog Looks Good Now](https://modrinth.com/mod/fog-looks-good-now) - many of the systems and ideas were expanded from this mod.
+- [steveplays](https://modrinth.com/user/Steveplays), the author of the [Biome Fog](https://modrinth.com/mod/biomefog) mod - who collaborated with me to bring biome fog colors to Fog.
+
