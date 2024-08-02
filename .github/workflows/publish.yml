@@ -37,7 +37,13 @@ jobs:
     strategy:
       matrix:
         # REMINDER: Update this array when adding new game versions.
-        game_version: [ "1.20.1" ]
+        game_version: [
+          "1.20.1-fabric",
+          "1.20.1-forge",
+          "1.20.4-fabric",
+          "1.20.6-fabric",
+          "1.21-fabric"
+        ]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
