@@ -2,7 +2,6 @@ package dev.imb11.fog.mixin.client.rendering;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.imb11.fog.client.util.math.CloudCalculator;
-import dev.imb11.fog.client.util.math.HazeCalculator;
 
 import dev.imb11.fog.config.FogConfig;
 
@@ -14,13 +13,10 @@ import net.minecraft.client.world.ClientWorld;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 
 /*? if >=1.20.6 {*/
-import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
