@@ -87,6 +87,7 @@ public abstract class WorldRendererMixin {
 			return;
 		}
 
+		// Force clouds to be white
 		RenderSystem.setShaderFogStart(10000F);
 	}
 	/*?}*/

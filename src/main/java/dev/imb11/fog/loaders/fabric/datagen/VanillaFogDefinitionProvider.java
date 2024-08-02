@@ -9,17 +9,21 @@ import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.biome.Biome;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
 public class VanillaFogDefinitionProvider extends CustomFogDefinitionDataProvider {
-	public VanillaFogDefinitionProvider(FabricDataOutput dataOutput, CompletableFuture<RegistryWrapper.WrapperLookup> lookup) {
+	public VanillaFogDefinitionProvider(@NotNull FabricDataOutput dataOutput, @NotNull CompletableFuture<RegistryWrapper.WrapperLookup> lookup) {
 		super(dataOutput, lookup);
 	}
 
 	@Override
-	public void acceptBiomes(BiConsumer<Identifier, CustomFogDefinition> provider) {
+	public void acceptBiomes(@NotNull BiConsumer<Identifier, CustomFogDefinition> provider) {
+		provider.accept(Identifier.tryParse("sparse_jungle"), CustomFogDefinition.Builder.create()
+                 .colors("#5dad6e", "#1a1e1b").startMultiplier(0.75f).endMultiplier(1.0f).build());
+
 		provider.accept(Identifier.tryParse("basalt_deltas"), CustomFogDefinition.Builder.create()
 				.colors("#36292B", "#36292B").startMultiplier(0.8f).endMultiplier(0.01f).build());
 
@@ -37,9 +41,9 @@ public class VanillaFogDefinitionProvider extends CustomFogDefinitionDataProvide
 	}
 
 	@Override
-	public void acceptBiomeTags(BiConsumer<TagKey<Biome>, CustomFogDefinition> provider) {
+	public void acceptBiomeTags(@NotNull BiConsumer<TagKey<Biome>, CustomFogDefinition> provider) {
 		provider.accept(ConventionalBiomeTags.IS_JUNGLE, CustomFogDefinition.Builder.create()
-		        .colors("#35422f", "#252924").build());
+		        .colors("#266b21", "#171916").startMultiplier(0.15f).endMultiplier(0.35f).build());
 
 		provider.accept(ConventionalBiomeTags.IS_SWAMP, CustomFogDefinition.Builder.create()
 				.colors("#393d32", "#272922").build());
