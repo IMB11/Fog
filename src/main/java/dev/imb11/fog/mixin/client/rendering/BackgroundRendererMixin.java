@@ -58,7 +58,6 @@ public abstract class BackgroundRendererMixin {
 		@Nullable final var clientWorld = MinecraftClient.getInstance().world;
 		if (clientWorld == null || FogConfig.getInstance().disableMod
 				|| (clientWorld.getDimensionEffects() instanceof DimensionEffects.Nether && FogConfig.getInstance().disableNether)
-				|| camera.getSubmersionType() != CameraSubmersionType.NONE
 		) {
 			return;
 		}
