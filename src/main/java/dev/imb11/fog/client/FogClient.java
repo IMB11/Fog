@@ -27,6 +27,8 @@ public class FogClient {
 		return net.fabricmc.loader.api.FabricLoader.getInstance().getConfigDir().resolve(MOD_ID).resolve(configFileName + "." + configExtension);
 		/*?} elif forge {*/
 		/*return net.minecraftforge.fml.loading.FMLLoader.getGamePath().resolve("config").resolve(MOD_ID).resolve(configFileName + "." + configExtension);
+		*//*?} else {*/
+		/*return net.neoforged.fml.loading.FMLLoader.getGamePath().resolve("config").resolve(MOD_ID).resolve(configFileName + "." + configExtension);
 		*//*?}*/
 	}
 
@@ -35,6 +37,8 @@ public class FogClient {
 		return net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded(modid);
 		/*?} elif forge {*/
 		/*return net.minecraftforge.fml.loading.FMLLoader.getLoadingModList().getModFileById(modid) != null;
+		*//*?} else {*/
+		/*return net.neoforged.fml.loading.FMLLoader.getLoadingModList().getModFileById(modid) != null;
 		*//*?}*/
 	}
 
@@ -43,6 +47,8 @@ public class FogClient {
 		return net.fabricmc.loader.api.FabricLoader.getInstance().getGameDir().resolve("config").resolve(MOD_ID);
 		/*?} elif forge {*/
 		/*return net.minecraftforge.fml.loading.FMLLoader.getGamePath().resolve("config").resolve(MOD_ID);
+		*//*?} else {*/
+		/*return net.neoforged.fml.loading.FMLLoader.getGamePath().resolve("config").resolve(MOD_ID);
 		*//*?}*/
 	}
 	

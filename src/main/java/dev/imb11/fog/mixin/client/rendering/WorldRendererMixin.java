@@ -5,6 +5,7 @@ import dev.imb11.fog.client.util.math.CloudCalculator;
 
 import dev.imb11.fog.config.FogConfig;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
 
 import net.minecraft.client.util.math.MatrixStack;
@@ -84,7 +85,7 @@ public abstract class WorldRendererMixin {
 		}
 
 		// Force clouds to be white
-		RenderSystem.setShaderFogStart(10000F);
+		RenderSystem.setShaderFogStart(MinecraftClient.getInstance().options.getViewDistance().getValue());
 	}
 	/*?}*/
 }
