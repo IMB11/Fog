@@ -1,6 +1,10 @@
 package dev.imb11.fog.client.resource;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import dev.imb11.fog.client.FogClient;
+import net.minecraft.client.MinecraftClient;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,16 +46,33 @@ public class FogResourceUnpacker {
 			);
 		}
 
+		/*? if =1.20.1 {*/
+		/*int packFormat = 15;
+		*//*?} elif =1.20.4 {*/
+		/*int packFormat = 26;
+		*//*?} elif =1.20.6 {*/
+		/*int packFormat = 41;
+		*//*?} else {*/
+		int packFormat = 48;
+		/*?}*/
+
 		if (!META_PATH.toFile().exists()) {
-			Files.writeString(META_PATH, """
+			Files.writeString(META_PATH, String.format("""
 					{
 					  "pack": {
 					    "description": "An expansive and dynamic overhaul to Minecraft's fog rendering system.",
-					    "pack_format": 14
+					    "pack_format": %d
 					  }
 					}
-					"""
+					""", packFormat)
 			);
+		} else {
+			// Ensure pack format is set to packFormat
+			String metaContent = Files.readString(META_PATH);
+			Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+			JsonObject object = GSON.fromJson(metaContent, JsonObject.class);
+			object.getAsJsonObject("pack").addProperty("pack_format", packFormat);
+			Files.writeString(META_PATH, GSON.toJson(object));
 		}
 
 		// Get all files that match glob `packed/assets/*/fog_definitions/**/*.json` within this jar.
