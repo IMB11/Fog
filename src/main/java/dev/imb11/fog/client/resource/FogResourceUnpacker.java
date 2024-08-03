@@ -85,7 +85,7 @@ public class FogResourceUnpacker {
 		for (Path file : files) {
 			FogClient.LOGGER.info("Unpacking file: {}", file);
 			// Create a relative path for the file in the destination directory
-			@NotNull String relativePath = "assets/" + file.toString().split(String.format("assets\\%s", File.separator))[1];
+			@NotNull String relativePath = String.format("assets%s", File.separator) + file.toString().split(String.format("assets\\%s", File.separator))[1];
 			@NotNull Path fullPath = UNPACKED_PATH.resolve(relativePath);
 			FogClient.LOGGER.info("Unpacking to: {}", fullPath);
 			FogClient.LOGGER.info("Relative path: {}", relativePath);
