@@ -28,6 +28,7 @@ public class FogResourceUnpacker {
 
 	public static void tryUnpack() throws IOException, URISyntaxException {
 		if (System.getProperty("fabric-api.datagen") != null) {
+			FogClient.LOGGER.info("Skipping unpacking of resource pack as we are in a data generation environment.");
 			return;
 		}
 
@@ -39,6 +40,7 @@ public class FogResourceUnpacker {
 		}
 
 		if (!README_PATH.toFile().exists()) {
+			FogClient.LOGGER.info("Creating README.txt in unpacked resource pack folder.");
 			Files.writeString(
 					README_PATH,
 					"This folder contains the unpacked fog definitions.\nYou can edit these files to customize the fog in your game.\nFor more information, visit https://docs.imb11.dev/fog/"
@@ -56,6 +58,7 @@ public class FogResourceUnpacker {
 		/*?}*/
 
 		if (!META_PATH.toFile().exists()) {
+			FogClient.LOGGER.info("Creating pack.mcmeta in unpacked resource pack folder.");
 			Files.writeString(META_PATH, String.format("""
 					{
 					  "pack": {
@@ -72,6 +75,7 @@ public class FogResourceUnpacker {
 			JsonObject object = GSON.fromJson(metaContent, JsonObject.class);
 			object.getAsJsonObject("pack").addProperty("pack_format", packFormat);
 			Files.writeString(META_PATH, GSON.toJson(object));
+			FogClient.LOGGER.info("Updated pack.mcmeta to pack format {}", packFormat);
 		}
 
 		// Get all files that match glob `packed/assets/*/fog_definitions/**/*.json` within this jar.
@@ -79,9 +83,12 @@ public class FogResourceUnpacker {
 		List<Path> files = getFilesFromResourceFolder(
 				"packed", String.format("assets/*/%s/**/*.json", FogResourceReloader.FOG_DEFINITIONS_FOLDER_NAME));
 		for (Path file : files) {
+			FogClient.LOGGER.info("Unpacking file: {}", file);
 			// Create a relative path for the file in the destination directory
 			@NotNull String relativePath = "assets/" + file.toString().split(String.format("assets\\%s", File.separator))[1];
 			@NotNull Path fullPath = UNPACKED_PATH.resolve(relativePath);
+			FogClient.LOGGER.info("Unpacking to: {}", fullPath);
+			FogClient.LOGGER.info("Relative path: {}", relativePath);
 
 			// Create directories if they don't exist
 			try {
@@ -90,9 +97,10 @@ public class FogResourceUnpacker {
 				FogClient.LOGGER.error(
 						"Exception thrown while creating folders for unpacked config resource pack assets (path: {}): {}", UNPACKED_PATH, e);
 			}
-
+			FogClient.LOGGER.info("Copying file: {} to {}", file, fullPath);
 			// Copy the file
 			if (!Files.exists(fullPath)) {
+				FogClient.LOGGER.info("Copied!");
 				Files.copy(file, fullPath);
 			}
 		}
