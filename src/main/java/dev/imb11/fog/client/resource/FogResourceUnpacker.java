@@ -84,11 +84,16 @@ public class FogResourceUnpacker {
 		String fileGlob = String.format("assets/*/%s/**/*.json", FogResourceReloader.FOG_DEFINITIONS_FOLDER_NAME);
 		FogClient.LOGGER.info("Searching for files matching glob: {}", fileGlob);
 		List<Path> files = getFilesFromResourceFolder("packed", fileGlob);
-		FogClient.LOGGER.info("Found {} files to unpack.", files.size());
+		FogClient.LOGGER.info("Found {} files to unpack:", files.size());
 		FogClient.LOGGER.info(Arrays.toString(files.toArray()));
 		for (Path file : files) {
+			var splitFilePath = file.toString().split(String.format("assets\\%s", File.separator));
+			if (splitFilePath.length == 0) {
+				continue;
+			}
+
 			// Create a relative path for the file in the destination directory
-			@NotNull String relativePath = String.format("assets%s", File.separator) + file.toString().split(String.format("assets\\%s", File.separator))[1];
+			@NotNull String relativePath = String.format("assets%s%s", File.separator, splitFilePath[1]);
 			@NotNull Path fullPath = UNPACKED_PATH.resolve(relativePath);
 
 			// Create directories if they don't exist
@@ -96,8 +101,11 @@ public class FogResourceUnpacker {
 				Files.createDirectories(fullPath.getParent());
 			} catch (IOException e) {
 				FogClient.LOGGER.error(
-						"Exception thrown while creating folders for unpacked config resource pack assets (path: {}): {}", UNPACKED_PATH, e);
+						"Exception thrown while creating folders for unpacked config resource pack assets (path: {}): {}", UNPACKED_PATH,
+						e
+				);
 			}
+
 			// Copy the file
 			if (!Files.exists(fullPath)) {
 				Files.copy(file, fullPath);
@@ -151,14 +159,15 @@ public class FogResourceUnpacker {
 		return result;
 	}
 
-	public static @NotNull PathMatcher getPathMatcher(@NotNull URI uri, @NotNull String pattern) throws IOException {
+	@SuppressWarnings("resource")
+	public static @NotNull PathMatcher getPathMatcher(@NotNull URI uri, @NotNull String pattern) {
 		FileSystem fs;
 		try {
 			fs = FileSystems.newFileSystem(uri, Collections.emptyMap());
 		} catch (Exception e) {
 			try {
 				fs = FileSystems.getFileSystem(uri);
-			} catch (Exception es) {
+			} catch (Exception e2) {
 				fs = FileSystems.getDefault();
 			}
 		}
