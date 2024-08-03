@@ -80,7 +80,7 @@ public class FogResourceUnpacker {
 				"packed", String.format("assets/*/%s/**/*.json", FogResourceReloader.FOG_DEFINITIONS_FOLDER_NAME));
 		for (Path file : files) {
 			// Create a relative path for the file in the destination directory
-			@NotNull String relativePath = "assets/" + file.toString().split(String.format("assets\\%s", File.separator))[1];
+			@NotNull String relativePath = String.format("assets%s", File.separator) + file.toString().split(String.format("assets\\%s", File.separator))[1];
 			@NotNull Path fullPath = UNPACKED_PATH.resolve(relativePath);
 
 			// Create directories if they don't exist
