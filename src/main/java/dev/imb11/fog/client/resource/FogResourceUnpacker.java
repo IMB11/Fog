@@ -88,7 +88,7 @@ public class FogResourceUnpacker {
 		FogClient.LOGGER.info(Arrays.toString(files.toArray()));
 		for (Path file : files) {
 			var splitFilePath = file.toString().split(String.format("assets\\%s", File.separator));
-			if (splitFilePath.length == 0) {
+			if (splitFilePath.length <= 1) {
 				continue;
 			}
 
