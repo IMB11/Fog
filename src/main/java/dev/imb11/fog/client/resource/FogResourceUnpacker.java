@@ -102,15 +102,12 @@ public class FogResourceUnpacker {
 	public static void walkNamespaces() {
 		try {
 			NAMESPACES.clear();
-			@NotNull Path assetsFolder = UNPACKED_PATH.resolve("assets" + File.separator);
-			FogClient.LOGGER.info("Walking assets folder: {}", assetsFolder);
+			@NotNull Path assetsFolder = UNPACKED_PATH.resolve("assets");
 			if (!assetsFolder.toFile().exists() || !assetsFolder.toFile().isDirectory()) {
-				FogClient.LOGGER.error("Assets folder does not exist or is not a directory.");
 				return;
 			}
 
 			try (@NotNull var assets = Files.list(assetsFolder)) {
-				FogClient.LOGGER.info("Found assets folder file: {}", assets.toString());
 				assets.forEach(namespace -> {
 					if (namespace.toFile().isDirectory()) {
 						NAMESPACES.add(namespace.getFileName().toString());
