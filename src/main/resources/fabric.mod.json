@@ -33,6 +33,7 @@
   "depends": {
     "fabricloader": "*",
     "fabric": "*",
+    "architectury": "${target_architectury}",
     "minecraft": "${target_minecraft}"
   }
 }

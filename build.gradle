@@ -152,6 +152,10 @@ processResources {
         props.mandatory_inclusion_field = (loader == "forge") ? "mandatory = true" : "type = \"required\""
     }
 
+    if (loader == "fabric") {
+        props.target_architectury = project.property("deps.arch_api")
+    }
+
     props.each { key, value -> inputs.property(key, value) }
 
     if (loader == "fabric") {
