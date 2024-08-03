@@ -4,13 +4,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import dev.imb11.fog.client.FogClient;
-import net.minecraft.client.MinecraftClient;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.*;
 import java.util.*;
@@ -29,17 +29,19 @@ public class FogResourceUnpacker {
 
 	public static void tryUnpack() throws IOException, URISyntaxException {
 		if (System.getProperty("fabric-api.datagen") != null) {
+			FogClient.LOGGER.info("Skipping unpacking of resource pack as we are in a data generation environment.");
 			return;
 		}
 
-		if (!UNPACKED_PATH.toFile().exists()) {
-			if (!UNPACKED_PATH.toFile().mkdirs()) {
-				FogClient.LOGGER.error(
-						"Error occurred while creating folders for the unpacked config resource pack (path: {}).", UNPACKED_PATH);
-			}
+		try {
+			Files.createDirectories(UNPACKED_PATH);
+		} catch (IOException e) {
+			FogClient.LOGGER.error(
+					"Exception thrown while creating folders for the unpacked config resource pack (path: {}): {}", UNPACKED_PATH, e);
 		}
 
 		if (!README_PATH.toFile().exists()) {
+			FogClient.LOGGER.info("Creating README.txt in unpacked resource pack folder.");
 			Files.writeString(
 					README_PATH,
 					"This folder contains the unpacked fog definitions.\nYou can edit these files to customize the fog in your game.\nFor more information, visit https://docs.imb11.dev/fog/"
@@ -48,15 +50,16 @@ public class FogResourceUnpacker {
 
 		/*? if =1.20.1 {*/
 		/*int packFormat = 15;
-		*//*?} elif =1.20.4 {*/
+		 *//*?} elif =1.20.4 {*/
 		/*int packFormat = 26;
-		*//*?} elif =1.20.6 {*/
+		 *//*?} elif =1.20.6 {*/
 		/*int packFormat = 41;
-		*//*?} else {*/
+		 *//*?} else {*/
 		int packFormat = 48;
 		/*?}*/
 
 		if (!META_PATH.toFile().exists()) {
+			FogClient.LOGGER.info("Creating pack.mcmeta in unpacked resource pack folder.");
 			Files.writeString(META_PATH, String.format("""
 					{
 					  "pack": {
@@ -73,21 +76,34 @@ public class FogResourceUnpacker {
 			JsonObject object = GSON.fromJson(metaContent, JsonObject.class);
 			object.getAsJsonObject("pack").addProperty("pack_format", packFormat);
 			Files.writeString(META_PATH, GSON.toJson(object));
+			FogClient.LOGGER.info("Updated pack.mcmeta to pack format {}", packFormat);
 		}
 
 		// Get all files that match glob `packed/assets/*/fog_definitions/**/*.json` within this jar.
 		// If a file already exists, we will ignore it.
-		List<Path> files = getFilesFromResourceFolder(
-				"packed", String.format("assets/*/%s/**/*.json", FogResourceReloader.FOG_DEFINITIONS_FOLDER_NAME));
+		String fileGlob = String.format("assets/*/%s/**/*.json", FogResourceReloader.FOG_DEFINITIONS_FOLDER_NAME);
+		FogClient.LOGGER.info("Searching for files matching glob: {}", fileGlob);
+		List<Path> files = getFilesFromResourceFolder("packed", fileGlob);
+		FogClient.LOGGER.info("Found {} files to unpack:", files.size());
+		FogClient.LOGGER.info(Arrays.toString(files.toArray()));
 		for (Path file : files) {
+			var splitFilePath = file.toString().split(String.format("assets\\%s", File.separator));
+			if (splitFilePath.length == 0) {
+				continue;
+			}
+
 			// Create a relative path for the file in the destination directory
-			@NotNull String relativePath = "assets/" + file.toString().split(String.format("assets\\%s", File.separator))[1];
+			@NotNull String relativePath = String.format("assets%s%s", File.separator, splitFilePath[1]);
 			@NotNull Path fullPath = UNPACKED_PATH.resolve(relativePath);
 
 			// Create directories if they don't exist
-			Path parentDir = fullPath.getParent();
-			if (!Files.exists(parentDir)) {
-				Files.createDirectories(parentDir);
+			try {
+				Files.createDirectories(fullPath.getParent());
+			} catch (IOException e) {
+				FogClient.LOGGER.error(
+						"Exception thrown while creating folders for unpacked config resource pack assets (path: {}): {}", UNPACKED_PATH,
+						e
+				);
 			}
 
 			// Copy the file
@@ -125,12 +141,14 @@ public class FogResourceUnpacker {
 		// Get the base directory from the resource folder
 		@Nullable var resource = FogResourceUnpacker.class.getClassLoader().getResource(resourceFolder);
 		if (resource == null) {
+			FogClient.LOGGER.error("Resource folder {} not found.", resourceFolder);
 			return result;
 		}
 
 		@NotNull Path basePath = Paths.get(resource.toURI());
 		// Create a PathMatcher for the glob pattern
-		@NotNull PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
+		@NotNull PathMatcher matcher = getPathMatcher(resource.toURI(), pattern);
+
 		try (@NotNull var stream = Files.walk(basePath)) {
 			result = stream
 					.filter(Files::isRegularFile)
@@ -139,5 +157,20 @@ public class FogResourceUnpacker {
 		}
 
 		return result;
+	}
+
+	@SuppressWarnings("resource")
+	public static @NotNull PathMatcher getPathMatcher(@NotNull URI uri, @NotNull String pattern) {
+		FileSystem fs;
+		try {
+			fs = FileSystems.newFileSystem(uri, Collections.emptyMap());
+		} catch (Exception e) {
+			try {
+				fs = FileSystems.getFileSystem(uri);
+			} catch (Exception e2) {
+				fs = FileSystems.getDefault();
+			}
+		}
+		return fs.getPathMatcher("glob:" + pattern);
 	}
 }
