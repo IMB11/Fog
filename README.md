@@ -1,4 +1,4 @@
-![Requires Fabric API](https://cdn.imb11.dev/requires_fabric_api.png) [![IMB11 Discord server](https://cdn.imb11.dev/mineblock%20badge_64h.png)](https://discord.imb11.dev/)
+![Requires Fabric API](https://cdn.imb11.dev/requires_fabric_api.png) [![IMB11 Discord server](https://cdn.imb11.dev/mineblock%20badge_64h.png)](https://discord.imb11.dev/) [![Steve's Underwater Paradise - Steveplays' Discord server](https://cdn.imb11.dev/steve.png)](https://discord.gg/KbWxgGg)
 
 # Fog
 
@@ -63,8 +63,7 @@ for a list of incompatibilities.
 
 ## Download
 
-Fog is available for Forge on 1.20.1, and Fabric and NeoForge for 1.20.1, 1.20.4, 1.20.6 and 1.21.
-
+Fog is available for Forge on 1.20.1, and Fabric and NeoForge for 1.20.1, 1.20.4, 1.20.6 and 1.21.  
 You can download Fog from the following locations:
 
 - [GitHub Releases](https://github.com/IMB11/Fog/releases)
@@ -106,8 +105,7 @@ Server owners can adjust fog start/end points and biome colors to match their se
 
 This project is licensed under All Rights Reserved, see [LICENSE](https://github.com/IMB11/Fog/blob/master/LICENSE).
 
-## Credits
+## Attribution
 
 - [birsy](https://modrinth.com/user/birsy), the original author of [Fog Looks Good Now](https://modrinth.com/mod/fog-looks-good-now) - many of the systems and ideas were expanded from this mod.
-- [steveplays](https://modrinth.com/user/Steveplays), the author of the [Biome Fog](https://modrinth.com/mod/biomefog) mod - who collaborated with me to bring biome fog colors to Fog.
-
+- [Steveplays](https://modrinth.com/user/Steveplays), the author of the [Biome Fog](https://modrinth.com/mod/biomefog) mod - who collaborated with me to bring biome fog colors to Fog.
