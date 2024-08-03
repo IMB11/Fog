@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import dev.imb11.fog.client.FogClient;
-import net.minecraft.client.MinecraftClient;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,11 +31,11 @@ public class FogResourceUnpacker {
 			return;
 		}
 
-		if (!UNPACKED_PATH.toFile().exists()) {
-			if (!UNPACKED_PATH.toFile().mkdirs()) {
-				FogClient.LOGGER.error(
-						"Error occurred while creating folders for the unpacked config resource pack (path: {}).", UNPACKED_PATH);
-			}
+		try {
+			Files.createDirectories(UNPACKED_PATH);
+		} catch (IOException e) {
+			FogClient.LOGGER.error(
+					"Exception thrown while creating folders for the unpacked config resource pack (path: {}): {}", UNPACKED_PATH, e);
 		}
 
 		if (!README_PATH.toFile().exists()) {
@@ -48,11 +47,11 @@ public class FogResourceUnpacker {
 
 		/*? if =1.20.1 {*/
 		/*int packFormat = 15;
-		*//*?} elif =1.20.4 {*/
+		 *//*?} elif =1.20.4 {*/
 		/*int packFormat = 26;
-		*//*?} elif =1.20.6 {*/
+		 *//*?} elif =1.20.6 {*/
 		/*int packFormat = 41;
-		*//*?} else {*/
+		 *//*?} else {*/
 		int packFormat = 48;
 		/*?}*/
 
@@ -85,9 +84,11 @@ public class FogResourceUnpacker {
 			@NotNull Path fullPath = UNPACKED_PATH.resolve(relativePath);
 
 			// Create directories if they don't exist
-			Path parentDir = fullPath.getParent();
-			if (!Files.exists(parentDir)) {
-				Files.createDirectories(parentDir);
+			try {
+				Files.createDirectories(fullPath.getParent());
+			} catch (IOException e) {
+				FogClient.LOGGER.error(
+						"Exception thrown while creating folders for unpacked config resource pack assets (path: {}): {}", UNPACKED_PATH, e);
 			}
 
 			// Copy the file
