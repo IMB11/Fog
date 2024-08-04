@@ -55,7 +55,7 @@ public class FogResourceUnpacker {
 		 *//*?} elif =1.20.6 {*/
 		/*int packFormat = 41;
 		 *//*?} else {*/
-		int packFormat = 48;
+		int packFormat = 45;
 		/*?}*/
 
 		if (!META_PATH.toFile().exists()) {
@@ -161,16 +161,6 @@ public class FogResourceUnpacker {
 
 	@SuppressWarnings("resource")
 	public static @NotNull PathMatcher getPathMatcher(@NotNull URI uri, @NotNull String pattern) {
-		FileSystem fs;
-		try {
-			fs = FileSystems.newFileSystem(uri, Collections.emptyMap());
-		} catch (Exception e) {
-			try {
-				fs = FileSystems.getFileSystem(uri);
-			} catch (Exception e2) {
-				fs = FileSystems.getDefault();
-			}
-		}
-		return fs.getPathMatcher("glob:" + pattern);
+		return FileSystems.getDefault().getPathMatcher("glob:" + pattern);
 	}
 }
