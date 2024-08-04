@@ -22,6 +22,7 @@ public class FogClient {
 	public static final @NotNull String MOD_ID = "fog";
 	public static final @NotNull String MOD_NAME = "Fog";
 	public static final @NotNull Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+	public static URI JAR_URL;
 
 	public static Path getConfigPath(String configFileName, String configExtension) {
 		/*? if fabric {*/
@@ -55,6 +56,24 @@ public class FogClient {
 	
 	public static void initialize() {
 		LOGGER.info("Loading {}.", MOD_NAME);
+
+		try {
+			/*? if fabric {*/
+			JAR_URL = FogResourceUnpacker.class.getProtectionDomain().getCodeSource().getLocation().toURI();
+			/*?}*/
+
+			/*? if forge {*/
+			/*JAR_URL = net.minecraftforge.fml.ModList.get().getModFileById("fog").getFile().getFilePath().toUri();
+			 *//*?}*/
+
+			/*? if neoforge {*/
+			/*JAR_URL = net.neoforged.fml.ModList.get().getModFileById("fog").getFile().getFilePath().toUri();
+			 *//*?}*/
+
+			LOGGER.info("JAR URL: {}", JAR_URL);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 
 		try {
 			FogResourceUnpacker.tryUnpack();

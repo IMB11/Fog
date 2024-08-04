@@ -81,20 +81,6 @@ public class FogResourceUnpacker {
 			FogClient.LOGGER.info("Updated pack.mcmeta to pack format {}", packFormat);
 		}
 
-		URI jarUrl;
-
-		/*? if fabric {*/
-		jarUrl = FogResourceUnpacker.class.getProtectionDomain().getCodeSource().getLocation().toURI();
-		/*?}*/
-
-		/*? if forge {*/
-		jarUrl = net.minecraftforge.fml.ModList.get().getModFileById("fog").getFile().getFilePath().toUri();
-		/*?}*/
-
-		/*? if neoforge {*/
-		jarUrl = net.neoforged.fml.ModList.get().getModFileById("fog").getFile().getFilePath().toUri();
-		/*?}*/
-
 		try {
 			URL resourceUrl = FogResourceUnpacker.class.getClassLoader().getResource("packed");
 			if (resourceUrl == null) {
@@ -107,6 +93,7 @@ public class FogResourceUnpacker {
 
 			// Check if running from a JAR file
 			try {
+				URI jarUrl = FogClient.JAR_URL;
 				String jarPath = Paths.get(jarUrl).toString();
 				FogClient.LOGGER.info("Running from JAR file: {}", jarPath);
 
