@@ -11,8 +11,8 @@ public class FogClientNeoForge {
 	public FogClientNeoForge() {
 		FogClient.initialize();
 
-		/^? if =1.20.4 {^//^
-		ModLoadingContext.get().registerExtensionPoint(
+		/^? if =1.20.4 {^/
+		/^ModLoadingContext.get().registerExtensionPoint(
 				net.neoforged.neoforge.client.ConfigScreenHandler.ConfigScreenFactory.class,
 				() -> new net.neoforged.neoforge.client.ConfigScreenHandler.ConfigScreenFactory(
 						(client, parent) -> FogConfig.getInstance().getYetAnotherConfigLibInstance().generateScreen(parent)

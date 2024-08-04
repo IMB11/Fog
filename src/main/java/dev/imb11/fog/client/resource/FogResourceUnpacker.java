@@ -6,15 +6,17 @@ import com.google.gson.JsonObject;
 import dev.imb11.fog.client.FogClient;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.*;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.stream.Stream;
 
 public class FogResourceUnpacker {
 	public static final Path UNPACKED_PATH = FogClient.getConfigFolder().resolve(FogResourceReloader.FOG_DEFINITIONS_FOLDER_NAME);
@@ -79,40 +81,85 @@ public class FogResourceUnpacker {
 			FogClient.LOGGER.info("Updated pack.mcmeta to pack format {}", packFormat);
 		}
 
-		// Get all files that match glob `packed/assets/*/fog_definitions/**/*.json` within this jar.
-		// If a file already exists, we will ignore it.
-		String fileGlob = String.format("assets/*/%s/**/*.json", FogResourceReloader.FOG_DEFINITIONS_FOLDER_NAME);
-		FogClient.LOGGER.info("Searching for files matching glob: {}", fileGlob);
-		List<Path> files = getFilesFromResourceFolder("packed", fileGlob);
-		FogClient.LOGGER.info("Found {} files to unpack:", files.size());
-		FogClient.LOGGER.info(Arrays.toString(files.toArray()));
-		for (Path file : files) {
-			var splitFilePath = file.toString().split(String.format("assets\\%s", File.separator));
-			if (splitFilePath.length <= 1) {
-				continue;
+		URI jarUrl;
+
+		/*? if fabric {*/
+		jarUrl = FogResourceUnpacker.class.getProtectionDomain().getCodeSource().getLocation().toURI();
+		/*?}*/
+
+		/*? if forge {*/
+		jarUrl = net.minecraftforge.fml.ModList.get().getModFileById("fog").getFile().getFilePath().toUri();
+		/*?}*/
+
+		/*? if neoforge {*/
+		jarUrl = net.neoforged.fml.ModList.get().getModFileById("fog").getFile().getFilePath().toUri();
+		/*?}*/
+
+		try {
+			URL resourceUrl = FogResourceUnpacker.class.getClassLoader().getResource("packed");
+			if (resourceUrl == null) {
+				throw new IllegalArgumentException("Resource not found: packed");
 			}
 
-			// Create a relative path for the file in the destination directory
-			@NotNull String relativePath = String.format("assets%s%s", File.separator, splitFilePath[1]);
-			@NotNull Path fullPath = UNPACKED_PATH.resolve(relativePath);
+			URI uri = resourceUrl.toURI();
 
-			// Create directories if they don't exist
+			FogClient.LOGGER.info("Unpacking resources from: {}", uri);
+
+			// Check if running from a JAR file
 			try {
-				Files.createDirectories(fullPath.getParent());
-			} catch (IOException e) {
-				FogClient.LOGGER.error(
-						"Exception thrown while creating folders for unpacked config resource pack assets (path: {}): {}", UNPACKED_PATH,
-						e
-				);
-			}
+				String jarPath = Paths.get(jarUrl).toString();
+				FogClient.LOGGER.info("Running from JAR file: {}", jarPath);
 
-			// Copy the file
-			if (!Files.exists(fullPath)) {
-				Files.copy(file, fullPath);
+				try (JarFile jarFile = new JarFile(jarPath)) {
+					Stream<JarEntry> entries = jarFile.stream();
+					entries.filter(e -> e.getName().startsWith("packed/"))
+					       .forEach(entry -> {
+						       Path targetPath = UNPACKED_PATH.resolve(entry.getName().substring("packed/".length()));
+							   FogClient.LOGGER.info("Unpacking: {}", targetPath);
+						       if (entry.isDirectory()) {
+							       try {
+								       if (!Files.exists(targetPath)) {
+									       Files.createDirectories(targetPath);
+								       }
+							       } catch (IOException e) {
+								       FogClient.LOGGER.error("Failed to create directory: {}", targetPath, e);
+							       }
+						       } else {
+							       if (!Files.exists(targetPath)) {
+								       try (InputStream inputStream = jarFile.getInputStream(entry)) {
+									       Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
+								       } catch (IOException e) {
+									       FogClient.LOGGER.error("Failed to copy file: {}", targetPath, e);
+								       }
+							       }
+						       }
+					       });
+				}
+			} catch (Exception ignored) {
+				// Running from file system
+				Path path = Paths.get(uri);
+				Files.walk(path).forEach(sourcePath -> {
+					try {
+						Path relativePath = path.relativize(sourcePath);
+						Path targetPath = UNPACKED_PATH.resolve(relativePath);
+
+						if (Files.isDirectory(sourcePath)) {
+							if (!Files.exists(targetPath)) {
+								Files.createDirectories(targetPath);
+							}
+						} else {
+							if (!Files.exists(targetPath)) {
+								Files.copy(sourcePath, targetPath);
+							}
+						}
+					} catch (IOException e) {
+						FogClient.LOGGER.error("Failed to copy file.", e);
+					}
+				});
 			}
+		} catch (Exception e) {
+			FogClient.LOGGER.error("Failed to unpack resources", e);
 		}
-
-		walkNamespaces();
 	}
 
 	public static void walkNamespaces() {
@@ -134,33 +181,5 @@ public class FogResourceUnpacker {
 		} catch (IOException e) {
 			FogClient.LOGGER.error("Error occurred while walking resource pack namespaces: {}", ExceptionUtils.getStackTrace(e));
 		}
-	}
-
-	public static @NotNull List<Path> getFilesFromResourceFolder(@NotNull String resourceFolder, @NotNull String pattern) throws IOException, URISyntaxException {
-		@NotNull List<Path> result = new ArrayList<>();
-		// Get the base directory from the resource folder
-		@Nullable var resource = FogResourceUnpacker.class.getClassLoader().getResource(resourceFolder);
-		if (resource == null) {
-			FogClient.LOGGER.error("Resource folder {} not found.", resourceFolder);
-			return result;
-		}
-
-		@NotNull Path basePath = Paths.get(resource.toURI());
-		// Create a PathMatcher for the glob pattern
-		@NotNull PathMatcher matcher = getPathMatcher(resource.toURI(), pattern);
-
-		try (@NotNull var stream = Files.walk(basePath)) {
-			result = stream
-					.filter(Files::isRegularFile)
-					.filter(path -> matcher.matches(basePath.relativize(path)))
-					.collect(Collectors.toList());
-		}
-
-		return result;
-	}
-
-	@SuppressWarnings("resource")
-	public static @NotNull PathMatcher getPathMatcher(@NotNull URI uri, @NotNull String pattern) {
-		return FileSystems.getDefault().getPathMatcher("glob:" + pattern);
 	}
 }

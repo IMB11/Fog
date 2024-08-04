@@ -10,3 +10,5 @@ stonecutter.registerChiseled tasks.register("chiseledBuildAndCollect", stonecutt
     group = "project"
     ofTask("buildAndCollect")
 }
+
+
