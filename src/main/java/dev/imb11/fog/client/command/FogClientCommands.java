@@ -4,7 +4,6 @@ import com.mojang.brigadier.context.CommandContext;
 import dev.architectury.event.events.client.ClientCommandRegistrationEvent;
 import dev.imb11.fog.client.FogManager;
 import dev.imb11.fog.client.util.color.Color;
-import dev.imb11.fog.client.util.math.HazeCalculator;
 import dev.imb11.fog.config.FogConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
@@ -59,7 +58,6 @@ public class FogClientCommands {
 						"§b§7[§rFog§b§7]§r Fog End: §6%.2f§r\n" +
 						"§b§7[§rFog§b§7]§r Darkness: §6%.2f§r\n" +
 						"§b§7[§rFog§b§7]§r Fog Color (Before Haze): §6#%s§r\n" +
-						"§b§7[§rFog§b§7]§r Haze Value: §6%.2f§r\n" +
 						"§b§7[§rFog§b§7]§r Current Sky Light: §6%.2f§r\n" +
 						"§b§7[§rFog§b§7]§r Current Block Light: §6%.2f§r\n" +
 						"§b§7[§rFog§b§7]§r Current Light: §6%.2f§r\n" +
@@ -71,7 +69,6 @@ public class FogClientCommands {
 				manager.fogEnd.get(tickDelta),
 				manager.darkness.get(tickDelta),
 				hexColor,
-				HazeCalculator.getHaze((int) clientWorld.getTimeOfDay()),
 				manager.currentSkyLight.get(tickDelta),
 				manager.currentBlockLight.get(tickDelta),
 				manager.currentLight.get(tickDelta),

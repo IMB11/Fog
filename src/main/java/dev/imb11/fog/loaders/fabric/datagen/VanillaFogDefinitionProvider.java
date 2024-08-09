@@ -46,7 +46,7 @@ public class VanillaFogDefinitionProvider extends CustomFogDefinitionDataProvide
 		        .colors("#266b21", "#171916").startMultiplier(0.15f).endMultiplier(0.35f).build());
 
 		provider.accept(ConventionalBiomeTags.IS_SWAMP, CustomFogDefinition.Builder.create()
-				.colors("#393d32", "#272922").build());
+				.colors("#bfc3a0", "#737861").build());
 
 		provider.accept(ConventionalBiomeTags.IS_BADLANDS, CustomFogDefinition.Builder.create()
 				.colors("#BF6621", "#8e4a19").build());

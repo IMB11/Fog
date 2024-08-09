@@ -3,7 +3,7 @@ package dev.imb11.fog.mixin.client.rendering;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.imb11.fog.client.FogManager;
-import dev.imb11.fog.client.util.math.HazeCalculator;
+import dev.imb11.fog.client.util.math.EnvironmentCalculations;
 import dev.imb11.fog.config.FogConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
@@ -42,9 +42,8 @@ public abstract class BackgroundRendererMixin {
 		@NotNull var fogManager = FogManager.getInstance();
 		@NotNull var fogSettings = fogManager.getFogSettings(tickDelta, viewDistance);
 		if (!world.getDimension().hasFixedTime() || !(world.getDimensionEffects() instanceof DimensionEffects.End)) {
-			fogSettings = HazeCalculator.applyHaze(
-					fogManager.getUndergroundFactor(MinecraftClient.getInstance(), tickDelta), fogSettings,
-					(int) world.getTimeOfDay() % 24000, tickDelta
+			fogSettings = EnvironmentCalculations.apply(
+					fogManager.getUndergroundFactor(MinecraftClient.getInstance(), tickDelta), fogSettings, tickDelta
 			);
 		}
 
@@ -111,8 +110,8 @@ public abstract class BackgroundRendererMixin {
 				client.options.getViewDistance().getValue()
 		);
 		if (!clientWorld.getDimension().hasFixedTime() || !(clientWorld.getDimensionEffects() instanceof DimensionEffects.End)) {
-			fogSettings = HazeCalculator.applyHaze(
-					fogManager.getUndergroundFactor(client, tickDelta), fogSettings, (int) clientWorld.getTimeOfDay() % 24000, tickDelta);
+			fogSettings = EnvironmentCalculations.apply(
+					fogManager.getUndergroundFactor(client, tickDelta), fogSettings, tickDelta);
 		}
 		RenderSystem.clearColor(fogSettings.fogRed(), fogSettings.fogGreen(), fogSettings.fogBlue(), 1.0F);
 		/*? if >=1.20.4 {*/

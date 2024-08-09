@@ -62,10 +62,7 @@ public class FogManager {
 			return;
 		}
 
-		if (PlayerUtil.isPlayerAboveGround(
-				clientPlayer.getEyePos().getY(), world.getSeaLevel(),
-				world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, clientPlayerBlockPosition.getX(), clientPlayerBlockPosition.getZ())
-		)) {
+		if (PlayerUtil.isPlayerAboveGround(clientPlayer)) {
 			this.undergroundness.interpolate(0.0F);
 		} else {
 			this.undergroundness.interpolate(1.0F);
@@ -94,12 +91,10 @@ public class FogManager {
 			colors = FogColors.DEFAULT;
 		}
 
-		long time = world.getTimeOfDay() % 24000;
-		boolean isDay = time < 12000;
-		float blendFactor = isDay ? (time / 12000f) : ((time - 12000) / 12000f);
-		float red = MathHelper.lerp(blendFactor, colors.getDayColor().red / 255f, colors.getNightColor().red / 255f);
-		float green = MathHelper.lerp(blendFactor, colors.getDayColor().green / 255f, colors.getNightColor().green / 255f);
-		float blue = MathHelper.lerp(blendFactor, colors.getDayColor().blue / 255f, colors.getNightColor().blue / 255f);
+		float blendFactor = getBlendFactor(world);
+		float red = MathHelper.lerp(blendFactor, colors.getNightColor().red / 255f, colors.getDayColor().red / 255f);
+		float green = MathHelper.lerp(blendFactor, colors.getNightColor().green / 255f, colors.getDayColor().green / 255f);
+		float blue = MathHelper.lerp(blendFactor, colors.getNightColor().blue / 255f, colors.getDayColor().blue / 255f);
 		this.fogColorRed.interpolate(red);
 		this.fogColorGreen.interpolate(green);
 		this.fogColorBlue.interpolate(blue);
@@ -114,6 +109,23 @@ public class FogManager {
 		this.currentSkyLight.interpolate(world.getLightLevel(LightType.SKY, clientPlayerBlockPosition));
 		this.currentBlockLight.interpolate(world.getLightLevel(LightType.BLOCK, clientPlayerBlockPosition));
 		this.currentLight.interpolate(world.getBaseLightLevel(clientPlayerBlockPosition, 0));
+	}
+
+	private static float getBlendFactor(@NotNull ClientWorld world) {
+		long time = world.getTimeOfDay() % 24000;
+		float blendFactor;
+		if (time < 11000) {
+			blendFactor = 1.0f; // Daytime
+		} else if (time < 13000) {
+			blendFactor = MathUtil.lerp(1.0f, 0.0f, (time - 11000) / 2000f); // Blend from day to night
+		} else if (time < 22000) {
+			blendFactor = 0.0f; // Nighttime
+		} else if (time < 23000) {
+			blendFactor = MathUtil.lerp(0.0f, 1.0f, (time - 22000) / 1000f); // Blend from night to day
+		} else {
+			blendFactor = 1.0f; // Constant day from 23000 to 24000 ticks
+		}
+		return blendFactor;
 	}
 
 	public float getUndergroundFactor(@NotNull MinecraftClient client, float deltaTicks) {
@@ -146,6 +158,7 @@ public class FogManager {
 		float fogEndValue = viewDistance * (fogEnd.get(tickDelta));
 		if (undergroundFogMultiplier > 0.78f) {
 			fogEndValue /= 1 + undergroundFogMultiplier;
+			fogStartValue *= 1 - undergroundFogMultiplier;
 		}
 
 		float fogRed = fogColorRed.get(tickDelta);

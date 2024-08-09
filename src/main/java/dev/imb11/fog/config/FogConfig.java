@@ -3,7 +3,7 @@ package dev.imb11.fog.config;
 import com.google.gson.GsonBuilder;
 import dev.imb11.fog.client.FogClient;
 import dev.imb11.fog.client.FogManager;
-import dev.imb11.fog.client.util.math.HazeCalculator;
+import dev.imb11.fog.client.util.math.EnvironmentCalculations;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
@@ -32,25 +32,6 @@ public class FogConfig {
 					.build())
 			.build();
 	@SerialEntry
-	public TreeMap<Integer, Float> timeToHazeMap = new TreeMap<>(Map.of(
-			// Sunrise Preparation (Sun appears on horizon)
-			22300, 0.45f,
-			// Sunrise Starts (Sun glare shader kicks in)
-			23000, 0.1f,
-			// Sunrise Ends (Sun glare shader ends)
-			23981, 0.45f,
-			// Noon
-			6000, 0.8f,
-			// Sunset Preparation (Moon appears on horizon)
-			11500, 0.45f,
-			// Sunset Starts (Sun glare shader kicks in)
-			12000, 0.1f,
-			// Sunset Ends (Sun glare shader ends)
-			12969, 0.45f,
-			// Midnight
-			18000, 0.9f
-	));
-	@SerialEntry
 	public float initialFogStart = 0.1f;
 	@SerialEntry
 	public float initialFogEnd = 0.85f;
@@ -60,8 +41,6 @@ public class FogConfig {
 	public boolean disableUndergroundFogMultiplier = false;
 	@SerialEntry
 	public boolean disableBiomeFogColour = false;
-	@SerialEntry
-	public boolean disableHazeCalculation = false;
 	@SerialEntry
 	public boolean disableCloudWhitening = false;
 	/**
@@ -85,8 +64,6 @@ public class FogConfig {
 
 	public static void load() {
 		HANDLER.load();
-
-		HazeCalculator.initialize();
 	}
 
 	public static void save() {
@@ -100,7 +77,6 @@ public class FogConfig {
 					HANDLER.save();
 
 					FogManager.INSTANCE = new FogManager();
-					HazeCalculator.initialize();
 				})
 				.category(ConfigCategory.createBuilder()
 				                        .name(getText(EntryType.CATEGORY_NAME, "fog_calculations"))
@@ -150,16 +126,6 @@ public class FogConfig {
 								                        )).build()).binding(
 						                        defaults.disableBiomeFogColour, () -> disableBiomeFogColour,
 						                        newDisableBiomeFogColour -> disableBiomeFogColour = newDisableBiomeFogColour
-				                        ).controller(BooleanControllerBuilder::create).build())
-				                        .option(Option.<Boolean>createBuilder().name(
-						                        getText(EntryType.OPTION_NAME, "disable_haze_calculation")).description(
-						                        initialFogStart -> OptionDescription.createBuilder().text(
-								                        getText(
-										                        EntryType.OPTION_DESCRIPTION,
-										                        "disable_haze_calculation"
-								                        )).build()).binding(
-						                        defaults.disableHazeCalculation, () -> disableHazeCalculation,
-						                        newDisableHazeCalculation -> disableHazeCalculation = newDisableHazeCalculation
 				                        ).controller(BooleanControllerBuilder::create).build())
 				                        .option(Option.<Boolean>createBuilder().name(
 						                        getText(EntryType.OPTION_NAME, "disable_cloud_whitening")).description(
