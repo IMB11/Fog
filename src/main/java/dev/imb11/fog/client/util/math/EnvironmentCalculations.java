@@ -27,8 +27,8 @@ public class EnvironmentCalculations {
 		Color belowColor = belowGroundColors.getNightColor();
 
 		float fogColorR = MathHelper.lerp(undergroundFactor, belowColor.red / 255f, settings.fogRed()),
-				fogColorG = MathHelper.lerp(undergroundFactor, belowColor.green / 255f, settings.fogRed()),
-				fogColorB = MathHelper.lerp(undergroundFactor, belowColor.blue / 255f, settings.fogGreen());
+				fogColorG = MathHelper.lerp(undergroundFactor, belowColor.green / 255f, settings.fogGreen()),
+				fogColorB = MathHelper.lerp(undergroundFactor, belowColor.blue / 255f, settings.fogBlue());
 
 		return new FogManager.FogSettings(settings.fogStart(), settings.fogEnd(), fogColorR, fogColorG, fogColorB);
 	}
