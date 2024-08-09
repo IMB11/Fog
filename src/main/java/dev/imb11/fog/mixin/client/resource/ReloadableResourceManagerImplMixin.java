@@ -18,7 +18,8 @@ public class ReloadableResourceManagerImplMixin {
 	private static @NotNull List<ResourcePack> fog$modifyResourcePackList(List<ResourcePack> packs) {
 		FogResourceUnpacker.walkNamespaces();
 		return new ArrayList<>(packs) {{
-			add(0, new FogResourcePack());
+			// Add pack to the end of the list.
+			add(new FogResourcePack());
 		}};
 	}
 }
