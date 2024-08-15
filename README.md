@@ -20,11 +20,11 @@ The fog adjusts with the weather, so during rain or snow, the fog will change ac
 
 ![Weather Fog comparison (left: Mod Disabled; right: Mod Enabled)](https://cdn.modrinth.com/data/WuGVWUF2/images/f1ccdd8276b7412e343c70bedec36fb7bd255c0d.png)
 
-### Time-Based Haze
+### Time-Based Colors
 
 Fog becomes more colorful and vibrant during sunsets, sunrises, and nighttime. This feature enhances the beauty of these moments, providing stunning visuals and a more dynamic environment that changes with the time of day.
 
-![Time-Based Haze comparison (left: Mod Disabled; right: Mod Enabled)](https://cdn.modrinth.com/data/WuGVWUF2/images/9813abf2da44ebb8a617896299497abd989888af.png)
+![Time-Based Haze comparison (left: Mod Disabled; right: Mod Enabled)](https://cdn.modrinth.com/data/WuGVWUF2/images/f52d639bef3213914c80284fa8b19c0bc03c342e.png)
 
 ### Biome Fog Colors
 

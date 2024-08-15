@@ -26,5 +26,12 @@ versionRange="${target_minecraft}"
 ordering="NONE"
 side="BOTH"
 
+[[dependencies.fog]]
+modId="mru"
+${mandatory_inclusion_field}
+versionRange="${target_mru}"
+ordering="NONE"
+side="BOTH"
+
 [[mixins]]
 config="fog.mixins.json"

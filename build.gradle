@@ -114,6 +114,7 @@ dependencies {
     })
 
     modImplementation(include("dev.architectury:architectury-${loader}:${property("deps.arch_api")}"))
+    modImplementation "dev.imb11:mru:${property("deps.mru")}+${mcVersion}+${loader}"
 
     if (isFabric) {
         System.out.println(loader)
@@ -146,6 +147,7 @@ processResources {
     def props = [
             mod_version: version,
             target_minecraft: project.property("mod.target"),
+            target_mru: project.property("deps.mru") + "+" + mcVersion + "+" + loader,
     ]
 
     if (loader == "forge" || loader == "neoforge") {

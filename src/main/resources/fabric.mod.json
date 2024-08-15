@@ -33,6 +33,7 @@
   "depends": {
     "fabricloader": "*",
     "fabric": "*",
+    "mru": "~${target_mru}",
     "architectury": ">=${target_architectury}",
     "minecraft": "${target_minecraft}"
   }

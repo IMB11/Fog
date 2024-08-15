@@ -6,8 +6,9 @@ import dev.architectury.registry.ReloadListenerRegistry;
 import dev.imb11.fog.client.command.FogClientCommands;
 import dev.imb11.fog.client.registry.FogRegistry;
 import dev.imb11.fog.client.resource.FogResourceReloader;
-import dev.imb11.fog.client.resource.FogResourceUnpacker;
 import dev.imb11.fog.config.FogConfig;
+import dev.imb11.mru.packing.Unpacker;
+import dev.imb11.mru.packing.resource.UnpackedResourcePack;
 import net.minecraft.resource.ResourceType;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -57,29 +58,9 @@ public class FogClient {
 	public static void initialize() {
 		LOGGER.info("Loading {}.", MOD_NAME);
 
-		try {
-			/*? if fabric {*/
-			JAR_URL = FogResourceUnpacker.class.getProtectionDomain().getCodeSource().getLocation().toURI();
-			/*?}*/
-
-			/*? if forge {*/
-			/*JAR_URL = net.minecraftforge.fml.ModList.get().getModFileById("fog").getFile().getFilePath().toUri();
-			 *//*?}*/
-
-			/*? if neoforge {*/
-			/*JAR_URL = net.neoforged.fml.ModList.get().getModFileById("fog").getFile().getFilePath().toUri();
-			 *//*?}*/
-
-			LOGGER.info("JAR URL: {}", JAR_URL);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-
-		try {
-			FogResourceUnpacker.tryUnpack();
-		} catch (IOException | URISyntaxException e) {
-			throw new RuntimeException(e);
-		}
+		Unpacker.register(FogClient.class, new UnpackedResourcePack("fog", getConfigFolder().resolve(FogResourceReloader.FOG_DEFINITIONS_FOLDER_NAME), "fog", "This folder contains the unpacked fog definitions.\n" +
+				"You can edit these files to customize the fog in your game.\n" +
+				"For more information, visit https://docs.imb11.dev/fog/"));
 
 		FogConfig.load();
 		FogClientCommands.register();
