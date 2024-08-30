@@ -1,15 +1,15 @@
-// 1.21	2024-08-09T18:53:18.883315029	Fog/Custom Fog Definition:fog
-2eedd3cc242d4a5bf11012c706791a0bf59cc142 assets/c/fog_definitions/tag/biome/is_beach.json
-efa18c3764d4d5d57a4ca2f3dabd69d188148a19 assets/minecraft/fog_definitions/biome/soul_sand_valley.json
-e21ca1bacda76f8e67c3a79262c54bb45b0f70ce assets/minecraft/fog_definitions/biome/warped_forest.json
-2eedd3cc242d4a5bf11012c706791a0bf59cc142 assets/c/fog_definitions/tag/biome/is_desert.json
-d18991fdc8b5c612a3ae1b45144585860b1bf064 assets/minecraft/fog_definitions/biome/nether_wastes.json
-ff9939863833df7f1cc8b94bec65cb20c1272cce assets/c/fog_definitions/tag/biome/is_snowy.json
-c44acf070f8bc256a1e050d27589770dbbc231c2 assets/c/fog_definitions/tag/biome/is_aquatic_icy.json
-af8eb08b3d03d59e2aac9274aa816262ea6baca1 assets/minecraft/fog_definitions/biome/sparse_jungle.json
-fb7fb76860cf9dc5ce404cbd0df886a1f7ff6032 assets/c/fog_definitions/tag/biome/is_jungle.json
-081f23017dccbbbbf86d0fed5183724dd3b2fae7 assets/minecraft/fog_definitions/biome/basalt_deltas.json
-ed7a26be0cdc64db4e2714898fec43817761c00b assets/minecraft/fog_definitions/biome/crimson_forest.json
-4a095b16c1146432aee0cd907ceb87d33c031738 assets/c/fog_definitions/tag/biome/is_end.json
-3db914b006fd089cee5246445cc9a06e805a9663 assets/c/fog_definitions/tag/biome/is_badlands.json
-082f5ef1355a82b522ddb90e883117b21dee862c assets/c/fog_definitions/tag/biome/is_swamp.json
+// 1.21.1	2024-08-30T19:57:10.8858252	Fog/Custom Fog Definition:fog
+ed7a26be0cdc64db4e2714898fec43817761c00b assets\minecraft\fog_definitions\biome\crimson_forest.json
+61268868389f80ddd2fc175dab578a5a6d3775dd assets\c\fog_definitions\tag\biome\is_aquatic_icy.json
+bdf7dff67ada32610d3c8970f29d8c74d654ca55 assets\c\fog_definitions\tag\biome\is_beach.json
+efa18c3764d4d5d57a4ca2f3dabd69d188148a19 assets\minecraft\fog_definitions\biome\soul_sand_valley.json
+ff9939863833df7f1cc8b94bec65cb20c1272cce assets\c\fog_definitions\tag\biome\is_snowy.json
+081f23017dccbbbbf86d0fed5183724dd3b2fae7 assets\minecraft\fog_definitions\biome\basalt_deltas.json
+0aadd5cec8445c0814015d19f23cfb515e4fff62 assets\c\fog_definitions\tag\biome\is_badlands.json
+d18991fdc8b5c612a3ae1b45144585860b1bf064 assets\minecraft\fog_definitions\biome\nether_wastes.json
+6ab53206f31ea26518ebf301389f655c2846e67e assets\c\fog_definitions\tag\biome\is_desert.json
+024071636ecdb7f6288625a11a90b2d75d65c917 assets\minecraft\fog_definitions\biome\sparse_jungle.json
+4a095b16c1146432aee0cd907ceb87d33c031738 assets\c\fog_definitions\tag\biome\is_end.json
+5e48288dad15e0c0bfd3db7ada891bc50cdbc5a2 assets\c\fog_definitions\tag\biome\is_jungle.json
+450e4e8e01a0af4128b371ad342d4a0d7bd9e560 assets\c\fog_definitions\tag\biome\is_swamp.json
+e21ca1bacda76f8e67c3a79262c54bb45b0f70ce assets\minecraft\fog_definitions\biome\warped_forest.json

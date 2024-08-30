@@ -43,7 +43,7 @@ loom {
         }
     }
 
-    if (loader == "fabric" && mcVersion == "1.21") {
+    if (loader == "fabric" && mcVersion == "1.21.1") {
         runs {
             datagenClient {
                 client()
@@ -112,12 +112,12 @@ dependencies {
     mappings(loom.layered {
         mappings("net.fabricmc:yarn:${property("deps.yarn")}:v2")
         if (stonecutter.eval(mcVersion, ">=1.20.6")) {
-            mappings("dev.architectury:yarn-mappings-patch-neoforge:${mcVersion}+build.4")
+            mappings("dev.architectury:yarn-mappings-patch-neoforge:${mcVersion.replace("1.21.1", "1.21")}+build.4")
         }
     })
 
     modImplementation(include("dev.architectury:architectury-${loader}:${property("deps.arch_api")}"))
-    modImplementation "dev.imb11:mru:${property("deps.mru")}+${mcVersion}+${loader}"
+    modImplementation "dev.imb11:mru:${property("deps.mru")}+${mcVersion.replace("1.21.1", "1.21")}+${loader}"
 
     if (isFabric) {
         System.out.println(loader)

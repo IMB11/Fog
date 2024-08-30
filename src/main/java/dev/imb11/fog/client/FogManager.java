@@ -151,13 +151,15 @@ public class FogManager {
 		// Default to no multiplier
 		float undergroundFogMultiplier = 1.0F;
 		if (!FogConfig.getInstance().disableUndergroundFogMultiplier) {
-			undergroundFogMultiplier = MathHelper.lerp(this.undergroundness.get(tickDelta), 0.75F, 1.0F);
+			undergroundFogMultiplier = this.undergroundness.get(tickDelta);
 			undergroundFogMultiplier = MathHelper.lerp(this.darkness.get(tickDelta), undergroundFogMultiplier, 1.0F);
 		}
 
 		float fogEndValue = viewDistance * (fogEnd.get(tickDelta));
-		fogEndValue /= 1 + undergroundFogMultiplier;
-		fogStartValue *= 1 - undergroundFogMultiplier;
+		if (undergroundFogMultiplier > 0.0F) {
+			fogEndValue /= 1 + undergroundFogMultiplier;
+			fogStartValue *= Math.max(0.1f, 0.5f - undergroundFogMultiplier);
+		}
 
 		float fogRed = fogColorRed.get(tickDelta);
 		float fogGreen = fogColorGreen.get(tickDelta);
