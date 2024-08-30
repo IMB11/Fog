@@ -83,6 +83,9 @@ repositories {
     maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     maven { url "https://maven.quiltmc.org/repository/release" }
     maven { url 'https://maven.terraformersmc.com/releases' }
+    maven {
+        url 'https://thedarkcolour.github.io/KotlinForForge'
+    }
     exclusiveContent {
         forRepository {
             maven {
@@ -123,15 +126,10 @@ dependencies {
         modImplementation("net.fabricmc.fabric-api:fabric-api:${property("runtime.fabric_api")}")
         modImplementation("maven.modrinth:modmenu:${property("deps.mod_menu")}")
 
-        modImplementation(include("dev.isxander:yet-another-config-lib:${property("deps.yacl")}-${loader}"))
+        modImplementation "dev.isxander:yet-another-config-lib:${property("deps.yacl")}-${loader}"
     } else {
         // YACL stuff
-        modImplementation(include("dev.isxander:yet-another-config-lib:${property("deps.yacl")}-${loader}"), {
-            transitive = false
-        })
-
-        "forgeRuntimeLibrary"(implementation include("org.quiltmc.parsers:json:0.2.1"))
-        "forgeRuntimeLibrary"(implementation include("org.quiltmc.parsers:gson:0.2.1"))
+        modImplementation "dev.isxander:yet-another-config-lib:${property("deps.yacl")}-${loader}"
 
         if (loader == "forge") {
             "forge"("net.minecraftforge:forge:${mcVersion}-${property("deps.fml")}")

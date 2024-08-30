@@ -26,5 +26,10 @@ versionRange="${target_minecraft}"
 ordering="NONE"
 side="BOTH"
 
+[[dependencies.fog]]
+modId = "yet_another_config_lib_v3"
+${mandatory_inclusion_field}
+versionRange = "[3.5.0,)"
+
 [[mixins]]
 config="fog.mixins.json"

@@ -27,6 +27,11 @@ ordering="NONE"
 side="BOTH"
 
 [[dependencies.fog]]
+modId = "yet_another_config_lib_v3"
+${mandatory_inclusion_field}
+versionRange = "[3.5.0,)"
+
+[[dependencies.fog]]
 modId="mru"
 ${mandatory_inclusion_field}
 versionRange="${target_mru}"

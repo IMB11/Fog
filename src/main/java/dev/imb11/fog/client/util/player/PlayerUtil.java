@@ -8,6 +8,7 @@ import net.minecraft.world.Heightmap;
 public class PlayerUtil {
 	private static boolean cachedResult = false;
 	private static long lastCheckTime = -1;
+
 	public static boolean isPlayerAboveGround(ClientPlayerEntity clientPlayerEntity) {
 		// Cache the result for 0.25 seconds
 		if (System.currentTimeMillis() - lastCheckTime < 250) {
@@ -20,12 +21,13 @@ public class PlayerUtil {
 	}
 
 	private static boolean isPlayerAboveGroundImpl(ClientPlayerEntity clientPlayerEntity) {
+		if (clientPlayerEntity.isSubmergedInWater()) return true;
+
 		// Check 10 points around the player to see if they are above ground, 65% of the points must be underground to return false
 		double x = clientPlayerEntity.getX();
 		double z = clientPlayerEntity.getZ();
 		double y = clientPlayerEntity.getEyeY();
 		ClientWorld world = clientPlayerEntity.clientWorld;
-
 
 		// random point within 5x5 radius of player
 		int points = 10;
@@ -34,8 +36,8 @@ public class PlayerUtil {
 			double dx = (Math.random() - 0.5) * 5;
 			double dz = (Math.random() - 0.5) * 5;
 
-			int topY = world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, (int) (x + dx), (int) (z + dz));
-			int seaLevel = world.getSeaLevel();
+			float topY = world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, (int) (x + dx), (int) (z + dz));
+			float seaLevel = world.getSeaLevel() - 0.25f;
 
 			// Offset topY using sea level info to prevent false positives, eg: house roofs etc.
 			topY = Math.max(topY, seaLevel);
