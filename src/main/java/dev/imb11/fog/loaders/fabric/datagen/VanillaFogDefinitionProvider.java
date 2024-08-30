@@ -22,7 +22,7 @@ public class VanillaFogDefinitionProvider extends CustomFogDefinitionDataProvide
 	@Override
 	public void acceptBiomes(@NotNull BiConsumer<Identifier, CustomFogDefinition> provider) {
 		provider.accept(Identifier.tryParse("sparse_jungle"), CustomFogDefinition.Builder.create()
-                 .colors("#5dad6e", "#1a1e1b").startMultiplier(0.75f).endMultiplier(1.0f).build());
+                 .colors("#7EBAA2", "#1A2122").startMultiplier(0.75f).endMultiplier(1.0f).build());
 
 		provider.accept(Identifier.tryParse("basalt_deltas"), CustomFogDefinition.Builder.create()
 				.colors("#36292B", "#36292B").startMultiplier(0.8f).endMultiplier(0.01f).build());
@@ -43,25 +43,25 @@ public class VanillaFogDefinitionProvider extends CustomFogDefinitionDataProvide
 	@Override
 	public void acceptBiomeTags(@NotNull BiConsumer<TagKey<Biome>, CustomFogDefinition> provider) {
 		provider.accept(ConventionalBiomeTags.IS_JUNGLE, CustomFogDefinition.Builder.create()
-		        .colors("#266b21", "#171916").startMultiplier(0.15f).endMultiplier(0.35f).build());
+		        .colors("#5B9071", "#171E23").startMultiplier(0.15f).endMultiplier(0.35f).build());
 
 		provider.accept(ConventionalBiomeTags.IS_SWAMP, CustomFogDefinition.Builder.create()
-				.colors("#bfc3a0", "#737861").build());
+				.colors("#BDC8C2", "#5A6459").build());
 
 		provider.accept(ConventionalBiomeTags.IS_BADLANDS, CustomFogDefinition.Builder.create()
-				.colors("#BF6621", "#8e4a19").build());
+				.colors("#BCA199", "#82512E").build());
 
 		provider.accept(ConventionalBiomeTags.IS_DESERT, CustomFogDefinition.Builder.create()
-				.colors("#D6C699", "#BFAA7F").build());
+				.colors("#D1C8AB", "#827D6A").build());
 
 		provider.accept(ConventionalBiomeTags.IS_SNOWY, CustomFogDefinition.Builder.create()
 				.colors("#F4F9EF", "#F4F9EF").build());
 
 		provider.accept(ConventionalBiomeTags.IS_AQUATIC_ICY, CustomFogDefinition.Builder.create()
-				.colors("#bfded7", "#83a099").build());
+				.colors("#BDDBE1", "#526C72").build());
 
 		provider.accept(ConventionalBiomeTags.IS_BEACH, CustomFogDefinition.Builder.create()
-				.colors("#D6C699", "#BFAA7F").build());
+				.colors("#CBCABD", "#827D6A").build());
 
 		provider.accept(ConventionalBiomeTags.IS_END, CustomFogDefinition.Builder.create()
 				.colors("#291d26", "#291d26")

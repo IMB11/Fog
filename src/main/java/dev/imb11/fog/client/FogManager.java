@@ -51,10 +51,10 @@ public class FogManager {
 			return;
 		}
 
-		if (world.hasRain(clientPlayer.getBlockPos())) {
+		if (world.hasRain(clientPlayer.getBlockPos()) && world.getBiome(clientPlayer.getBlockPos()).value().hasPrecipitation()) {
 			raininess.interpolate(1.0f);
 		} else {
-			raininess.interpolate(0.0f);
+			raininess.interpolate(0.0f, 1f);
 		}
 
 		@Nullable final BlockPos clientPlayerBlockPosition = clientPlayer.getBlockPos();
@@ -156,23 +156,22 @@ public class FogManager {
 		}
 
 		float fogEndValue = viewDistance * (fogEnd.get(tickDelta));
-		if (undergroundFogMultiplier > 0.78f) {
-			fogEndValue /= 1 + undergroundFogMultiplier;
-			fogStartValue *= 1 - undergroundFogMultiplier;
-		}
+		fogEndValue /= 1 + undergroundFogMultiplier;
+		fogStartValue *= 1 - undergroundFogMultiplier;
 
 		float fogRed = fogColorRed.get(tickDelta);
 		float fogGreen = fogColorGreen.get(tickDelta);
 		float fogBlue = fogColorBlue.get(tickDelta);
 
 		float raininessValue = raininess.get(tickDelta);
+
 		if (!FogConfig.getInstance().disableRaininessEffect && raininessValue > 0.0f) {
 			fogEndValue /= 1.0f + 0.5f * raininessValue;
 
 			// Darken the fog colour based on raininess
-			fogRed *= 1f - raininessValue;
-			fogGreen *= 1f - raininessValue;
-			fogBlue *= 0.85f - raininessValue;
+			fogRed = Math.max(0.1f, fogRed - (0.5f * raininessValue));
+			fogGreen = Math.max(0.1f, fogGreen - (0.5f * raininessValue));
+			fogBlue = Math.max(0.1f, fogBlue - (0.5f * raininessValue));
 		}
 
 		float darknessValue = this.darkness.get(tickDelta);

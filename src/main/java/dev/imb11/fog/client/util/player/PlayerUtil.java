@@ -36,21 +36,21 @@ public class PlayerUtil {
 			double dx = (Math.random() - 0.5) * 5;
 			double dz = (Math.random() - 0.5) * 5;
 
-			float topY = world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, (int) (x + dx), (int) (z + dz));
+			float topY = world.getTopY(Heightmap.Type.WORLD_SURFACE_WG, (int) (x + dx), (int) (z + dz));
 			float seaLevel = world.getSeaLevel() - 0.25f;
 
 			// Offset topY using sea level info to prevent false positives, eg: house roofs etc.
 			topY = Math.max(topY, seaLevel);
 
-			if (y < topY) {
+			if (y < topY && y < seaLevel) {
 				undergroundPoints++;
 			}
 		}
 
 		// Check point at player eyes too.
-		int topY = world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, (int) x, (int) z);
+		int topY = world.getTopY(Heightmap.Type.WORLD_SURFACE_WG, (int) x, (int) z);
 		int seaLevel = world.getSeaLevel();
-		if(y < topY && y < seaLevel) {
+		if(y < topY && y < seaLevel - 0.25f) {
 			undergroundPoints++;
 		}
 
