@@ -55,7 +55,7 @@ public class VanillaFogDefinitionProvider extends CustomFogDefinitionDataProvide
 				.colors("#D1C8AB", "#827D6A").build());
 
 		provider.accept(ConventionalBiomeTags.IS_SNOWY, CustomFogDefinition.Builder.create()
-				.colors("#F4F9EF", "#F4F9EF").build());
+				.colors("#DFEBF4", "#687782").build());
 
 		provider.accept(ConventionalBiomeTags.IS_AQUATIC_ICY, CustomFogDefinition.Builder.create()
 				.colors("#BDDBE1", "#526C72").build());

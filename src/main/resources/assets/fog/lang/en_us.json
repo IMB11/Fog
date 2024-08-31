@@ -1,4 +1,6 @@
 {
+  "fog.datagen_warning.title": "§6§l§nWarning!§r",
+  "fog.datagen_warning.message": "Fog has been updated, changing the default biome fog colors.\nPlease back up your changes to the `.minecraft/config/fog/fog_definitions` folder before deleting it to apply the new changes.\nThis will not be shown again. (Note: Pressing 'OK' will not delete the folder for you.)",
   "fog.config.category.fog_calculations": "Fog Calculations",
   "fog.config.option.fog_calculations.warning": "§6§l§nWarning!§r It is not recommended to touch these constants unless you understand what they do, and how they are used.\nConsider leaving them as-is for the best experience.",
   "fog.config.option.initial_fog_start": "Initial Fog Start",

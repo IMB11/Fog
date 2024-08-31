@@ -10,6 +10,7 @@
   "mixins": [],
   "client": [
     "client.rendering.BackgroundRendererMixin",
-    "client.rendering.WorldRendererMixin"
+    "client.rendering.WorldRendererMixin",
+    "client.ui.TitleScreenMixin"
   ]
 }
