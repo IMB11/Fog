@@ -46,6 +46,7 @@ Additionally, clouds maintain their natural look and are not affected by fog col
 
 - [Fabric API](https://modrinth.com/mod/fabric-api)
 - [YetAnotherConfigLib](https://modrinth.com/mod/yacl)
+- [M.R.U](https://modrinth.com/mod/mru)
 
 ## Compatibility info
 
