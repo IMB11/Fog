@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
 import dev.imb11.fog.api.CustomFogDefinition;
+import dev.imb11.fog.client.FogClient;
 import dev.imb11.fog.client.registry.FogRegistry;
 
 import net.minecraft.registry.Registry;
@@ -11,18 +12,17 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourceReloader;
+import net.minecraft.resource.SinglePreparationResourceReloader;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-public class FogResourceReloader implements ResourceReloader {
+public class FogResourceReloader extends SinglePreparationResourceReloader<Void> {
 	private static final @NotNull Gson GSON = new Gson();
 	private static final @NotNull String JSON_FILE_SUFFIX = ".json";
 	public static final @NotNull String FOG_DEFINITIONS_FOLDER_NAME = "fog_definitions";
@@ -32,22 +32,26 @@ public class FogResourceReloader implements ResourceReloader {
 	public static final @NotNull String BIOME_FOLDER_NAME = "biome";
 	public static final @NotNull String BIOME_TAGS_FOLDER_NAME = String.format("%s/%s", TAG_FOLDER_NAME, BIOME_FOLDER_NAME);
 
+	/**
+	 * The preparation stage, ran on worker threads.
+	 */
 	@Override
-	public CompletableFuture<Void> reload(
-			@NotNull Synchronizer synchronizer, @NotNull ResourceManager resourceManager, @NotNull Profiler prepareProfiler,
-			@NotNull Profiler applyProfiler, @NotNull Executor prepareExecutor, @NotNull Executor applyExecutor
-	) {
-		return CompletableFuture.supplyAsync(() -> {
-			FogRegistry.resetCaches();
+	protected @Nullable Void prepare(ResourceManager resourceManager, Profiler profiler) {
+		FogRegistry.resetCaches();
 
-			loadTaggedFogs(resourceManager, STRUCTURE_TAGS_FOLDER_NAME, FogRegistry.getStructureTagFogRegistry(), RegistryKeys.STRUCTURE);
-			loadTaggedFogs(resourceManager, BIOME_TAGS_FOLDER_NAME, FogRegistry.getBiomeTagFogRegistry(), RegistryKeys.BIOME);
-			loadFogs(resourceManager, STRUCTURE_FOLDER_NAME, FogRegistry.getStructureFogRegistry());
-			loadFogs(resourceManager, BIOME_FOLDER_NAME, FogRegistry.getBiomeFogRegistry());
+		loadTaggedFogs(resourceManager, STRUCTURE_TAGS_FOLDER_NAME, FogRegistry.getStructureTagFogRegistry(), RegistryKeys.STRUCTURE);
+		loadTaggedFogs(resourceManager, BIOME_TAGS_FOLDER_NAME, FogRegistry.getBiomeTagFogRegistry(), RegistryKeys.BIOME);
+		loadFogs(resourceManager, STRUCTURE_FOLDER_NAME, FogRegistry.getStructureFogRegistry());
+		loadFogs(resourceManager, BIOME_FOLDER_NAME, FogRegistry.getBiomeFogRegistry());
+		return null;
+	}
 
-			synchronizer.whenPrepared(null);
-			return null;
-		}, applyExecutor);
+	/**
+	 * The apply stage, ran on the main thread.
+	 */
+	@Override
+	protected void apply(@Nullable Void prepared, ResourceManager resourceManager, Profiler profiler) {
+		// NO-OP
 	}
 
 	private <K> void loadFogs(
@@ -78,7 +82,7 @@ public class FogResourceReloader implements ResourceReloader {
 						GSON.fromJson(new String(jsonFog.getValue().getInputStream().readAllBytes()), JsonElement.class)
 				).result().orElseThrow());
 			} catch (IOException e) {
-				throw new RuntimeException(e);
+				FogClient.LOGGER.error("Exception thrown while deserializing a fog definition (identifier: {}): {}", fogIdentifier, e);
 			}
 		}
 	}

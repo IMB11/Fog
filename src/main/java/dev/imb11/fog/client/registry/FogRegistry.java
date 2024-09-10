@@ -1,6 +1,5 @@
 package dev.imb11.fog.client.registry;
 
-import dev.architectury.event.events.client.ClientPlayerEvent;
 import dev.imb11.fog.api.CustomFogDefinition;
 
 import net.minecraft.registry.Registry;
@@ -12,18 +11,18 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.structure.Structure;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FogRegistry {
-	private static final Map<TagKey<Structure>, CustomFogDefinition> STRUCTURE_TAG_FOG_REGISTRY = new HashMap<>();
-	private static final Map<Identifier, CustomFogDefinition> STRUCTURE_FOG_REGISTRY = new HashMap<>();
-	private static final Map<TagKey<Biome>, CustomFogDefinition> BIOME_TAG_FOG_REGISTRY = new HashMap<>();
-	private static final Map<Identifier, CustomFogDefinition> BIOME_FOG_REGISTRY = new HashMap<>();
-	private static final Map<Identifier, Identifier> TAGGED_BIOME_TO_FOG_CACHE = new HashMap<>();
-	private static final Map<Identifier, Set<Identifier>> TAGGED_BIOME_SKIP_LIST = new HashMap<>();
+	private static final Map<TagKey<Structure>, CustomFogDefinition> STRUCTURE_TAG_FOG_REGISTRY = new ConcurrentHashMap<>();
+	private static final Map<Identifier, CustomFogDefinition> STRUCTURE_FOG_REGISTRY = new ConcurrentHashMap<>();
+	private static final Map<TagKey<Biome>, CustomFogDefinition> BIOME_TAG_FOG_REGISTRY = new ConcurrentHashMap<>();
+	private static final Map<Identifier, CustomFogDefinition> BIOME_FOG_REGISTRY = new ConcurrentHashMap<>();
+	private static final Map<Identifier, Identifier> TAGGED_BIOME_TO_FOG_CACHE = new ConcurrentHashMap<>();
+	private static final Map<Identifier, Set<Identifier>> TAGGED_BIOME_SKIP_LIST = new ConcurrentHashMap<>();
 
 	public static @NotNull Map<TagKey<Structure>, CustomFogDefinition> getStructureTagFogRegistry() {
 		return STRUCTURE_TAG_FOG_REGISTRY;
@@ -66,6 +65,7 @@ public class FogRegistry {
 			if (entryListOptional.isPresent()) {
 				var entryList = entryListOptional.get();
 				for (var entry : entryList) {
+					//noinspection OptionalGetWithoutIsPresent
 					if (entry.getKey().get().getValue().equals(biomeId)) {
 						TAGGED_BIOME_TO_FOG_CACHE.put(biomeId, tagId);
 						TAGGED_BIOME_SKIP_LIST.put(biomeId, skippedTags);
