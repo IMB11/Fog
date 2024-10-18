@@ -61,7 +61,7 @@ public class VanillaFogDefinitionProvider extends CustomFogDefinitionDataProvide
 				.colors("#BDDBE1", "#526C72").build());
 
 		provider.accept(ConventionalBiomeTags.IS_BEACH, CustomFogDefinition.Builder.create()
-				.colors("#CBCABD", "#827D6A").build());
+				.colors("#CBCABD", "#11110e").build());
 
 		provider.accept(ConventionalBiomeTags.IS_END, CustomFogDefinition.Builder.create()
 				.colors("#291d26", "#291d26")

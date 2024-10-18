@@ -1,4 +1,4 @@
-// 1.21.1	2024-10-18T17:58:57.8248948	Fog/Custom Fog Definition:fog
+// 1.21.1	2024-10-18T18:33:36.4922581	Fog/Custom Fog Definition:fog
 66dbd1cc3283d1f6a3f9f8c789e67baabc193059 assets\c\fog_definitions\tag\biome\is_snowy.json
 4a095b16c1146432aee0cd907ceb87d33c031738 assets\c\fog_definitions\tag\biome\is_end.json
 024071636ecdb7f6288625a11a90b2d75d65c917 assets\minecraft\fog_definitions\biome\sparse_jungle.json
@@ -10,6 +10,6 @@ ed7a26be0cdc64db4e2714898fec43817761c00b assets\minecraft\fog_definitions\biome\
 081f23017dccbbbbf86d0fed5183724dd3b2fae7 assets\minecraft\fog_definitions\biome\basalt_deltas.json
 d18991fdc8b5c612a3ae1b45144585860b1bf064 assets\minecraft\fog_definitions\biome\nether_wastes.json
 5e48288dad15e0c0bfd3db7ada891bc50cdbc5a2 assets\c\fog_definitions\tag\biome\is_jungle.json
-bdf7dff67ada32610d3c8970f29d8c74d654ca55 assets\c\fog_definitions\tag\biome\is_beach.json
 4057cc9fe572b9cf63a07711d50ab18b01d92d72 assets\c\fog_definitions\tag\biome\is_badlands.json
+01930365bb419a96ae82b2e45b99af5d94b8df5c assets\c\fog_definitions\tag\biome\is_beach.json
 e21ca1bacda76f8e67c3a79262c54bb45b0f70ce assets\minecraft\fog_definitions\biome\warped_forest.json

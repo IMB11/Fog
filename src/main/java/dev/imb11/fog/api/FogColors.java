@@ -10,8 +10,8 @@ import org.jetbrains.annotations.Nullable;
  * Represents the colors of the fog during the day and night.
  */
 public class FogColors {
-	// TODO: Dehardcode these default values - default should also use skycolor.
-	public static final FogColors DEFAULT = new FogColors("#b9d2fd", "#182d44");
+	// TODO: De-hardcode these default values, default should also use the sky's color
+	public static final FogColors DEFAULT = new FogColors("#b9d2fd", "#000000");
 	public static final FogColors DEFAULT_CAVE = new FogColors("#212121", "#101010");
 	public static final Codec<FogColors> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Codec.STRING.fieldOf("day").forGetter(FogColors::getDay),
