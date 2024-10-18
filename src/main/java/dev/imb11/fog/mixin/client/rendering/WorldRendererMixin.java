@@ -2,6 +2,7 @@ package dev.imb11.fog.mixin.client.rendering;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.imb11.fog.client.util.math.CloudCalculator;
 
@@ -74,19 +75,38 @@ public abstract class WorldRendererMixin {
 	}
 	*//*?} else {*/
 	@WrapOperation(method = "renderClouds", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/world/ClientWorld;getCloudsColor(F)Lnet/minecraft/util/math/Vec3d;"))
-	public @NotNull Vec3d fog$whiteClouds(ClientWorld world, float tickDelta, @NotNull Operation<Vec3d> original) {
-		if (world == null
+	public @NotNull Vec3d fog$whiteClouds(ClientWorld instance, float tickDelta, @NotNull Operation<Vec3d> original) {
+		if (this.world == null
 				|| FogConfig.getInstance().disableMod
-				|| !(world.getDimensionEffects() instanceof DimensionEffects.Overworld)
+				|| !(this.world.getDimensionEffects() instanceof DimensionEffects.Overworld)
 				|| FogConfig.getInstance().disableCloudWhitening
-				|| world.getDimension().hasFixedTime()
+				|| this.world.getDimension().hasFixedTime()
 		) {
-			return original.call(world, tickDelta);
+			return original.call(this.world, tickDelta);
 		}
 
 		// TODO: Move constants to FogConfig
-		float color = CloudCalculator.getCloudColor(world.getTimeOfDay() % 24000);
+		float color = CloudCalculator.getCloudColor(this.world.getTimeOfDay() % 24000);
 		return new Vec3d(color, color, color);
+	}
+
+	@WrapOperation(method = "renderClouds", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/BackgroundRenderer;applyFogColor()V"))
+	public void fog$removeFogFromClouds(@NotNull Operation<Void> original, @Local(argsOnly = true) float tickDelta) {
+		if (this.world == null
+				|| FogConfig.getInstance().disableMod
+				|| !(this.world.getDimensionEffects() instanceof DimensionEffects.Overworld)
+				|| FogConfig.getInstance().disableCloudWhitening
+				|| this.world.getDimension().hasFixedTime()
+		) {
+			original.call();
+			return;
+		}
+
+		// Force clouds to be white
+		RenderSystem.setShaderFogStart(10000F);
+
+		@NotNull var cloudsColor = this.world.getCloudsColor(tickDelta);
+		RenderSystem.setShaderFogColor((float) cloudsColor.getX(), (float) cloudsColor.getY(), (float) cloudsColor.getZ());
 	}
 	/*?}*/
 
