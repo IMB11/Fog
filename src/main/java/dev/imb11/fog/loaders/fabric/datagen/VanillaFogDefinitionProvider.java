@@ -49,7 +49,7 @@ public class VanillaFogDefinitionProvider extends CustomFogDefinitionDataProvide
 				.colors("#BDC8C2", "#5A6459").build());
 
 		provider.accept(ConventionalBiomeTags.IS_BADLANDS, CustomFogDefinition.Builder.create()
-				.colors("#BCA199", "#82512E").build());
+				.colors("#BCA199", "#140c07").build());
 
 		provider.accept(ConventionalBiomeTags.IS_DESERT, CustomFogDefinition.Builder.create()
 				.colors("#D1C8AB", "#827D6A").build());
