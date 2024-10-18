@@ -43,7 +43,7 @@ public class FogManager {
 		return INSTANCE;
 	}
 
-	public void onEndTick(@NotNull ClientWorld world) {
+	public void onEndTick(@NotNull ClientWorld clientWorld) {
 		@NotNull final var client = MinecraftClient.getInstance();
 		@Nullable final var clientPlayer = client.player;
 		if (clientPlayer == null) {
@@ -62,13 +62,13 @@ public class FogManager {
 			this.undergroundness.interpolate(1.0F);
 		}
 
-		if (isClientPlayerAboveGround && world.getBiome(clientPlayer.getBlockPos()).value().hasPrecipitation()) {
+		if (isClientPlayerAboveGround && clientWorld.getBiome(clientPlayer.getBlockPos()).value().hasPrecipitation() && clientWorld.isRaining()) {
 			raininess.interpolate(1.0f);
 		} else {
 			raininess.interpolate(0.0f, 1f);
 		}
 
-		float density = ClientWorldUtil.isFogDenseAtPosition(world, clientPlayerBlockPosition) ? 0.9F : 1.0F;
+		float density = ClientWorldUtil.isFogDenseAtPosition(clientWorld, clientPlayerBlockPosition) ? 0.9F : 1.0F;
 		/*? if <1.21 {*/
 		/*float tickDelta = client.getTickDelta();
 		*//*?} else {*/
@@ -77,18 +77,18 @@ public class FogManager {
 		// TODO: Apply the start and end multipliers in FogManager#getFogSettings
 		DarknessCalculation darknessCalculation = DarknessCalculation.of(
 				client, fogStart.getDefaultValue(), fogEnd.getDefaultValue() * density, tickDelta);
-		@NotNull var clientPlayerBiomeKeyOptional = world.getBiome(clientPlayer.getBlockPos()).getKey();
+		@NotNull var clientPlayerBiomeKeyOptional = clientWorld.getBiome(clientPlayer.getBlockPos()).getKey();
 		if (clientPlayerBiomeKeyOptional.isEmpty()) {
 			return;
 		}
 
-		CustomFogDefinition fogDefinition = FogRegistry.getFogDefinitionOrDefault(clientPlayerBiomeKeyOptional.get().getValue(), world);
+		CustomFogDefinition fogDefinition = FogRegistry.getFogDefinitionOrDefault(clientPlayerBiomeKeyOptional.get().getValue(), clientWorld);
 		@Nullable FogColors colors = fogDefinition.colors();
 		if (colors == null || FogConfig.getInstance().disableBiomeFogColour) {
 			colors = FogColors.DEFAULT;
 		}
 
-		float blendFactor = getBlendFactor(world);
+		float blendFactor = getBlendFactor(clientWorld);
 		float red = MathHelper.lerp(blendFactor, colors.getNightColor().red / 255f, colors.getDayColor().red / 255f);
 		float green = MathHelper.lerp(blendFactor, colors.getNightColor().green / 255f, colors.getDayColor().green / 255f);
 		float blue = MathHelper.lerp(blendFactor, colors.getNightColor().blue / 255f, colors.getDayColor().blue / 255f);
@@ -103,9 +103,9 @@ public class FogManager {
 		this.fogEnd.interpolate(darknessCalculation.fogEnd());
 		this.darkness.interpolate(darknessCalculation.darknessValue());
 
-		this.currentSkyLight.interpolate(world.getLightLevel(LightType.SKY, clientPlayerBlockPosition));
-		this.currentBlockLight.interpolate(world.getLightLevel(LightType.BLOCK, clientPlayerBlockPosition));
-		this.currentLight.interpolate(world.getBaseLightLevel(clientPlayerBlockPosition, 0));
+		this.currentSkyLight.interpolate(clientWorld.getLightLevel(LightType.SKY, clientPlayerBlockPosition));
+		this.currentBlockLight.interpolate(clientWorld.getLightLevel(LightType.BLOCK, clientPlayerBlockPosition));
+		this.currentLight.interpolate(clientWorld.getBaseLightLevel(clientPlayerBlockPosition, 0));
 	}
 
 	private static float getBlendFactor(@NotNull ClientWorld world) {
