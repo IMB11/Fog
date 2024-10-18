@@ -2,7 +2,6 @@
 package dev.imb11.fog.loaders.fabric.datagen;
 
 import dev.imb11.fog.client.FogClient;
-import dev.imb11.fog.client.resource.FogResourceReloader;
 import dev.imb11.mru.event.fabric.DatagenFinishedCallback;
 import dev.imb11.mru.packing.Packer;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
@@ -10,11 +9,7 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.util.stream.Stream;
 
 public class FogDatagenFabric implements DataGeneratorEntrypoint {
 
@@ -23,9 +18,8 @@ public class FogDatagenFabric implements DataGeneratorEntrypoint {
 		var pack = fabricDataGenerator.createPack();
 		pack.addProvider(VanillaFogDefinitionProvider::new);
 
-		DatagenFinishedCallback.EVENT.register((Path outputDirectory) -> {
-			Packer.pack(outputDirectory, "assets/**/fog_definitions/**/*.json");
-		});
+		DatagenFinishedCallback.EVENT.register(
+				(Path outputDirectory) -> Packer.pack(outputDirectory, "assets/**/fog_definitions/**/*.json"));
 	}
 
 	@Override
