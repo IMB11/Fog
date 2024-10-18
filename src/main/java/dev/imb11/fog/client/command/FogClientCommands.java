@@ -57,7 +57,7 @@ public class FogClientCommands {
 						"§b§7[§rFog§b§7]§r Fog Start: §6%.2f§r\n" +
 						"§b§7[§rFog§b§7]§r Fog End: §6%.2f§r\n" +
 						"§b§7[§rFog§b§7]§r Darkness: §6%.2f§r\n" +
-						"§b§7[§rFog§b§7]§r Fog Color (Before Haze): §6#%s§r\n" +
+						"§b§7[§rFog§b§7]§r Fog Color: §6#%s§r\n" +
 						"§b§7[§rFog§b§7]§r Current Sky Light: §6%.2f§r\n" +
 						"§b§7[§rFog§b§7]§r Current Block Light: §6%.2f§r\n" +
 						"§b§7[§rFog§b§7]§r Current Light: §6%.2f§r\n" +

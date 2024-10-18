@@ -11,8 +11,6 @@
   "fog.config.option.description.disable_underground_fog_multiplier": "Вимикає множник підземного туману, який робить туман більш густим і темним, коли гравець знаходиться під землею",
   "fog.config.option.disable_biome_fog_colour": "Вимкнути колір туману біома",
   "fog.config.option.description.disable_biome_fog_colour": "Вимикає колір туману біома, який змінює колір туману залежно від того, в якому біомі перебуває гравець",
-  "fog.config.option.disable_haze_calculation": "Вимкнути розрахунок серпанки",
-  "fog.config.option.description.disable_haze_calculation": "Вимикає розрахунок серпанку, серпанок - це зміна кольору туману залежно від часу доби.",
   "fog.config.option.disabled_dimensions": "Вимкнені розміри",
   "fog.config.option.disable_cloud_whitening": "Вимкнути відбілювання хмар",
   "fog.config.option.description.disable_cloud_whitening": "Вимикає ефект відбілювання хмар, який відокремлює колір хмар від кольору туману. Цей параметр вимкнено, коли присутній Sodium, оскільки Sodium робить це за замовчуванням.",

@@ -11,8 +11,6 @@
   "fog.config.option.description.disable_underground_fog_multiplier": "停用地下迷霧倍增器，該功能會讓玩家在地下時迷霧顯得更加濃密和黑暗",
   "fog.config.option.disable_biome_fog_colour": "停用生態域迷霧顏色",
   "fog.config.option.description.disable_biome_fog_colour": "停用生態域迷霧顏色，該功能會讓迷霧顏色根據玩家所在的生態域而變化",
-  "fog.config.option.disable_haze_calculation": "停用霾霧計算",
-  "fog.config.option.description.disable_haze_calculation": "停用霾霧計算，霾霧是指迷霧顏色基於一天中時間的變化。",
   "fog.config.option.disabled_dimensions": "在地獄中停用",
   "fog.config.option.disable_cloud_whitening": "停用雲朵增白",
   "fog.config.option.description.disable_cloud_whitening": "停用雲朵增白效果，該效果會將雲朵顏色與迷霧顏色分離。當 Sodium 存在時，此選項會被停用，因為 Sodium 預設會執行此操作。",
