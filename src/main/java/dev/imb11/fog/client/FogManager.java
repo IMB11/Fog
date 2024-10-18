@@ -13,7 +13,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.Heightmap;
 import net.minecraft.world.LightType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,35 +50,33 @@ public class FogManager {
 			return;
 		}
 
-		if (world.hasRain(clientPlayer.getBlockPos()) && world.getBiome(clientPlayer.getBlockPos()).value().hasPrecipitation()) {
-			raininess.interpolate(1.0f);
-		} else {
-			raininess.interpolate(0.0f, 1f);
-		}
-
 		@Nullable final BlockPos clientPlayerBlockPosition = clientPlayer.getBlockPos();
 		if (clientPlayerBlockPosition == null) {
 			return;
 		}
 
-		if (PlayerUtil.isPlayerAboveGround(clientPlayer)) {
+		var isClientPlayerAboveGround = PlayerUtil.isPlayerAboveGround(clientPlayer);
+		if (isClientPlayerAboveGround) {
 			this.undergroundness.interpolate(0.0F);
 		} else {
 			this.undergroundness.interpolate(1.0F);
 		}
 
-		float density = ClientWorldUtil.isFogDenseAtPosition(world, clientPlayerBlockPosition) ? 0.9F : 1.0F;
+		if (isClientPlayerAboveGround && world.getBiome(clientPlayer.getBlockPos()).value().hasPrecipitation()) {
+			raininess.interpolate(1.0f);
+		} else {
+			raininess.interpolate(0.0f, 1f);
+		}
 
+		float density = ClientWorldUtil.isFogDenseAtPosition(world, clientPlayerBlockPosition) ? 0.9F : 1.0F;
 		/*? if <1.21 {*/
 		/*float tickDelta = client.getTickDelta();
 		*//*?} else {*/
 		float tickDelta = client.getRenderTickCounter().getTickDelta(true);
 		/*?}*/
-
 		// TODO: Apply the start and end multipliers in FogManager#getFogSettings
 		DarknessCalculation darknessCalculation = DarknessCalculation.of(
 				client, fogStart.getDefaultValue(), fogEnd.getDefaultValue() * density, tickDelta);
-
 		@NotNull var clientPlayerBiomeKeyOptional = world.getBiome(clientPlayer.getBlockPos()).getKey();
 		if (clientPlayerBiomeKeyOptional.isEmpty()) {
 			return;
@@ -115,15 +112,20 @@ public class FogManager {
 		long time = world.getTimeOfDay() % 24000;
 		float blendFactor;
 		if (time < 11000) {
-			blendFactor = 1.0f; // Daytime
+			// Daytime
+			blendFactor = 1.0f;
 		} else if (time < 13000) {
-			blendFactor = MathUtil.lerp(1.0f, 0.0f, (time - 11000) / 2000f); // Blend from day to night
+			// Blend from day to night
+			blendFactor = MathUtil.lerp(1.0f, 0.0f, (time - 11000) / 2000f);
 		} else if (time < 22000) {
-			blendFactor = 0.0f; // Nighttime
+			// Nighttime
+			blendFactor = 0.0f;
 		} else if (time < 23000) {
-			blendFactor = MathUtil.lerp(0.0f, 1.0f, (time - 22000) / 1000f); // Blend from night to day
+			// Blend from night to day
+			blendFactor = MathUtil.lerp(0.0f, 1.0f, (time - 22000) / 1000f);
 		} else {
-			blendFactor = 1.0f; // Constant day from 23000 to 24000 ticks
+			// Constant day from 23000 to 24000 ticks
+			blendFactor = 1.0f;
 		}
 		return blendFactor;
 	}
