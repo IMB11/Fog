@@ -19,14 +19,15 @@ import org.jetbrains.annotations.Nullable;
 
 public class FogManager {
 	public static FogManager INSTANCE = new FogManager();
-	public final InterpolatedValue raininess = new InterpolatedValue(0.0f, 0.03f);
-	public final InterpolatedValue undergroundness = new InterpolatedValue(0.0f, 0.25f);
-	public final InterpolatedValue fogStart = new InterpolatedValue(0.1f, 0.05f);
-	public final InterpolatedValue fogEnd = new InterpolatedValue(0.85f, 0.05f);
-	public final InterpolatedValue darkness = new InterpolatedValue(0.0f, 0.1f);
-	public final InterpolatedValue fogColorRed = new InterpolatedValue((float) 0x33 / 255f, 0.05f);
-	public final InterpolatedValue fogColorGreen = new InterpolatedValue((float) 0x33 / 255f, 0.05f);
-	public final InterpolatedValue fogColorBlue = new InterpolatedValue((float) 0x33 / 255f, 0.05f);
+
+	public final InterpolatedValue raininess = new InterpolatedValue(0.0f, 0.005f);
+	public final InterpolatedValue undergroundness = new InterpolatedValue(0.0f, 0.005f);
+	public final InterpolatedValue fogStart = new InterpolatedValue(0.1f, 0.005f);
+	public final InterpolatedValue fogEnd = new InterpolatedValue(0.85f, 0.005f);
+	public final InterpolatedValue darkness = new InterpolatedValue(0.0f, 0.005f);
+	public final InterpolatedValue fogColorRed = new InterpolatedValue((float) 0x33 / 255f, 0.005f);
+	public final InterpolatedValue fogColorGreen = new InterpolatedValue((float) 0x33 / 255f, 0.005f);
+	public final InterpolatedValue fogColorBlue = new InterpolatedValue((float) 0x33 / 255f, 0.005f);
 	public final InterpolatedValue currentSkyLight = new InterpolatedValue(16.0F);
 	public final InterpolatedValue currentBlockLight = new InterpolatedValue(16.0F);
 	public final InterpolatedValue currentLight = new InterpolatedValue(16.0F);
@@ -62,16 +63,17 @@ public class FogManager {
 			this.undergroundness.interpolate(1.0F);
 		}
 
-		if (isClientPlayerAboveGround && clientWorld.getBiome(clientPlayer.getBlockPos()).value().hasPrecipitation() && clientWorld.isRaining()) {
+		if (isClientPlayerAboveGround && clientWorld.getBiome(
+				clientPlayer.getBlockPos()).value().hasPrecipitation() && clientWorld.isRaining()) {
 			raininess.interpolate(1.0f);
 		} else {
-			raininess.interpolate(0.0f, 1f);
+			raininess.interpolate(0.0f);
 		}
 
 		float density = ClientWorldUtil.isFogDenseAtPosition(clientWorld, clientPlayerBlockPosition) ? 0.9F : 1.0F;
 		/*? if <1.21 {*/
 		/*float tickDelta = client.getTickDelta();
-		*//*?} else {*/
+		 *//*?} else {*/
 		float tickDelta = client.getRenderTickCounter().getTickDelta(true);
 		/*?}*/
 		// TODO: Apply the start and end multipliers in FogManager#getFogSettings
@@ -82,7 +84,8 @@ public class FogManager {
 			return;
 		}
 
-		CustomFogDefinition fogDefinition = FogRegistry.getFogDefinitionOrDefault(clientPlayerBiomeKeyOptional.get().getValue(), clientWorld);
+		CustomFogDefinition fogDefinition = FogRegistry.getFogDefinitionOrDefault(
+				clientPlayerBiomeKeyOptional.get().getValue(), clientWorld);
 		@Nullable FogColors colors = fogDefinition.colors();
 		if (colors == null || FogConfig.getInstance().disableBiomeFogColour) {
 			colors = FogColors.DEFAULT;
@@ -170,7 +173,7 @@ public class FogManager {
 		float raininessValue = raininess.get(tickDelta);
 
 		if (!FogConfig.getInstance().disableRaininessEffect && raininessValue > 0.0f) {
-			fogEndValue /= 1.0f + 0.5f * raininessValue;
+			fogEndValue /= 1.0f + raininessValue;
 
 			// Darken the fog colour based on raininess
 			fogRed = Math.max(0.1f, fogRed - (0.5f * raininessValue));
