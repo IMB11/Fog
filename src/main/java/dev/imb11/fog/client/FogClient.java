@@ -14,14 +14,12 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URI;
 import java.nio.file.Path;
 
 public class FogClient {
 	public static final @NotNull String MOD_ID = "fog";
 	public static final @NotNull String MOD_NAME = "Fog";
 	public static final @NotNull Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-	public static URI JAR_URL;
 
 	public static Path getConfigPath(String configFileName, String configExtension) {
 		/*? if fabric {*/

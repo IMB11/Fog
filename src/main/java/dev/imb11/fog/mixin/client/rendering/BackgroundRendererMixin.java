@@ -33,7 +33,7 @@ public abstract class BackgroundRendererMixin {
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;clearColor(FFFF)V", remap = false, shift = At.Shift.BEFORE))
 	private static void fog$modifyFogColors(@NotNull Camera camera, float tickDelta, @NotNull ClientWorld world, int viewDistance, float skyDarkness, @NotNull CallbackInfo ci) {
 		if (FogConfig.getInstance().disableMod
-				|| (world.getDimensionEffects() instanceof DimensionEffects.Nether && FogConfig.getInstance().disableNether)
+				|| FogConfig.getInstance().disabledDimensions.contains(world.getRegistryKey().getValue().toString())
 				|| camera.getSubmersionType() != CameraSubmersionType.NONE
 		) {
 			return;
@@ -55,8 +55,9 @@ public abstract class BackgroundRendererMixin {
 	@Inject(method = "applyFog", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderFogStart(F)V", remap = false, shift = At.Shift.BEFORE))
 	private static void fog$fogRenderEvent(@NotNull Camera camera, @NotNull BackgroundRenderer.FogType fogType, float viewDistance, boolean thickFog, float deltaTick, @NotNull CallbackInfo ci, @Local @NotNull BackgroundRenderer.FogData fogData) {
 		@Nullable final var clientWorld = MinecraftClient.getInstance().world;
-		if (clientWorld == null || FogConfig.getInstance().disableMod
-				|| (clientWorld.getDimensionEffects() instanceof DimensionEffects.Nether && FogConfig.getInstance().disableNether)
+		if (clientWorld == null
+				|| FogConfig.getInstance().disableMod
+				|| FogConfig.getInstance().disabledDimensions.contains(clientWorld.getRegistryKey().getValue().toString())
 				|| camera.getSubmersionType() != CameraSubmersionType.NONE
 		) {
 			return;
@@ -89,7 +90,7 @@ public abstract class BackgroundRendererMixin {
 		@Nullable final var clientWorld = client.world;
 		@Nullable final var camera = client.gameRenderer.getCamera();
 		if (clientWorld == null || camera == null
-				|| clientWorld.getDimensionEffects() instanceof DimensionEffects.Nether && FogConfig.getInstance().disableNether
+				|| FogConfig.getInstance().disabledDimensions.contains(clientWorld.getRegistryKey().getValue().toString())
 				|| camera.getSubmersionType() != CameraSubmersionType.NONE
 		) {
 			/*? if <1.20.4 {*/

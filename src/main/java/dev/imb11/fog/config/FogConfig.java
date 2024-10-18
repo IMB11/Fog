@@ -7,12 +7,15 @@ import dev.imb11.mru.yacl.ConfigHelper;
 import dev.imb11.mru.yacl.EntryType;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
+import dev.isxander.yacl3.api.controller.StringControllerBuilder;
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 import static dev.imb11.fog.client.FogClient.MOD_ID;
 
@@ -29,10 +32,14 @@ public class FogConfig {
 					.build())
 			.build();
 	private static final ConfigHelper HELPER = new ConfigHelper(MOD_ID, "config");
+
 	@SerialEntry
-	public float initialFogStart = 0.1f;
+	public boolean disableMod = false;
+	/**
+	 * Nether has pretty good Fog, it doesn't need changing unless player really wants to.
+	 */
 	@SerialEntry
-	public float initialFogEnd = 0.85f;
+	public @NotNull List<String> disabledDimensions = List.of(String.format("%s:the_nether", Identifier.DEFAULT_NAMESPACE));
 	@SerialEntry
 	public boolean disableRaininessEffect = false;
 	@SerialEntry
@@ -41,13 +48,10 @@ public class FogConfig {
 	public boolean disableBiomeFogColour = false;
 	@SerialEntry
 	public boolean disableCloudWhitening = false;
-	/**
-	 * Nether has pretty good Fog, it doesn't need changing unless player really wants to.
-	 */
 	@SerialEntry
-	public boolean disableNether = true;
+	public float initialFogStart = 0.1f;
 	@SerialEntry
-	public boolean disableMod = false;
+	public float initialFogEnd = 0.85f;
 
 	public static @NotNull FogConfig getInstance() {
 		return HANDLER.instance();
@@ -104,10 +108,16 @@ public class FogConfig {
 						                        newDisableCloudWhitening -> disableCloudWhitening = newDisableCloudWhitening
 				                        ).controller(BooleanControllerBuilder::create).available(
 						                        !FogClient.isModInstalled("sodium")).build())
-				                        .option(HELPER.get(
-						                        "disable_nether", defaults.disableNether, () -> config.disableNether,
-						                        val -> config.disableNether = val
-				                        ))
+				                        .group(ListOption.<String>createBuilder()
+				                                         .name(Text.translatable(
+						                                         String.format("%s.config.option.disabled_dimensions", MOD_ID)))
+				                                         .binding(
+						                                         disabledDimensions, () -> disabledDimensions,
+						                                         val -> disabledDimensions = val
+				                                         )
+				                                         .controller(StringControllerBuilder::create)
+				                                         .initial("mod_id:dimension_id")
+				                                         .build())
 				                        .option(Option.<Boolean>createBuilder().name(
 						                        HELPER.getText(EntryType.OPTION_NAME, "disable_mod")).description(
 						                        initialFogStart -> OptionDescription.createBuilder().text(

@@ -13,10 +13,10 @@
   "fog.config.option.description.disable_biome_fog_colour": "Biyom sis rengini devre dışı bırakır, bu da oyuncunun içinde bulunduğu biyoma bağlı olarak sis renginin değişmesine neden olur",
   "fog.config.option.disable_haze_calculation": "Bulanıklık Hesaplamasını Devre Dışı Bırak",
   "fog.config.option.description.disable_haze_calculation": "Bulanıklık hesaplamasını devre dışı bırakır, bulanıklık, günün saatine bağlı olarak sis rengindeki değişikliktir.",
-  "fog.config.option.disable_nether": "Nether'da Devre Dışı Bırak",
+  "fog.config.option.disabled_dimensions": "Devre Dışı Boyutlar",
   "fog.config.option.disable_cloud_whitening": "Bulut Beyazlatmayı Devre Dışı Bırak",
   "fog.config.option.description.disable_cloud_whitening": "Bulut renginin sis renginden bağlantısını kesen bulut beyazlatma efektini devre dışı bırakır. Sodium mevcut olduğunda bu devre dışıdır, çünkü Sodium bunu varsayılan olarak yapar.",
-  "fog.config.option.description.disable_nether": "Nether boyutundaki sis motoru modifikasyonlarını devre dışı bırakır - Vanilla, Nether biyomlarıyla oldukça iyi bir iş çıkarır, bunları değiştirmeye gerek yoktur.",
+  "fog.config.option.description.disabled_dimensions": "Nether boyutundaki sis motoru modifikasyonlarını devre dışı bırakır - Vanilla, Nether biyomlarıyla oldukça iyi bir iş çıkarır, bunları değiştirmeye gerek yoktur.",
   "fog.config.option.disable_mod": "Modu Tamamen Devre Dışı Bırak",
   "fog.config.option.description.disable_mod": "Modu tamamen devre dışı bırakır, vanilla ile karşılaştırma yapmak istiyorsanız kullanışlıdır.",
 

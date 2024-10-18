@@ -15,10 +15,10 @@
   "fog.config.option.description.disable_biome_fog_colour": "Отключает цвет тумана, зависящий от биома, из-за чего цвет тумана меняется в зависимости от биома, в котором находится игрок.",
   "fog.config.option.disable_haze_calculation": "Отключить расчёт дымки",
   "fog.config.option.description.disable_haze_calculation": "Отключает расчет дымки, где дымка — это изменение цвета тумана в зависимости от времени суток.",
-  "fog.config.option.disable_nether": "Отключить в Незере",
+  "fog.config.option.disabled_dimensions": "Отключенные размеры",
   "fog.config.option.disable_cloud_whitening": "Отключить отбеливание облаков",
   "fog.config.option.description.disable_cloud_whitening": "Отключает эффект отбеливания облаков, который отделяет цвет облаков от цвета тумана. Этот параметр отключен при наличии Sodium, поскольку он делает это по умолчанию.",
-  "fog.config.option.description.disable_nether": "Отключает модификации двигателя тумана в Незере — Minecraft сам отлично справляется с биомами Незера, нет необходимости это менять.",
+  "fog.config.option.description.disabled_dimensions": "Отключает модификации двигателя тумана в Незере — Minecraft сам отлично справляется с биомами Незера, нет необходимости это менять.",
   "fog.config.option.disable_mod": "Полностью отключить мод",
   "fog.config.option.description.disable_mod": "Полностью отключает мод, полезно, если вы хотите провести сравнение с ванильной игрой.",
 
