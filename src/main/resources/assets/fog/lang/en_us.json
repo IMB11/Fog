@@ -1,5 +1,6 @@
 {
   "fog.config.category.fog_calculations": "Fog Calculations",
+  "key.fog.toggle": "Toggle Fog Engine",
   "fog.config.option.fog_calculations.warning": "§6§l§nWarning!§r It is not recommended to touch these constants unless you understand what they do, and how they are used.\nConsider leaving them as-is for the best experience.",
   "fog.config.option.initial_fog_start": "Initial Fog Start",
   "fog.config.option.description.initial_fog_start": "The initial (when the fog engine is loaded) distance from the camera at which fog starts to appear - expressed as a percentage of view distance",

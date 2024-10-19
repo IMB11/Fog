@@ -6,6 +6,7 @@ import dev.architectury.registry.ReloadListenerRegistry;
 import dev.imb11.fog.client.command.FogClientCommands;
 import dev.imb11.fog.client.registry.FogRegistry;
 import dev.imb11.fog.client.resource.FogResourceReloader;
+import dev.imb11.fog.client.util.FogKeybinds;
 import dev.imb11.fog.config.FogConfig;
 import dev.imb11.mru.packing.Unpacker;
 import dev.imb11.mru.packing.resource.UnpackedResourcePack;
@@ -56,6 +57,8 @@ public class FogClient {
 
 		FogConfig.load();
 		FogClientCommands.register();
+
+		FogKeybinds.init();
 
 		ReloadListenerRegistry.register(ResourceType.CLIENT_RESOURCES, new FogResourceReloader());
 		ClientTickEvent.CLIENT_LEVEL_POST.register((world) -> FogManager.getInstance().onEndTick(world));

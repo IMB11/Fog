@@ -88,7 +88,7 @@ public class FogClientCommands {
 		return 1;
 	}
 
-	private static int toggle(@NotNull CommandContext<ClientCommandRegistrationEvent.ClientCommandSourceStack> commandContext) {
+	public static int toggle(@NotNull CommandContext<ClientCommandRegistrationEvent.ClientCommandSourceStack> commandContext) {
 		FogConfig config = FogConfig.getInstance();
 		config.disableMod = !config.disableMod;
 
