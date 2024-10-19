@@ -20,22 +20,37 @@ import org.jetbrains.annotations.Nullable;
 public class FogManager {
 	public static FogManager INSTANCE = new FogManager();
 
-	public final InterpolatedValue raininess = new InterpolatedValue(0.0f, 0.005f);
-	public final InterpolatedValue undergroundness = new InterpolatedValue(0.0f, 0.005f);
-	public final InterpolatedValue fogStart = new InterpolatedValue(0.1f, 0.005f);
-	public final InterpolatedValue fogEnd = new InterpolatedValue(0.85f, 0.005f);
-	public final InterpolatedValue darkness = new InterpolatedValue(0.0f, 0.005f);
-	public final InterpolatedValue fogColorRed = new InterpolatedValue((float) -1, 0.025f);
-	public final InterpolatedValue fogColorGreen = new InterpolatedValue((float) -1, 0.025f);
-	public final InterpolatedValue fogColorBlue = new InterpolatedValue((float) -1, 0.025f);
-	public final InterpolatedValue currentSkyLight = new InterpolatedValue(16.0F);
-	public final InterpolatedValue currentBlockLight = new InterpolatedValue(16.0F);
-	public final InterpolatedValue currentLight = new InterpolatedValue(16.0F);
-	public final InterpolatedValue currentStartMultiplier = new InterpolatedValue(1.0F, 0.0075f);
-	public final InterpolatedValue currentEndMultiplier = new InterpolatedValue(1.0F, 0.0075f);
+	public final InterpolatedValue raininess;
+	public final InterpolatedValue undergroundness;
+	public final InterpolatedValue fogStart;
+	public final InterpolatedValue fogEnd;
+	public final InterpolatedValue darkness;
+	public final InterpolatedValue fogColorRed;
+	public final InterpolatedValue fogColorGreen;
+	public final InterpolatedValue fogColorBlue;
+	public final InterpolatedValue currentSkyLight;
+	public final InterpolatedValue currentBlockLight;
+	public final InterpolatedValue currentLight;
+	public final InterpolatedValue currentStartMultiplier;
+	public final InterpolatedValue currentEndMultiplier;
 
 	public FogManager() {
 		@NotNull FogConfig config = FogConfig.getInstance();
+
+		raininess = new InterpolatedValue(0.0f, config.raininessTransitionSpeed);
+		undergroundness = new InterpolatedValue(0.0f, config.undergroundnessTransitionSpeed);
+		fogStart = new InterpolatedValue(config.initialFogStart, config.fogStartTransitionSpeed);
+		fogEnd = new InterpolatedValue(config.initialFogEnd, config.fogEndTransitionSpeed);
+		darkness = new InterpolatedValue(0.0f, config.darknessTransitionSpeed);
+		fogColorRed = new InterpolatedValue(-1.0f, config.fogColorTransitionSpeed);
+		fogColorGreen = new InterpolatedValue(-1.0f, config.fogColorTransitionSpeed);
+		fogColorBlue = new InterpolatedValue(-1.0f, config.fogColorTransitionSpeed);
+		currentSkyLight = new InterpolatedValue(16.0F);
+		currentBlockLight = new InterpolatedValue(16.0F);
+		currentLight = new InterpolatedValue(16.0F);
+		currentStartMultiplier = new InterpolatedValue(1.0F, config.startMultiplierTransitionSpeed);
+		currentEndMultiplier = new InterpolatedValue(1.0F, config.endMultiplierTransitionSpeed);
+
 		fogStart.resetTo(config.initialFogStart);
 		fogEnd.resetTo(config.initialFogEnd);
 	}

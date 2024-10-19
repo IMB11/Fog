@@ -3,6 +3,7 @@ package dev.imb11.fog.config;
 import com.google.gson.GsonBuilder;
 import dev.imb11.fog.client.FogClient;
 import dev.imb11.fog.client.FogManager;
+import dev.imb11.fog.client.util.FogConfigHelper;
 import dev.imb11.mru.yacl.ConfigHelper;
 import dev.imb11.mru.yacl.EntryType;
 import dev.isxander.yacl3.api.*;
@@ -31,7 +32,7 @@ public class FogConfig {
 					.appendGsonBuilder(GsonBuilder::setPrettyPrinting)
 					.build())
 			.build();
-	private static final ConfigHelper HELPER = new ConfigHelper(MOD_ID, "config");
+	private static final FogConfigHelper HELPER = new FogConfigHelper(MOD_ID, "config");
 
 	@SerialEntry
 	public boolean disableMod = false;
@@ -52,6 +53,23 @@ public class FogConfig {
 	public float initialFogStart = 0.1f;
 	@SerialEntry
 	public float initialFogEnd = 0.85f;
+
+	@SerialEntry
+	public float raininessTransitionSpeed = 0.005f;
+	@SerialEntry
+	public float undergroundnessTransitionSpeed = 0.005f;
+	@SerialEntry
+	public float fogStartTransitionSpeed = 0.005f;
+	@SerialEntry
+	public float fogEndTransitionSpeed = 0.005f;
+	@SerialEntry
+	public float darknessTransitionSpeed = 0.005f;
+	@SerialEntry
+	public float fogColorTransitionSpeed = 0.025f;
+	@SerialEntry
+	public float startMultiplierTransitionSpeed = 0.0075f;
+	@SerialEntry
+	public float endMultiplierTransitionSpeed = 0.0075f;
 
 	public static @NotNull FogConfig getInstance() {
 		return HANDLER.instance();
@@ -83,6 +101,38 @@ public class FogConfig {
 				                        .option(HELPER.getSlider(
 						                        "initial_fog_end", 0f, 1f, 0.05f, defaults.initialFogEnd, () -> config.initialFogEnd,
 						                        val -> config.initialFogEnd = val
+				                        ))
+				                        .option(HELPER.getFieldTDP(
+						                        "fog_start_transition_speed", 0.001f, 0.5f, defaults.fogStartTransitionSpeed, () -> config.fogStartTransitionSpeed,
+						                        val -> config.fogStartTransitionSpeed = val
+				                        ))
+				                        .option(HELPER.getFieldTDP(
+						                        "fog_end_transition_speed", 0.001f, 0.5f, defaults.fogEndTransitionSpeed, () -> config.fogEndTransitionSpeed,
+						                        val -> config.fogEndTransitionSpeed = val
+				                        ))
+				                        .option(HELPER.getFieldTDP(
+						                        "darkness_transition_speed", 0.001f, 0.5f, defaults.darknessTransitionSpeed, () -> config.darknessTransitionSpeed,
+						                        val -> config.darknessTransitionSpeed = val
+				                        ))
+				                        .option(HELPER.getFieldTDP(
+						                        "fog_color_transition_speed", 0.001f, 0.5f, defaults.fogColorTransitionSpeed, () -> config.fogColorTransitionSpeed,
+						                        val -> config.fogColorTransitionSpeed = val
+				                        ))
+				                        .option(HELPER.getFieldTDP(
+						                        "start_multiplier_transition_speed", 0.001f, 0.5f, defaults.startMultiplierTransitionSpeed, () -> config.startMultiplierTransitionSpeed,
+						                        val -> config.startMultiplierTransitionSpeed = val
+				                        ))
+				                        .option(HELPER.getFieldTDP(
+						                        "end_multiplier_transition_speed", 0.001f, 0.5f, defaults.endMultiplierTransitionSpeed, () -> config.endMultiplierTransitionSpeed,
+						                        val -> config.endMultiplierTransitionSpeed = val
+				                        ))
+				                        .option(HELPER.getFieldTDP(
+						                        "raininess_transition_speed", 0.001f, 0.5f, defaults.raininessTransitionSpeed, () -> config.raininessTransitionSpeed,
+						                        val -> config.raininessTransitionSpeed = val
+				                        ))
+				                        .option(HELPER.getFieldTDP(
+						                        "undergroundness_transition_speed", 0.001f, 0.5f, defaults.undergroundnessTransitionSpeed, () -> config.undergroundnessTransitionSpeed,
+						                        val -> config.undergroundnessTransitionSpeed = val
 				                        ))
 				                        .option(HELPER.get(
 						                        "disable_raininess_effect", defaults.disableRaininessEffect,
