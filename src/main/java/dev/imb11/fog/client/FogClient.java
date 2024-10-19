@@ -54,10 +54,6 @@ public class FogClient {
 	public static void initialize() {
 		LOGGER.info("Loading {}.", MOD_NAME);
 
-		Unpacker.register(FogClient.class, new UnpackedResourcePack("fog", getConfigFolder().resolve(FogResourceReloader.FOG_DEFINITIONS_FOLDER_NAME), "fog", "This folder contains the unpacked fog definitions.\n" +
-				"You can edit these files to customize the fog in your game.\n" +
-				"For more information, visit https://docs.imb11.dev/fog/"));
-
 		FogConfig.load();
 		FogClientCommands.register();
 

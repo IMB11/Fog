@@ -17,9 +17,6 @@ public class FogDatagenFabric implements DataGeneratorEntrypoint {
 	public void onInitializeDataGenerator(@NotNull FabricDataGenerator fabricDataGenerator) {
 		var pack = fabricDataGenerator.createPack();
 		pack.addProvider(VanillaFogDefinitionProvider::new);
-
-		DatagenFinishedCallback.EVENT.register(
-				(Path outputDirectory) -> Packer.pack(outputDirectory, "assets/**/fog_definitions/**/*.json"));
 	}
 
 	@Override

@@ -25,14 +25,14 @@ public class FogManager {
 	public final InterpolatedValue fogStart = new InterpolatedValue(0.1f, 0.005f);
 	public final InterpolatedValue fogEnd = new InterpolatedValue(0.85f, 0.005f);
 	public final InterpolatedValue darkness = new InterpolatedValue(0.0f, 0.005f);
-	public final InterpolatedValue fogColorRed = new InterpolatedValue((float) 0x33 / 255f, 0.005f);
-	public final InterpolatedValue fogColorGreen = new InterpolatedValue((float) 0x33 / 255f, 0.005f);
-	public final InterpolatedValue fogColorBlue = new InterpolatedValue((float) 0x33 / 255f, 0.005f);
+	public final InterpolatedValue fogColorRed = new InterpolatedValue((float) -1, 0.025f);
+	public final InterpolatedValue fogColorGreen = new InterpolatedValue((float) -1, 0.025f);
+	public final InterpolatedValue fogColorBlue = new InterpolatedValue((float) -1, 0.025f);
 	public final InterpolatedValue currentSkyLight = new InterpolatedValue(16.0F);
 	public final InterpolatedValue currentBlockLight = new InterpolatedValue(16.0F);
 	public final InterpolatedValue currentLight = new InterpolatedValue(16.0F);
-	public final InterpolatedValue currentStartMultiplier = new InterpolatedValue(1.0F);
-	public final InterpolatedValue currentEndMultiplier = new InterpolatedValue(1.0F);
+	public final InterpolatedValue currentStartMultiplier = new InterpolatedValue(1.0F, 0.0075f);
+	public final InterpolatedValue currentEndMultiplier = new InterpolatedValue(1.0F, 0.0075f);
 
 	public FogManager() {
 		@NotNull FogConfig config = FogConfig.getInstance();
@@ -75,6 +75,7 @@ public class FogManager {
 		/*float tickDelta = client.getTickDelta();
 		 *//*?} else {*/
 		float tickDelta = client.getRenderTickCounter().getTickDelta(true);
+
 		/*?}*/
 		// TODO: Apply the start and end multipliers in FogManager#getFogSettings
 		DarknessCalculation darknessCalculation = DarknessCalculation.of(
@@ -95,9 +96,18 @@ public class FogManager {
 		float red = MathHelper.lerp(blendFactor, colors.getNightColor().red / 255f, colors.getDayColor().red / 255f);
 		float green = MathHelper.lerp(blendFactor, colors.getNightColor().green / 255f, colors.getDayColor().green / 255f);
 		float blue = MathHelper.lerp(blendFactor, colors.getNightColor().blue / 255f, colors.getDayColor().blue / 255f);
-		this.fogColorRed.interpolate(red);
-		this.fogColorGreen.interpolate(green);
-		this.fogColorBlue.interpolate(blue);
+
+		if (fogColorRed.get(tickDelta) < 0 || fogColorGreen.get(tickDelta) < 0 || fogColorBlue.get(tickDelta) < 0) {
+			this.fogColorRed.set(red);
+			this.fogColorGreen.set(green);
+			this.fogColorBlue.set(blue);
+		} else {
+			this.fogColorRed.interpolate(red);
+			this.fogColorGreen.interpolate(green);
+			this.fogColorBlue.interpolate(blue);
+		}
+
+
 
 		this.currentStartMultiplier.interpolate(fogDefinition.startMultiplier());
 		this.currentEndMultiplier.interpolate(fogDefinition.endMultiplier());
