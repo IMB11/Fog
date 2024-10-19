@@ -34,6 +34,8 @@ public class FogManager {
 	public final InterpolatedValue currentStartMultiplier;
 	public final InterpolatedValue currentEndMultiplier;
 
+	public boolean hasSetup = false;
+
 	public FogManager() {
 		@NotNull FogConfig config = FogConfig.getInstance();
 
@@ -112,10 +114,12 @@ public class FogManager {
 		float green = MathHelper.lerp(blendFactor, colors.getNightColor().green / 255f, colors.getDayColor().green / 255f);
 		float blue = MathHelper.lerp(blendFactor, colors.getNightColor().blue / 255f, colors.getDayColor().blue / 255f);
 
-		if (fogColorRed.get(tickDelta) < 0 || fogColorGreen.get(tickDelta) < 0 || fogColorBlue.get(tickDelta) < 0) {
+		if (!hasSetup) {
 			this.fogColorRed.set(red);
 			this.fogColorGreen.set(green);
 			this.fogColorBlue.set(blue);
+
+			hasSetup = true;
 		} else {
 			this.fogColorRed.interpolate(red);
 			this.fogColorGreen.interpolate(green);
