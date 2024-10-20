@@ -33,7 +33,7 @@ public record DarknessCalculation(float fogStart, float fogEnd, float darknessVa
 				float factor = client.options.getDarknessEffectScale().getValue().floatValue();
 
 				/*? if <1.20.6 {*/
-				/*float intensity = effect.getFactorCalculationData().get().lerp(e, deltaTick) * factor;
+				/*float intensity = effect.getFactorCalculationData().get().lerp(livingEntity, deltaTick) * factor;
 				 *//*?} else {*/
 				float intensity = effect.getFadeFactor(livingEntity, deltaTick) * factor;
 				/*?}*/
