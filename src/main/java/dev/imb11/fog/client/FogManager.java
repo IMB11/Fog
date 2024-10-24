@@ -3,6 +3,7 @@ package dev.imb11.fog.client;
 import dev.imb11.fog.api.FogColors;
 import dev.imb11.fog.client.registry.FogRegistry;
 import dev.imb11.fog.api.CustomFogDefinition;
+import dev.imb11.fog.client.util.color.Color;
 import dev.imb11.fog.client.util.math.DarknessCalculation;
 import dev.imb11.fog.client.util.math.InterpolatedValue;
 import dev.imb11.fog.client.util.math.MathUtil;
@@ -110,9 +111,10 @@ public class FogManager {
 		}
 
 		float blendFactor = getBlendFactor(clientWorld);
-		float red = MathHelper.lerp(blendFactor, colors.getNightColor().red / 255f, colors.getDayColor().red / 255f);
-		float green = MathHelper.lerp(blendFactor, colors.getNightColor().green / 255f, colors.getDayColor().green / 255f);
-		float blue = MathHelper.lerp(blendFactor, colors.getNightColor().blue / 255f, colors.getDayColor().blue / 255f);
+		Color finalNightColor = getFinalNightColor(clientWorld, colors);
+		float red = MathHelper.lerp(blendFactor, finalNightColor.red / 255f, colors.getDayColor().red / 255f);
+		float green = MathHelper.lerp(blendFactor, finalNightColor.green / 255f, colors.getDayColor().green / 255f);
+		float blue = MathHelper.lerp(blendFactor, finalNightColor.blue / 255f, colors.getDayColor().blue / 255f);
 
 		if (!hasSetup) {
 			this.fogColorRed.set(red);
@@ -160,6 +162,25 @@ public class FogManager {
 			blendFactor = 1.0f;
 		}
 		return blendFactor;
+	}
+
+	// Calculate the final night color based on moon phase if new moon night color is defined
+	private static Color getFinalNightColor(@NotNull ClientWorld world, FogColors fogColors) {
+		if (!FogConfig.getInstance().disableMoonPhaseColorTransition && fogColors.getNightNewMoonColor() != null) {
+			float blendFactor = switch (world.getMoonPhase()) {
+				case 0    -> 0.0f;  // new moon
+
+				case 1, 7 -> 0.25f; // 1/4 moon
+				case 2, 6 -> 0.5f;  // 1/2 moon
+				case 3, 5 -> 0.75f; // 3/4 moon
+				case 4    ->  1.0f; // full moon
+
+				default -> 1.0f;
+			};
+			return fogColors.getNightFullMoonColor().lerp(fogColors.getNightNewMoonColor(), blendFactor);
+		} else {
+			return fogColors.getNightFullMoonColor();
+		}
 	}
 
 	public float getUndergroundFactor(@NotNull MinecraftClient client, float deltaTicks) {
