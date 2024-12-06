@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         gradle-version: ["wrapper"]
-        gradle-command: ["gradle"]
+        gradle-command: ["./gradlew"]
         include:
         - gradle-version: "wrapper"
           gradle-command: "./gradlew"
