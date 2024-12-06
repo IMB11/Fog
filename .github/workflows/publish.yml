@@ -6,6 +6,13 @@ on:
 jobs:
   build:
     runs-on: "ubuntu-latest"
+    strategy:
+      matrix:
+        gradle-version: ["wrapper"]
+        gradle-command: ["gradle"]
+        include:
+        - gradle-version: "wrapper"
+          gradle-command: "./gradlew"
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -23,12 +30,12 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: "wrapper"
+          gradle-version: ${{ matrix.gradle-version }}
 
       - name: Build JARs
         uses: Wandalen/wretry.action@master
         with:
-          command: "gradle chiseledBuild"
+          command: "${{ matrix.gradle-command }} chiseledBuild"
           attempt_limit: 3
 
       - name: Upload Built JARs
