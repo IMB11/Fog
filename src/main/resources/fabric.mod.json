@@ -35,7 +35,7 @@
     "fabric": "*",
     "mru": "~${target_mru}",
     "architectury": ">=${target_architectury}",
-    "yet_another_config_lib_v3": ">=3.5.0",
+    "yet_another_config_lib_v3": ">=3.6.2",
     "minecraft": "${target_minecraft}"
   }
 }
