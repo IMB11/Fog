@@ -24,7 +24,7 @@ public class EnvironmentCalculations {
 
 	private static FogManager.@NotNull FogSettings applyCaveFog(float undergroundFactor, FogManager.FogSettings settings) {
 		FogColors belowGroundColors = FogColors.DEFAULT_CAVE;
-		Color belowColor = belowGroundColors.getNightColor();
+		Color belowColor = belowGroundColors.getNightFullMoonColor();
 
 		float fogColorR = MathHelper.lerp(undergroundFactor, belowColor.red / 255f, settings.fogRed()),
 				fogColorG = MathHelper.lerp(undergroundFactor, belowColor.green / 255f, settings.fogGreen()),
