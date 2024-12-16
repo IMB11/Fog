@@ -22,24 +22,17 @@ stonecutter {
 //			loaders.each { vers("$version-$it", version) }
 //		}
 
-		vers("1.20.1-fabric", "1.20.1")
-		vers("1.20.1-forge", "1.20.1")
-
-        vers("1.20.4-fabric", "1.20.4")
-        vers("1.20.4-neoforge", "1.20.4")
-
-
-        vers("1.20.6-fabric", "1.20.6")
-        vers("1.20.6-neoforge", "1.20.6")
-
         vers("1.21-fabric", "1.21")
         vers("1.21-neoforge", "1.21")
+
+        vers("1.21.3-fabric", "1.21.3")
+        vers("1.21.3-neoforge", "1.21.3")
 
 //		mc("1.20.4", "fabric", "neoforge")
 //		mc("1.20.6", "fabric", "neoforge")
 //		mc("1.21", "fabric", "neoforge")
 
-        vcsVersion "1.21-fabric"
+        vcsVersion "1.21.3-fabric"
 	}
 
 	create rootProject

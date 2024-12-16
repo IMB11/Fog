@@ -3,6 +3,7 @@ package dev.imb11.fog.client.registry;
 import dev.imb11.fog.api.CustomFogDefinition;
 
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
@@ -52,7 +53,7 @@ public class FogRegistry {
 		}
 
 		Set<Identifier> skippedTags = TAGGED_BIOME_SKIP_LIST.getOrDefault(biomeId, new HashSet<>());
-		Registry<Biome> biomeRegistry = world.getRegistryManager().get(RegistryKeys.BIOME);
+		Registry<Biome> biomeRegistry = world.getRegistryManager().getOrThrow(RegistryKeys.BIOME);
 		for (var biomeTagFogEntry : getBiomeTagFogRegistry().entrySet()) {
 			TagKey<Biome> tagKey = biomeTagFogEntry.getKey();
 			Identifier tagId = tagKey.id();
@@ -61,7 +62,11 @@ public class FogRegistry {
 				continue;
 			}
 
-			var entryListOptional = biomeRegistry.getEntryList(tagKey);
+			//? if <1.21.2 {
+			/*var entryListOptional = biomeRegistry.getEntryList(tagKey);
+			*///?} else {
+			var entryListOptional = biomeRegistry.getOptional(tagKey);
+			//?}
 			if (entryListOptional.isPresent()) {
 				var entryList = entryListOptional.get();
 				for (var entry : entryList) {

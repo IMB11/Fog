@@ -8,8 +8,6 @@ import dev.imb11.fog.client.registry.FogRegistry;
 import dev.imb11.fog.client.resource.FogResourceReloader;
 import dev.imb11.fog.client.util.FogKeybinds;
 import dev.imb11.fog.config.FogConfig;
-import dev.imb11.mru.packing.Unpacker;
-import dev.imb11.mru.packing.resource.UnpackedResourcePack;
 import net.minecraft.resource.ResourceType;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;

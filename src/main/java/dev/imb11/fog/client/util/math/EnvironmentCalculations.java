@@ -47,7 +47,14 @@ public class EnvironmentCalculations {
 		if (client.player.getY() > viewCutoff) {
 			// Range from viewCutoff to viewCutoff + 25
 			float percentageCutoff = MathHelper.clamp(distancePastCutoff / 25f, 0, 1);
-			Vec3d skyColour = client.world.getSkyColor(player.getPos(), tickDelta);
+			Vec3d skyColour;
+
+			//? if <1.21.2 {
+			/*skyColour = client.world.getSkyColor(player.getPos(), tickDelta);
+			*///?} else {
+			skyColour = Vec3d.unpackRgb(client.world.getSkyColor(player.getPos(), tickDelta));
+			//?}
+
 			// Lerp between the fog color and the sky color
 			fogColorR = (float) MathHelper.lerp(percentageCutoff, fogColorR, skyColour.x);
 			fogColorG = (float) MathHelper.lerp(percentageCutoff, fogColorG, skyColour.y);

@@ -10,20 +10,20 @@ import net.minecraft.client.render.*;
 import net.minecraft.client.world.ClientWorld;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
-
-/*? if >=1.21 {*/
 import net.minecraft.block.enums.CameraSubmersionType;
-/*?}*/
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BackgroundRenderer.class)
 public abstract class BackgroundRendererMixin {
-	@Shadow
+	//? if <1.21.3 {
+	/*@Shadow
 	private static float red;
 	@Shadow
 	private static float green;
@@ -69,22 +69,14 @@ public abstract class BackgroundRendererMixin {
 		fogData.fogShape = FogShape.SPHERE;
 	}
 
-	/**
+	/^*
 	 * Changes the color of the seam/transition in the sky.
-	 */
-	/*? if <1.20.4 {*/
-	/*@Inject(method = "setFogBlack", at = @At("HEAD"))
-	private static void fog$setFogBlackChangeClearColor(@NotNull CallbackInfo ci) {
-		if (FogConfig.getInstance().disableMod) {
-			return;
-		}
-	*//*?} else {*/
+	 ^/
 	@WrapWithCondition(method = "render", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;clearColor(FFFF)V"))
 	private static boolean fog$setFogBlackChangeClearColor(float red, float green, float blue, float alpha) {
 		if (FogConfig.getInstance().disableMod) {
 			return true;
 		}
-		/*?}*/
 
 		@NotNull final var client = MinecraftClient.getInstance();
 		@Nullable final var clientWorld = client.world;
@@ -93,18 +85,10 @@ public abstract class BackgroundRendererMixin {
 				|| FogConfig.getInstance().disabledDimensions.contains(clientWorld.getRegistryKey().getValue().toString())
 				|| camera.getSubmersionType() != CameraSubmersionType.NONE
 		) {
-			/*? if <1.20.4 {*/
-			/*return;
-			 *//*?} else {*/
 			return true;
-			/*?}*/
 		}
 
-		/*? if <1.21 {*/
-		/*float tickDelta = client.getTickDelta();
-		 *//*?} else {*/
 		float tickDelta = client.getRenderTickCounter().getTickDelta(true);
-		/*?}*/
 		@NotNull var fogManager = FogManager.getInstance();
 		@NotNull var fogSettings = fogManager.getFogSettings(
 				tickDelta,
@@ -115,8 +99,44 @@ public abstract class BackgroundRendererMixin {
 					fogManager.getUndergroundFactor(client, tickDelta), fogSettings, tickDelta);
 		}
 		RenderSystem.clearColor(fogSettings.fogRed(), fogSettings.fogGreen(), fogSettings.fogBlue(), 1.0F);
-		/*? if >=1.20.4 {*/
 		return false;
-		/*?}*/
 	}
+	*///?} else {
+	@Inject(method = "applyFog", at = @At(value = "TAIL"), cancellable = true)
+	private static void $apply_fog_modifications(Camera camera, BackgroundRenderer.FogType fogType, Vector4f color, float viewDistance, boolean thickenFog, float tickDelta, CallbackInfoReturnable<Fog> cir) {
+		var client = MinecraftClient.getInstance();
+		var world = client.world;
+
+		if (world == null
+				|| FogConfig.getInstance().disableMod
+				|| FogConfig.getInstance().disabledDimensions.contains(world.getRegistryKey().getValue().toString())
+				|| camera.getSubmersionType() != CameraSubmersionType.NONE
+		) {
+			return;
+		}
+
+		var fogManager = FogManager.getInstance();
+		var fogSettings = fogManager.getFogSettings(tickDelta, viewDistance);
+
+		if (!world.getDimension().hasFixedTime() || !(world.getDimensionEffects() instanceof DimensionEffects.End)) {
+			fogSettings = EnvironmentCalculations.apply(
+					fogManager.getUndergroundFactor(client, tickDelta),
+					fogSettings,
+					tickDelta
+			);
+		}
+
+		Fog customFog = new Fog(
+				(float) fogSettings.fogStart(),
+				(float) fogSettings.fogEnd(),
+				FogShape.SPHERE,
+				fogSettings.fogRed(),
+				fogSettings.fogGreen(),
+				fogSettings.fogBlue(),
+				1.0F
+		);
+
+//		cir.setReturnValue(customFog);
+	}
+	//?}
 }
