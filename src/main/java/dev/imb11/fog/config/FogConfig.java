@@ -48,6 +48,8 @@ public class FogConfig {
 	@SerialEntry
 	public boolean disableBiomeFogColour = false;
 	@SerialEntry
+	public boolean disableMoonPhaseColorTransition = false;
+	@SerialEntry
 	public boolean disableCloudWhitening = false;
 	@SerialEntry
 	public float initialFogStart = 0.1f;
@@ -146,6 +148,10 @@ public class FogConfig {
 				                        .option(HELPER.get(
 						                        "disable_biome_fog_colour", defaults.disableBiomeFogColour,
 						                        () -> config.disableBiomeFogColour, val -> config.disableBiomeFogColour = val
+				                        ))
+				                        .option(HELPER.get(
+						                        "disable_moon_phase_color_transition", defaults.disableMoonPhaseColorTransition,
+						                        () -> config.disableMoonPhaseColorTransition, val -> config.disableMoonPhaseColorTransition = val
 				                        ))
 				                        .option(Option.<Boolean>createBuilder().name(
 						                        HELPER.getText(EntryType.OPTION_NAME, "disable_cloud_whitening")).description(
