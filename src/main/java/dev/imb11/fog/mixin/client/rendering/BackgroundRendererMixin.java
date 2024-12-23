@@ -1,7 +1,5 @@
 package dev.imb11.fog.mixin.client.rendering;
 
-import com.llamalad7.mixinextras.sugar.Local;
-import com.mojang.blaze3d.systems.RenderSystem;
 import dev.imb11.fog.client.FogManager;
 import dev.imb11.fog.client.util.math.EnvironmentCalculations;
 import dev.imb11.fog.config.FogConfig;
@@ -12,13 +10,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector4f;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import net.minecraft.block.enums.CameraSubmersionType;
+
+//? if <1.21.3 {
+/*import com.llamalad7.mixinextras.sugar.Local;
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.world.ClientWorld;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
-import net.minecraft.block.enums.CameraSubmersionType;
+*///? } else {
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+//? }
 
 @Mixin(BackgroundRenderer.class)
 public abstract class BackgroundRendererMixin {
@@ -102,11 +107,10 @@ public abstract class BackgroundRendererMixin {
 		return false;
 	}
 	*///?} else {
-	@Inject(method = "applyFog", at = @At(value = "TAIL"), cancellable = true)
-	private static void $apply_fog_modifications(Camera camera, BackgroundRenderer.FogType fogType, Vector4f color, float viewDistance, boolean thickenFog, float tickDelta, CallbackInfoReturnable<Fog> cir) {
-		var client = MinecraftClient.getInstance();
-		var world = client.world;
-
+	@Inject(method = "applyFog", at = @At(value = "HEAD"), cancellable = true)
+	private static void fog$modifyFog(Camera camera, BackgroundRenderer.FogType fogType, Vector4f color, float viewDistance, boolean thickenFog, float tickDelta, @NotNull CallbackInfoReturnable<Fog> cir) {
+		@NotNull var client = MinecraftClient.getInstance();
+		@Nullable var world = client.world;
 		if (world == null
 				|| FogConfig.getInstance().disableMod
 				|| FogConfig.getInstance().disabledDimensions.contains(world.getRegistryKey().getValue().toString())
@@ -115,18 +119,13 @@ public abstract class BackgroundRendererMixin {
 			return;
 		}
 
-		var fogManager = FogManager.getInstance();
-		var fogSettings = fogManager.getFogSettings(tickDelta, viewDistance);
-
+		@NotNull var fogManager = FogManager.getInstance();
+		@NotNull var fogSettings = fogManager.getFogSettings(tickDelta, viewDistance);
 		if (!world.getDimension().hasFixedTime() || !(world.getDimensionEffects() instanceof DimensionEffects.End)) {
-			fogSettings = EnvironmentCalculations.apply(
-					fogManager.getUndergroundFactor(client, tickDelta),
-					fogSettings,
-					tickDelta
-			);
+			fogSettings = EnvironmentCalculations.apply(fogManager.getUndergroundFactor(client, tickDelta), fogSettings, tickDelta);
 		}
 
-		Fog customFog = new Fog(
+		@NotNull var customFog = new Fog(
 				(float) fogSettings.fogStart(),
 				(float) fogSettings.fogEnd(),
 				FogShape.SPHERE,
@@ -135,8 +134,27 @@ public abstract class BackgroundRendererMixin {
 				fogSettings.fogBlue(),
 				1.0F
 		);
+		cir.setReturnValue(customFog);
+	}
 
-//		cir.setReturnValue(customFog);
+	@Inject(method = "getFogColor", at = @At(value = "HEAD"), cancellable = true)
+	private static void fog$modifyFogColor(Camera camera, float tickDelta, @Nullable ClientWorld world, int clampedViewDistance, float skyDarkness, @NotNull CallbackInfoReturnable<Vector4f> cir) {
+		if (world == null
+				|| FogConfig.getInstance().disableMod
+				|| FogConfig.getInstance().disabledDimensions.contains(world.getRegistryKey().getValue().toString())
+				|| camera.getSubmersionType() != CameraSubmersionType.NONE
+		) {
+			return;
+		}
+
+		@NotNull var client = MinecraftClient.getInstance();
+		@NotNull var fogManager = FogManager.getInstance();
+		@NotNull var fogSettings = fogManager.getFogSettings(tickDelta, clampedViewDistance);
+		if (!world.getDimension().hasFixedTime() || !(world.getDimensionEffects() instanceof DimensionEffects.End)) {
+			fogSettings = EnvironmentCalculations.apply(fogManager.getUndergroundFactor(client, tickDelta), fogSettings, tickDelta);
+		}
+
+		cir.setReturnValue(new Vector4f(fogSettings.fogRed(), fogSettings.fogGreen(), fogSettings.fogBlue(), 1.0F));
 	}
 	//?}
 }

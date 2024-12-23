@@ -9,9 +9,11 @@ import net.minecraft.client.render.DimensionEffects;
 import net.minecraft.client.render.Fog;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -20,12 +22,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(targets = "net.minecraft.client.render.CloudRenderer")
 public class CloudRendererMixin {
 	//? if >=1.21.2 {
-	private static Fog PREVIOUS_FOG = null;
+	@Unique
+	private static @Nullable Fog fog$PREVIOUS_FOG = null;
 
 	@Inject(method = "renderClouds(ILnet/minecraft/client/option/CloudRenderMode;FLorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lnet/minecraft/util/math/Vec3d;F)V", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderColor(FFFF)V", ordinal = 0), cancellable = true)
-	public void $set_clouds_white(int color, CloudRenderMode cloudRenderMode, float cloudHeight, Matrix4f positionMatrix, Matrix4f projectionMatrix, Vec3d cameraPos, float ticks, CallbackInfo ci) {
-		var client = MinecraftClient.getInstance();
-		var world = client.world;
+	public void fog$whitenClouds(int color, CloudRenderMode cloudRenderMode, float cloudHeight, Matrix4f positionMatrix, Matrix4f projectionMatrix, Vec3d cameraPos, float ticks, CallbackInfo ci) {
+		@NotNull var client = MinecraftClient.getInstance();
+		@Nullable var world = client.world;
 
 		if (world == null
 				|| FogConfig.getInstance().disableMod
@@ -39,23 +42,27 @@ public class CloudRendererMixin {
 		ci.cancel();
 
 		// Force clouds to be white
-		PREVIOUS_FOG = RenderSystem.getShaderFog();
+		fog$PREVIOUS_FOG = RenderSystem.getShaderFog();
 		var cloudsColor = world.getCloudsColor(ticks);
-		RenderSystem.setShaderFog(applyFogChanges(PREVIOUS_FOG, cloudsColor));
+		//noinspection DataFlowIssue
+		RenderSystem.setShaderFog(fog$applyFogChanges(fog$PREVIOUS_FOG, cloudsColor));
 	}
 
-	private Fog applyFogChanges(Fog fog, int cloudsColor) {
+	@Unique
+	private @NotNull Fog fog$applyFogChanges(@NotNull Fog fog, int cloudsColor) {
 		// (float start, float end, FogShape shape, float red, float green, float blue, float alpha)
-		Color color = new Color(cloudsColor);
+		@NotNull var color = new Color(cloudsColor);
 		return new Fog(fog.start(), fog.end(), fog.shape(), color.red / 255f, color.green / 255f, color.blue / 255f, fog.alpha());
 	}
 
-	@Inject(method = "renderClouds(ILnet/minecraft/client/option/CloudRenderMode;FLorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lnet/minecraft/util/math/Vec3d;F)V", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderColor(FFFF)V", ordinal = 1), cancellable = true)
-	public void $reset_clouds_white(int color, CloudRenderMode cloudRenderMode, float cloudHeight, Matrix4f positionMatrix, Matrix4f projectionMatrix, Vec3d cameraPos, float ticks, CallbackInfo ci) {
-		if (PREVIOUS_FOG != null) {
-			RenderSystem.setShaderFog(PREVIOUS_FOG);
-			PREVIOUS_FOG = null;
+	@Inject(method = "renderClouds(ILnet/minecraft/client/option/CloudRenderMode;FLorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lnet/minecraft/util/math/Vec3d;F)V", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderColor(FFFF)V", ordinal = 1))
+	public void fog$resetCloudWhitening(int color, CloudRenderMode cloudRenderMode, float cloudHeight, Matrix4f positionMatrix, Matrix4f projectionMatrix, Vec3d cameraPos, float ticks, CallbackInfo ci) {
+		if (fog$PREVIOUS_FOG == null) {
+			return;
 		}
+
+		RenderSystem.setShaderFog(fog$PREVIOUS_FOG);
+		fog$PREVIOUS_FOG = null;
 	}
 	//?}
 }
