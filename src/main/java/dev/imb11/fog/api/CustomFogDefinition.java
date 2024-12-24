@@ -112,11 +112,12 @@ public final class CustomFogDefinition {
 
 		/**
 		 * @param day The color of the fog during the day - in #RRGGBB format.
-		 * @param night The color of the fog during the night - in #RRGGBB format.
+		 * @param nightFullMoon The color of the fog during the night - in #RRGGBB format.
+		 * @param nightNewMoon The color of the fog during the night during a new moon - in #RRGGBB format or null.
 		 * @return This builder.
 		 */
-		public Builder colors(String day, String night) {
-			this.colors = new FogColors(day, night);
+		public Builder colors(String day, String nightFullMoon, String nightNewMoon) {
+			this.colors = new FogColors(day, nightFullMoon, nightNewMoon);
 			return this;
 		}
 
