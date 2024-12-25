@@ -49,7 +49,7 @@ public class FogConfig {
 	@SerialEntry
 	public boolean disableBiomeFogColour = false;
 	@SerialEntry
-	public boolean disableCloudWhitening = false;
+	public boolean disableCloudWhitening = true;
 	@SerialEntry
 	public float initialFogStart = 0.1f;
 	@SerialEntry

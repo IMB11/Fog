@@ -1,8 +1,10 @@
 package dev.imb11.fog.mixin.client.rendering;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import dev.imb11.fog.config.FogConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.CloudRenderMode;
+import net.minecraft.client.render.DimensionEffects;
 import net.minecraft.client.render.Fog;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +24,10 @@ public class CloudRendererMixin {
 	private void fog$whiteClouds(int color, CloudRenderMode cloudRenderMode, float cloudHeight, Matrix4f positionMatrix, Matrix4f projectionMatrix, Vec3d cameraPos, float ticks, CallbackInfo ci) {
 		@NotNull var client = MinecraftClient.getInstance();
 		@Nullable var camera = client.gameRenderer.getCamera();
-		if (camera == null) {
+		if (camera == null || client.world == null || FogConfig.getInstance().disableMod
+				|| !(client.world.getDimensionEffects() instanceof DimensionEffects.Overworld)
+				|| FogConfig.getInstance().disableCloudWhitening
+				|| client.world.getDimension().hasFixedTime()) {
 			return;
 		}
 
