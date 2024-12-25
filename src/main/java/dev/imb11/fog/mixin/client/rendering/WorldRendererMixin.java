@@ -27,7 +27,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.util.math.Vec3d;
-*/
+
+*///?}
 
 @Pseudo
 @Mixin(value = WorldRenderer.class)

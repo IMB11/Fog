@@ -21,9 +21,9 @@ import net.minecraft.client.world.ClientWorld;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
-*///? } else {
+*///?} else {
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-//? }
+//?}
 
 @Mixin(BackgroundRenderer.class)
 public abstract class BackgroundRendererMixin {
