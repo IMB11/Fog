@@ -11,8 +11,10 @@ import dev.imb11.fog.client.util.player.PlayerUtil;
 import dev.imb11.fog.client.util.world.ClientWorldUtil;
 import dev.imb11.fog.config.FogConfig;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.DimensionEffects;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.LightType;
 import org.jetbrains.annotations.NotNull;
@@ -89,13 +91,8 @@ public class FogManager {
 		}
 
 		float density = ClientWorldUtil.isFogDenseAtPosition(clientWorld, clientPlayerBlockPosition) ? 0.9F : 1.0F;
-		/*? if <1.21 {*/
-		/*float tickDelta = client.getTickDelta();
-		 *//*?} else {*/
 		float tickDelta = client.getRenderTickCounter().getTickDelta(true);
 
-		/*?}*/
-		// TODO: Apply the start and end multipliers in FogManager#getFogSettings
 		DarknessCalculation darknessCalculation = DarknessCalculation.of(
 				client, fogStart.getDefaultValue(), fogEnd.getDefaultValue() * density, tickDelta);
 		@NotNull var clientPlayerBiomeKeyOptional = clientWorld.getBiome(clientPlayer.getBlockPos()).getKey();
@@ -112,6 +109,8 @@ public class FogManager {
 
 		float blendFactor = getBlendFactor(clientWorld);
 		Color finalNightColor = getFinalNightColor(clientWorld, colors);
+
+		// Base day/night color blending
 		float red = MathHelper.lerp(blendFactor, finalNightColor.red / 255f, colors.getDayColor().red / 255f);
 		float green = MathHelper.lerp(blendFactor, finalNightColor.green / 255f, colors.getDayColor().green / 255f);
 		float blue = MathHelper.lerp(blendFactor, finalNightColor.blue / 255f, colors.getDayColor().blue / 255f);
@@ -120,7 +119,6 @@ public class FogManager {
 			this.fogColorRed.set(red);
 			this.fogColorGreen.set(green);
 			this.fogColorBlue.set(blue);
-
 			hasSetup = true;
 		} else {
 			this.fogColorRed.interpolate(red);
@@ -170,8 +168,8 @@ public class FogManager {
 				case 1, 7 -> 0.25f; // 1/4 moon
 				case 2, 6 -> 0.5f;  // 1/2 moon
 				case 3, 5 -> 0.75f; // 3/4 moon
-				case 4    ->  1.0f; // full moon
-				default -> 1.0f;
+				case 4    -> 1.0f;  // full moon
+				default   -> 1.0f;
 			};
 			return fogColors.getNightColor().lerp(newMoonColor, blendFactor);
 		} else {
@@ -198,6 +196,8 @@ public class FogManager {
 	}
 
 	public @NotNull FogSettings getFogSettings(float tickDelta, float viewDistance) {
+		MinecraftClient client = MinecraftClient.getInstance();
+
 		float fogStartValue = fogStart.get(tickDelta) * viewDistance;
 		// Default to no multiplier
 		float undergroundFogMultiplier = 1.0F;
@@ -217,7 +217,6 @@ public class FogManager {
 		float fogBlue = fogColorBlue.get(tickDelta);
 
 		float raininessValue = raininess.get(tickDelta);
-
 		if (!FogConfig.getInstance().disableRaininessEffect && raininessValue > 0.0f) {
 			fogEndValue /= 1.0f + raininessValue;
 
@@ -235,7 +234,66 @@ public class FogManager {
 		fogStartValue *= this.currentStartMultiplier.get(tickDelta);
 		fogEndValue *= this.currentEndMultiplier.get(tickDelta);
 
+		// Sunset
+		float[] sunsetAdjustedColors = applySunsetLogic(client, fogRed, fogGreen, fogBlue, tickDelta);
+		fogRed = sunsetAdjustedColors[0];
+		fogGreen = sunsetAdjustedColors[1];
+		fogBlue = sunsetAdjustedColors[2];
+
 		return new FogSettings(fogStartValue, fogEndValue, fogRed, fogGreen, fogBlue);
+	}
+
+	/**
+	 * Applies sunset color blending similar to vanilla Minecraft's implementation.
+	 */
+	private float[] applySunsetLogic(MinecraftClient client, float red, float green, float blue, float tickDelta) {
+		if (!FogConfig.getInstance().disableSunsetFog && client.world != null) {
+			// Access the world's dimension effects to utilize built-in sunset checks
+			DimensionEffects dimensionEffects = client.world.getDimensionEffects();
+
+			// Retrieve the current sky angle based on tick delta
+			float skyAngle = client.world.getSkyAngle(tickDelta);
+
+			// Check if it's currently sunrise or sunset using vanilla Minecraft's method
+			if (dimensionEffects.isSunRisingOrSetting(skyAngle)) {
+				// Get the sky color defined by the dimension effects for the current sky angle
+				int skyColorInt = dimensionEffects.getSkyColor(skyAngle);
+
+				// Extract individual color channels from the packed integer color
+				float skyRed = ColorHelper.floatFromChannel(ColorHelper.getRed(skyColorInt));
+				float skyGreen = ColorHelper.floatFromChannel(ColorHelper.getGreen(skyColorInt));
+				float skyBlue = ColorHelper.floatFromChannel(ColorHelper.getBlue(skyColorInt));
+
+				// Blend the current fog color with the sky color based on the sunset factor
+				// The blending factor (h) determines the influence of the sky color
+				float h = calculateSunsetBlendFactor(client.world, tickDelta);
+
+				red = MathHelper.lerp(h, red, skyRed);
+				green = MathHelper.lerp(h, green, skyGreen);
+				blue = MathHelper.lerp(h, blue, skyBlue);
+			}
+		}
+
+		return new float[]{red, green, blue};
+	}
+
+	/**
+	 * Calculates the blending factor for sunset based on the world's sky angle.
+	 */
+	private float calculateSunsetBlendFactor(ClientWorld world, float tickDelta) {
+		// Retrieve the current sky angle (0.0 to 1.0)
+		float skyAngle = world.getSkyAngle(tickDelta);
+
+		// Calculate the blend factor based on how close the sky angle is to sunset
+		// Adjust the denominator to control the transition speed
+		float sunsetStart = 0.20f; // Starting point of sunset
+		float sunsetEnd = 0.30f;   // Ending point of sunset
+
+		if (skyAngle >= sunsetStart && skyAngle <= sunsetEnd) {
+			return MathHelper.clamp((skyAngle - sunsetStart) / (sunsetEnd - sunsetStart), 0.0F, 1.0F);
+		} else {
+			return 0.0F;
+		}
 	}
 
 	public record FogSettings(double fogStart, double fogEnd, float fogRed, float fogGreen, float fogBlue) {}
