@@ -16,6 +16,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.List;
 
 import static dev.imb11.fog.client.FogClient.MOD_ID;
@@ -70,6 +71,10 @@ public class FogConfig {
 	public float startMultiplierTransitionSpeed = 0.0075f;
 	@SerialEntry
 	public float endMultiplierTransitionSpeed = 0.0075f;
+	@SerialEntry
+	public boolean disableMoonPhaseColorTransition = false;
+	@SerialEntry
+	public Color newMoonColor = new Color(0, 0, 0, 255);
 
 	public static @NotNull FogConfig getInstance() {
 		return HANDLER.instance();
@@ -146,6 +151,13 @@ public class FogConfig {
 				                        .option(HELPER.get(
 						                        "disable_biome_fog_colour", defaults.disableBiomeFogColour,
 						                        () -> config.disableBiomeFogColour, val -> config.disableBiomeFogColour = val
+				                        ))
+				                        .option(HELPER.get(
+						                        "disable_moon_phase_color_transition", defaults.disableMoonPhaseColorTransition,
+						                        () -> config.disableMoonPhaseColorTransition, val -> config.disableMoonPhaseColorTransition = val
+				                        ))
+				                        .option(HELPER.get(
+						                        "new_moon_color", defaults.newMoonColor, () -> config.newMoonColor, val -> config.newMoonColor = val
 				                        ))
 				                        .option(Option.<Boolean>createBuilder().name(
 						                        HELPER.getText(EntryType.OPTION_NAME, "disable_cloud_whitening")).description(

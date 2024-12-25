@@ -4,6 +4,9 @@ import dev.imb11.fog.client.util.math.MathUtil;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static dev.imb11.fog.client.util.math.MathUtil.clamp;
 
 /**
@@ -33,6 +36,11 @@ public class Color {
 		red = color.red;
 		green = color.green;
 		blue = color.blue;
+	}
+
+	private static final Map<java.awt.Color, Color> colorCache = new HashMap<>();
+	public static Color from(java.awt.Color awtColor) {
+		return colorCache.computeIfAbsent(awtColor, color -> new Color(color.getRed(), color.getGreen(), color.getBlue()));
 	}
 
 	@Override
