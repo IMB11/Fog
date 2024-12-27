@@ -116,7 +116,7 @@ dependencies {
         mappings("dev.architectury:yarn-mappings-patch-neoforge:1.21+build.4")
     })
 
-    modImplementation(include("dev.architectury:architectury-${loader}:${property("deps.arch_api")}"))
+    modImplementation("dev.architectury:architectury-${loader}:${property("deps.arch_api")}")
     modImplementation ("dev.imb11:mru:${property("deps.mru")}+${mcVersion.replace("1.21.1", "1.21").replace("1.21.3", "1.21.4")}+${loader}", {
         transitive = false;
     })
@@ -156,26 +156,16 @@ processResources {
         props.mandatory_inclusion_field = (loader == "forge") ? "mandatory = true" : "type = \"required\""
     }
 
-    if (loader == "fabric") {
-        props.target_architectury = project.property("deps.arch_api")
-    }
-
     props.each { key, value -> inputs.property(key, value) }
 
     if (loader == "fabric") {
         filesMatching("fabric.mod.json") { expand(props) }
-        exclude(["META-INF/mods.toml"])
+        exclude(["META-INF/neoforge.mods.toml"])
     }
 
-    if (loader == "forge" || loader == "neoforge") {
-        filesMatching(["META-INF/mods.toml", "META-INF/neoforge.mods.toml"]) { expand(props) }
+    if (loader == "neoforge") {
+        filesMatching(["META-INF/neoforge.mods.toml"]) { expand(props) }
         exclude("fabric.mod.json")
-
-        if (stonecutter.eval(mcVersion, ">1.20.4")) {
-            exclude("META-INF/mods.toml")
-        } else {
-            exclude("META-INF/neoforge.mods.toml")
-        }
     }
 }
 

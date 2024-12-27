@@ -31,5 +31,10 @@ modId = "yet_another_config_lib_v3"
 ${mandatory_inclusion_field}
 versionRange = "[3.6.2,)"
 
+[[dependencies.fog]]
+modId = "architectury"
+${mandatory_inclusion_field}
+versionRange = "*"
+
 [[mixins]]
 config="fog.mixins.json"
