@@ -12,8 +12,10 @@ import dev.imb11.fog.client.util.world.ClientWorldUtil;
 import dev.imb11.fog.config.FogConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.util.CubicSampler;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.LightType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -233,7 +235,7 @@ public class FogManager {
 		fogEndValue *= this.currentEndMultiplier.get(tickDelta);
 
 		// Sunset
-		float[] sunsetAdjustedColors = applySunsetLogic(client, fogRed, fogGreen, fogBlue);
+		float[] sunsetAdjustedColors = applySunsetLogic(client, fogRed, fogGreen, fogBlue, tickDelta);
 		fogRed = sunsetAdjustedColors[0];
 		fogGreen = sunsetAdjustedColors[1];
 		fogBlue = sunsetAdjustedColors[2];
@@ -241,55 +243,31 @@ public class FogManager {
 		return new FogSettings(fogStartValue, fogEndValue, fogRed, fogGreen, fogBlue);
 	}
 
+	public float sunsetSunriseBlendFactor = 0.0F;
+
 	/**
 	 * Applies sunset color blending similar to vanilla Minecraft's implementation.
 	 */
-	private float[] applySunsetLogic(MinecraftClient client, float red, float green, float blue) {
+	private float[] applySunsetLogic(MinecraftClient client, float red, float green, float blue, float tickDelta) {
 		if (!FogConfig.getInstance().disableSunsetFog && client.world != null) {
-			// Retrieve the current dimension type (e.g., Overworld, Nether, End)
-			float skyAngle = client.world.getSkyAngle(1.0F); // 1.0F for exact time
+			float skyAngle = client.world.getSkyAngle(tickDelta);
+			float blendSpeed = 0.0005F; // Speed of blending
 
-			// Use the isSunRisingOrSetting method to check for sunrise/sunset
+			Vec3d sunColor = Vec3d.unpackRgb(client.world.getDimensionEffects().getSkyColor(skyAngle));
+
 			if (client.world.getDimensionEffects().isSunRisingOrSetting(skyAngle)) {
-				// Retrieve the sunset color from configuration
-				Color sunsetColor = Color.from(FogConfig.getInstance().sunsetColor);
-
-				// Calculate the blend factor based on how close the sky angle is to sunset
-				float blendFactor = calculateSunsetBlendFactor(client.world);
-
-				// Interpolate each color component towards the sunset color
-				red = MathHelper.lerp(blendFactor, red, sunsetColor.red / 255f);
-				green = MathHelper.lerp(blendFactor, green, sunsetColor.green / 255f);
-				blue = MathHelper.lerp(blendFactor, blue, sunsetColor.blue / 255f);
+				sunsetSunriseBlendFactor = Math.min(sunsetSunriseBlendFactor + (blendSpeed * tickDelta), 1.0F);
+			} else {
+				sunsetSunriseBlendFactor = Math.max(sunsetSunriseBlendFactor - (blendSpeed * tickDelta), 0.0F);
 			}
+
+			// Interpolate each color component towards the sunset color
+			red = MathHelper.lerp(sunsetSunriseBlendFactor, red, (float) sunColor.x);
+			green = MathHelper.lerp(sunsetSunriseBlendFactor, green, (float) sunColor.y);
+			blue = MathHelper.lerp(sunsetSunriseBlendFactor, blue, (float) sunColor.z);
 		}
 
 		return new float[]{red, green, blue};
-	}
-
-	/**
-	 * Calculates the blending factor for sunset based on the world's sky angle.
-	 */
-	private float calculateSunsetBlendFactor(ClientWorld world) {
-		long time = world.getTimeOfDay() % 24000;
-
-		float blendFactor = 0.0f;
-
-		final int SUNSET_START = 12000;
-		final int SUNSET_END = 13850;
-		final int SUNSET_MIDPOINT = (SUNSET_START + SUNSET_END) / 2;
-		final float SUNSET_DURATION = (SUNSET_MIDPOINT - SUNSET_START);
-
-		// Sunset period: blendFactor increases from 0.0 to 1.0 and back to 0.0
-		if (time >= SUNSET_START && time <= SUNSET_END) {
-			if (time <= SUNSET_MIDPOINT) { // First half: 0.0 to 1.0
-				blendFactor = (float) (time - SUNSET_START) / SUNSET_DURATION;
-			} else { // Second half: 1.0 to 0.0
-				blendFactor = (float) (SUNSET_END - time) / SUNSET_DURATION;
-			}
-			blendFactor = MathHelper.clamp(blendFactor, 0.0f, 1.0f);
-		}
-		return blendFactor;
 	}
 
 	public record FogSettings(double fogStart, double fogEnd, float fogRed, float fogGreen, float fogBlue) {}

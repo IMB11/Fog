@@ -76,8 +76,6 @@ public class FogConfig {
 	@SerialEntry
 	public Color newMoonColor = new Color(0, 0, 0, 255);
 	@SerialEntry
-	public Color sunsetColor = new Color(206, 113, 45, 255);
-	@SerialEntry
 	public boolean disableSunsetFog = false;
 
 	public static @NotNull FogConfig getInstance() {
@@ -166,9 +164,6 @@ public class FogConfig {
 				                        .option(HELPER.get(
 						                        "disable_sunset_fog", defaults.disableSunsetFog,
 						                        () -> config.disableSunsetFog, val -> config.disableSunsetFog = val
-				                        ))
-				                        .option(HELPER.get(
-						                        "sunset_color", defaults.sunsetColor, () -> config.sunsetColor, val -> config.sunsetColor = val
 				                        ))
 				                        .option(Option.<Boolean>createBuilder().name(
 						                        HELPER.getText(EntryType.OPTION_NAME, "disable_cloud_whitening")).description(
