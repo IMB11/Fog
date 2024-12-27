@@ -22,7 +22,7 @@ public class FogColors {
 	private static final HashMap<Class<? extends DimensionEffects>, FogColors> CACHED_DEFAULTS = new HashMap<>();
 
 	public static FogColors getDefault(ClientWorld world) {
-		if (world == null || world.getDimensionEffects() instanceof DimensionEffects.Overworld) {
+		if (world == null) {
 			return new FogColors("#b9d2fd", "#000000");
 		} else {
 			if (CACHED_DEFAULTS.containsKey(world.getDimensionEffects().getClass())) {

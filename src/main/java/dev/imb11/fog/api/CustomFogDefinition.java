@@ -3,15 +3,20 @@ package dev.imb11.fog.api;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.minecraft.client.world.ClientWorld;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.Objects;
 
 /**
  * Represents a custom fog definition.
  */
 public final class CustomFogDefinition {
-	public static final CustomFogDefinition DEFAULT = new CustomFogDefinition(1.0f, 1.0f, FogColors.getDefault(null));
+	public static CustomFogDefinition getDefault(ClientWorld world) {
+		return new CustomFogDefinition(1.0f, 1.0f, FogColors.getDefault(world));
+	}
+
 	public static final Codec<CustomFogDefinition> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Codec.FLOAT.fieldOf("start_multiplier").forGetter(CustomFogDefinition::startMultiplier),
 			Codec.FLOAT.fieldOf("end_multiplier").forGetter(CustomFogDefinition::endMultiplier),
@@ -75,9 +80,9 @@ public final class CustomFogDefinition {
 	 * A builder for {@link CustomFogDefinition}.
 	 */
 	public static class Builder {
-		private float startMultiplier = DEFAULT.startMultiplier();
-		private float endMultiplier = DEFAULT.endMultiplier();
-		private FogColors colors = DEFAULT.colors();
+		private float startMultiplier = getDefault(null).startMultiplier();
+		private float endMultiplier = getDefault(null).endMultiplier();
+		private FogColors colors = getDefault(null).colors();
 
 		public static Builder create() {
 			return new Builder();

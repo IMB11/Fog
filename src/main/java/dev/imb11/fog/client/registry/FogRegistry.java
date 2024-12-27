@@ -2,6 +2,7 @@ package dev.imb11.fog.client.registry;
 
 import dev.imb11.fog.api.CustomFogDefinition;
 
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
@@ -41,7 +42,7 @@ public class FogRegistry {
 		return BIOME_FOG_REGISTRY;
 	}
 
-	public static @NotNull CustomFogDefinition getFogDefinitionOrDefault(@NotNull Identifier biomeId, @NotNull World world) {
+	public static @NotNull CustomFogDefinition getFogDefinitionOrDefault(@NotNull Identifier biomeId, @NotNull ClientWorld world) {
 		CustomFogDefinition biomeFogDefinition = getBiomeFogRegistry().get(biomeId);
 		if (biomeFogDefinition != null) {
 			return biomeFogDefinition;
@@ -82,7 +83,7 @@ public class FogRegistry {
 		}
 
 		TAGGED_BIOME_SKIP_LIST.put(biomeId, skippedTags);
-		return CustomFogDefinition.DEFAULT;
+		return CustomFogDefinition.getDefault(world);
 	}
 
 	public static void resetCaches() {
