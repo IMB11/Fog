@@ -2,6 +2,7 @@ package dev.imb11.fog.client.util.color;
 
 import dev.imb11.fog.client.util.math.MathUtil;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -41,6 +42,10 @@ public class Color {
 	private static final Map<java.awt.Color, Color> colorCache = new HashMap<>();
 	public static Color from(java.awt.Color awtColor) {
 		return colorCache.computeIfAbsent(awtColor, color -> new Color(color.getRed(), color.getGreen(), color.getBlue()));
+	}
+
+	public Vec3d asVec3d() {
+		return new Vec3d(red / 255.0f, green / 255.0f, blue / 255.0f);
 	}
 
 	@Override
