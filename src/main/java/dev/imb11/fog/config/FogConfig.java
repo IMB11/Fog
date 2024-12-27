@@ -38,7 +38,14 @@ public class FogConfig {
 	 * Nether has pretty good Fog, it doesn't need changing unless player really wants to.
 	 */
 	@SerialEntry
-	public @NotNull List<String> disabledDimensions = List.of(String.format("%s:the_nether", Identifier.DEFAULT_NAMESPACE));
+	public @NotNull List<String> disabledBiomes = List.of(
+			"minecraft:nether_wastes", 
+			"minecraft:crimson_forest", 
+			"minecraft:warped_forest", 
+			"minecraft:soul_sand_valley", 
+			"minecraft:basalt_deltas"
+	);
+	
 	@SerialEntry
 	public boolean disableRaininessEffect = false;
 	@SerialEntry
@@ -200,13 +207,13 @@ public class FogConfig {
 				                        .build()
 				)
 				.category(ConfigCategory.createBuilder()
-				                        .name(HELPER.getText(EntryType.CATEGORY_NAME, "dimension_and_general"))
+				                        .name(HELPER.getText(EntryType.CATEGORY_NAME, "general"))
 				                        .group(ListOption.<String>createBuilder()
 				                                         .name(Text.translatable(
-						                                         String.format("%s.config.option.disabled_dimensions", MOD_ID)))
+						                                         String.format("%s.config.option.disabled_biomes", MOD_ID)))
 				                                         .binding(
-						                                         disabledDimensions, () -> disabledDimensions,
-						                                         val -> disabledDimensions = val
+						                                         disabledBiomes, () -> disabledBiomes,
+						                                         val -> disabledBiomes = val
 				                                         )
 				                                         .controller(StringControllerBuilder::create)
 				                                         .initial("mod_id:dimension_id")

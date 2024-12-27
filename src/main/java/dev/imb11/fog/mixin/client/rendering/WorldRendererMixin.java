@@ -43,6 +43,7 @@ public abstract class WorldRendererMixin {
 				|| FogConfig.getInstance().disableMod
 				|| !(this.world.getDimensionEffects() instanceof DimensionEffects.Overworld)
 				|| FogConfig.getInstance().disableCloudWhitening
+				|| FogManager.isInDisabledBiome()
 				|| this.world.getDimension().hasFixedTime()
 		) {
 			return original.call(this.world, tickDelta);
@@ -59,6 +60,7 @@ public abstract class WorldRendererMixin {
 				|| FogConfig.getInstance().disableMod
 				|| !(this.world.getDimensionEffects() instanceof DimensionEffects.Overworld)
 				|| FogConfig.getInstance().disableCloudWhitening
+				|| FogManager.isInDisabledBiome()
 				|| this.world.getDimension().hasFixedTime()
 		) {
 			original.call();
@@ -78,6 +80,7 @@ public abstract class WorldRendererMixin {
 				|| FogConfig.getInstance().disableMod
 				|| !(world.getDimensionEffects() instanceof DimensionEffects.Overworld)
 				|| FogConfig.getInstance().disableCloudWhitening
+				|| FogManager.isInDisabledBiome()
 				|| world.getDimension().hasFixedTime()) {
 			return;
 		}

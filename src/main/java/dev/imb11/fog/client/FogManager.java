@@ -12,11 +12,13 @@ import dev.imb11.fog.client.util.world.ClientWorldUtil;
 import dev.imb11.fog.config.FogConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.CubicSampler;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.LightType;
+import net.minecraft.world.biome.Biome;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,6 +64,13 @@ public class FogManager {
 
 	public static @NotNull FogManager getInstance() {
 		return INSTANCE;
+	}
+
+	public static boolean isInDisabledBiome() {
+		MinecraftClient client = MinecraftClient.getInstance();
+		RegistryEntry<Biome> biome = client.world.getBiomeAccess().getBiome(client.player.getBlockPos());
+
+		return FogConfig.getInstance().disabledBiomes.contains(biome.getIdAsString());
 	}
 
 	private static float getBlendFactor(@NotNull ClientWorld world) {
