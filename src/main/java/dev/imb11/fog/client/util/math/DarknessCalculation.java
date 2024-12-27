@@ -25,18 +25,9 @@ public record DarknessCalculation(float fogStart, float fogEnd, float darknessVa
 			darknessValue = 1.0F;
 		} else if (livingEntity.hasStatusEffect(StatusEffects.DARKNESS)) {
 			StatusEffectInstance effect = livingEntity.getStatusEffect(StatusEffects.DARKNESS);
-			/*? if >=1.20.6 {*/
 			if (effect != null) {
-				/*?} else {*/
-				/*if (effect != null && effect.getFactorCalculationData().isPresent()) {
-				 *//*?}*/
 				float factor = client.options.getDarknessEffectScale().getValue().floatValue();
-
-				/*? if <1.20.6 {*/
-				/*float intensity = effect.getFactorCalculationData().get().lerp(livingEntity, deltaTick) * factor;
-				 *//*?} else {*/
 				float intensity = effect.getFadeFactor(livingEntity, deltaTick) * factor;
-				/*?}*/
 
 				float darknessScale = calculateDarknessScale(livingEntity, deltaTick);
 				fogStart = ((8.0F * 16) / renderDistance) * (1 - darknessScale);
@@ -49,14 +40,7 @@ public record DarknessCalculation(float fogStart, float fogEnd, float darknessVa
 	}
 
 	private static float calculateDarknessScale(@NotNull LivingEntity entity, float deltaTick) {
-		/*? if <1.20.6 {*/
-        /*float darknessFactor = entity.getStatusEffect(StatusEffects.DARKNESS)
-                .getFactorCalculationData()
-                .get()
-                .lerp(entity, deltaTick);
-		*//*?} else {*/
 		float darknessFactor = entity.getStatusEffect(StatusEffects.DARKNESS).getFadeFactor(entity, deltaTick);
-		/*?}*/
 
 		float factor = 0.45F * darknessFactor;
 		return Math.max(0.0F, MathHelper.cos((entity.age - deltaTick) * (float) Math.PI * 0.025F) * factor);

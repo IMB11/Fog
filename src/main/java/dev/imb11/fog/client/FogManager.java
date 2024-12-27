@@ -126,7 +126,7 @@ public class FogManager {
 				clientPlayerBiomeKeyOptional.get().getValue(), clientWorld);
 		@Nullable FogColors colors = fogDefinition.colors();
 		if (colors == null || FogConfig.getInstance().disableBiomeFogColour) {
-			colors = FogColors.DEFAULT;
+			colors = FogColors.getDefault(clientWorld);
 		}
 
 		float blendFactor = getBlendFactor(clientWorld);

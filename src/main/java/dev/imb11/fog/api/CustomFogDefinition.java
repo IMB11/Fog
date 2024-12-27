@@ -11,7 +11,7 @@ import java.util.Objects;
  * Represents a custom fog definition.
  */
 public final class CustomFogDefinition {
-	public static final CustomFogDefinition DEFAULT = new CustomFogDefinition(1.0f, 1.0f, FogColors.DEFAULT);
+	public static final CustomFogDefinition DEFAULT = new CustomFogDefinition(1.0f, 1.0f, FogColors.getDefault(null));
 	public static final Codec<CustomFogDefinition> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Codec.FLOAT.fieldOf("start_multiplier").forGetter(CustomFogDefinition::startMultiplier),
 			Codec.FLOAT.fieldOf("end_multiplier").forGetter(CustomFogDefinition::endMultiplier),

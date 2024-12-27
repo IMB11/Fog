@@ -44,8 +44,16 @@ public class Color {
 		return colorCache.computeIfAbsent(awtColor, color -> new Color(color.getRed(), color.getGreen(), color.getBlue()));
 	}
 
+	public static Color from(Vec3d vec3d) {
+		return new Color((int) (vec3d.x * 255), (int) (vec3d.y * 255), (int) (vec3d.z * 255));
+	}
+
 	public Vec3d asVec3d() {
 		return new Vec3d(red / 255.0f, green / 255.0f, blue / 255.0f);
+	}
+
+	public String asHex() {
+		return String.format("#%02x%02x%02x", red, green, blue);
 	}
 
 	@Override
