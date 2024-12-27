@@ -1,5 +1,6 @@
 package dev.imb11.fog.mixin.client.rendering;
 
+import dev.imb11.fog.client.FogManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import net.minecraft.client.render.*;

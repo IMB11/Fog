@@ -54,7 +54,13 @@ public class FogRegistry {
 		}
 
 		Set<Identifier> skippedTags = TAGGED_BIOME_SKIP_LIST.getOrDefault(biomeId, new HashSet<>());
+
+		//? if <1.21.2 {
+		/*Registry<Biome> biomeRegistry = world.getRegistryManager().get(RegistryKeys.BIOME);
+		*///?} else {
 		Registry<Biome> biomeRegistry = world.getRegistryManager().getOrThrow(RegistryKeys.BIOME);
+		//?}
+
 		for (var biomeTagFogEntry : getBiomeTagFogRegistry().entrySet()) {
 			TagKey<Biome> tagKey = biomeTagFogEntry.getKey();
 			Identifier tagId = tagKey.id();

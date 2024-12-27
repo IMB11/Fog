@@ -11,9 +11,9 @@ import dev.imb11.fog.client.util.player.PlayerUtil;
 import dev.imb11.fog.client.util.world.ClientWorldUtil;
 import dev.imb11.fog.config.FogConfig;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.DimensionEffects;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.CubicSampler;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -40,6 +40,7 @@ public class FogManager {
 	public final InterpolatedValue currentEndMultiplier;
 
 	public boolean hasSetup = false;
+	public float sunsetSunriseBlendFactor = 0.0F;
 
 	public FogManager() {
 		@NotNull FogConfig config = FogConfig.getInstance();
@@ -252,8 +253,6 @@ public class FogManager {
 		return new FogSettings(fogStartValue, fogEndValue, fogRed, fogGreen, fogBlue);
 	}
 
-	public float sunsetSunriseBlendFactor = 0.0F;
-
 	/**
 	 * Applies sunset color blending similar to vanilla Minecraft's implementation.
 	 */
@@ -262,9 +261,33 @@ public class FogManager {
 			float skyAngle = client.world.getSkyAngle(tickDelta);
 			float blendSpeed = 0.0005F; // Speed of blending
 
-			Vec3d sunColor = Vec3d.unpackRgb(client.world.getDimensionEffects().getSkyColor(skyAngle));
+			boolean isSunset = false;
+			Vec3d sunColor;
 
-			if (client.world.getDimensionEffects().isSunRisingOrSetting(skyAngle)) {
+			//? if >=1.21.2 {
+			isSunset = client.world.getDimensionEffects().isSunRisingOrSetting(skyAngle);
+			sunColor = Vec3d.unpackRgb(client.world.getDimensionEffects().getSkyColor(skyAngle));
+			//?} else {
+			/*// Because we have no good way of determining sunsets in non-overworld biomes before 1.21.2, we'll just apply this to the overworld.
+			if (client.world.getDimensionEffects() instanceof DimensionEffects.Overworld) {
+				float f = MathHelper.cos(skyAngle * 6.2831855F);
+				isSunset = f >= -0.4F && f <= 0.4F;
+
+				float t = MathHelper.cos(skyAngle * 6.2831855F);
+				float g = t / 0.4F * 0.5F + 0.5F;
+				float h = MathHelper.square(1.0F - (1.0F - MathHelper.sin(g * 3.1415927F)) * 0.99F);
+
+				int color = ((MathHelper.floor(h * 255.0F) & 0xFF) << 24) |
+						((MathHelper.floor((g * 0.3F + 0.7F) * 255.0F) & 0xFF) << 16) |
+						((MathHelper.floor((g * g * 0.7F + 0.2F) * 255.0F) & 0xFF) << 8) |
+						(MathHelper.floor(0.2F * 255.0F) & 0xFF);
+				sunColor = Vec3d.unpackRgb(color);
+			} else {
+				sunColor = Vec3d.ZERO;
+			}
+			*///?}
+
+			if (isSunset) {
 				sunsetSunriseBlendFactor = Math.min(sunsetSunriseBlendFactor + (blendSpeed * tickDelta), 1.0F);
 			} else {
 				sunsetSunriseBlendFactor = Math.max(sunsetSunriseBlendFactor - (blendSpeed * tickDelta), 0.0F);

@@ -1,5 +1,6 @@
 package dev.imb11.fog.mixin.client.rendering;
 
+//? if >=1.21.2 {
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.imb11.fog.client.FogManager;
 import dev.imb11.fog.client.util.math.CloudCalculator;
@@ -12,11 +13,13 @@ import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+//?}
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 
 @Pseudo
 @Mixin(targets = "net.minecraft.client.render.CloudRenderer")
