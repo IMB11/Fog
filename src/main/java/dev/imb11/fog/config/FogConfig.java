@@ -4,7 +4,6 @@ import com.google.gson.GsonBuilder;
 import dev.imb11.fog.client.FogClient;
 import dev.imb11.fog.client.FogManager;
 import dev.imb11.fog.client.util.FogConfigHelper;
-import dev.imb11.mru.yacl.ConfigHelper;
 import dev.imb11.mru.yacl.EntryType;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
@@ -15,10 +14,8 @@ import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
-
 import java.awt.*;
 import java.util.List;
-
 import static dev.imb11.fog.client.FogClient.MOD_ID;
 
 public class FogConfig {
@@ -95,7 +92,6 @@ public class FogConfig {
 				.title(Text.empty())
 				.save(() -> {
 					HANDLER.save();
-
 					FogManager.INSTANCE = new FogManager();
 				})
 				.category(ConfigCategory.createBuilder()
@@ -108,38 +104,6 @@ public class FogConfig {
 				                        .option(HELPER.getSlider(
 						                        "initial_fog_end", 0f, 1f, 0.05f, defaults.initialFogEnd, () -> config.initialFogEnd,
 						                        val -> config.initialFogEnd = val
-				                        ))
-				                        .option(HELPER.getFieldTDP(
-						                        "fog_start_transition_speed", 0.001f, 0.5f, defaults.fogStartTransitionSpeed, () -> config.fogStartTransitionSpeed,
-						                        val -> config.fogStartTransitionSpeed = val
-				                        ))
-				                        .option(HELPER.getFieldTDP(
-						                        "fog_end_transition_speed", 0.001f, 0.5f, defaults.fogEndTransitionSpeed, () -> config.fogEndTransitionSpeed,
-						                        val -> config.fogEndTransitionSpeed = val
-				                        ))
-				                        .option(HELPER.getFieldTDP(
-						                        "darkness_transition_speed", 0.001f, 0.5f, defaults.darknessTransitionSpeed, () -> config.darknessTransitionSpeed,
-						                        val -> config.darknessTransitionSpeed = val
-				                        ))
-				                        .option(HELPER.getFieldTDP(
-						                        "fog_color_transition_speed", 0.001f, 0.5f, defaults.fogColorTransitionSpeed, () -> config.fogColorTransitionSpeed,
-						                        val -> config.fogColorTransitionSpeed = val
-				                        ))
-				                        .option(HELPER.getFieldTDP(
-						                        "start_multiplier_transition_speed", 0.001f, 0.5f, defaults.startMultiplierTransitionSpeed, () -> config.startMultiplierTransitionSpeed,
-						                        val -> config.startMultiplierTransitionSpeed = val
-				                        ))
-				                        .option(HELPER.getFieldTDP(
-						                        "end_multiplier_transition_speed", 0.001f, 0.5f, defaults.endMultiplierTransitionSpeed, () -> config.endMultiplierTransitionSpeed,
-						                        val -> config.endMultiplierTransitionSpeed = val
-				                        ))
-				                        .option(HELPER.getFieldTDP(
-						                        "raininess_transition_speed", 0.001f, 0.5f, defaults.raininessTransitionSpeed, () -> config.raininessTransitionSpeed,
-						                        val -> config.raininessTransitionSpeed = val
-				                        ))
-				                        .option(HELPER.getFieldTDP(
-						                        "undergroundness_transition_speed", 0.001f, 0.5f, defaults.undergroundnessTransitionSpeed, () -> config.undergroundnessTransitionSpeed,
-						                        val -> config.undergroundnessTransitionSpeed = val
 				                        ))
 				                        .option(HELPER.get(
 						                        "disable_raininess_effect", defaults.disableRaininessEffect,
@@ -154,28 +118,89 @@ public class FogConfig {
 						                        "disable_biome_fog_colour", defaults.disableBiomeFogColour,
 						                        () -> config.disableBiomeFogColour, val -> config.disableBiomeFogColour = val
 				                        ))
+				                        .build()
+				)
+				.category(ConfigCategory.createBuilder()
+				                        .name(HELPER.getText(EntryType.CATEGORY_NAME, "transition_speeds"))
+				                        .option(LabelOption.create(HELPER.getText(EntryType.OPTION_NAME, "fog_calculations.warning")))
+				                        .option(HELPER.getFieldTDP(
+						                        "fog_start_transition_speed", 0.001f, 0.5f, defaults.fogStartTransitionSpeed,
+						                        () -> config.fogStartTransitionSpeed,
+						                        val -> config.fogStartTransitionSpeed = val
+				                        ))
+				                        .option(HELPER.getFieldTDP(
+						                        "fog_end_transition_speed", 0.001f, 0.5f, defaults.fogEndTransitionSpeed,
+						                        () -> config.fogEndTransitionSpeed,
+						                        val -> config.fogEndTransitionSpeed = val
+				                        ))
+				                        .option(HELPER.getFieldTDP(
+						                        "darkness_transition_speed", 0.001f, 0.5f, defaults.darknessTransitionSpeed,
+						                        () -> config.darknessTransitionSpeed,
+						                        val -> config.darknessTransitionSpeed = val
+				                        ))
+				                        .option(HELPER.getFieldTDP(
+						                        "fog_color_transition_speed", 0.001f, 0.5f, defaults.fogColorTransitionSpeed,
+						                        () -> config.fogColorTransitionSpeed,
+						                        val -> config.fogColorTransitionSpeed = val
+				                        ))
+				                        .option(HELPER.getFieldTDP(
+						                        "start_multiplier_transition_speed", 0.001f, 0.5f, defaults.startMultiplierTransitionSpeed,
+						                        () -> config.startMultiplierTransitionSpeed,
+						                        val -> config.startMultiplierTransitionSpeed = val
+				                        ))
+				                        .option(HELPER.getFieldTDP(
+						                        "end_multiplier_transition_speed", 0.001f, 0.5f, defaults.endMultiplierTransitionSpeed,
+						                        () -> config.endMultiplierTransitionSpeed,
+						                        val -> config.endMultiplierTransitionSpeed = val
+				                        ))
+				                        .option(HELPER.getFieldTDP(
+						                        "raininess_transition_speed", 0.001f, 0.5f, defaults.raininessTransitionSpeed,
+						                        () -> config.raininessTransitionSpeed,
+						                        val -> config.raininessTransitionSpeed = val
+				                        ))
+				                        .option(HELPER.getFieldTDP(
+						                        "undergroundness_transition_speed", 0.001f, 0.5f, defaults.undergroundnessTransitionSpeed,
+						                        () -> config.undergroundnessTransitionSpeed,
+						                        val -> config.undergroundnessTransitionSpeed = val
+				                        ))
+				                        .build()
+				)
+				.category(ConfigCategory.createBuilder()
+				                        .name(HELPER.getText(EntryType.CATEGORY_NAME, "additional_visual_tweaks"))
+				                        .option(LabelOption.create(HELPER.getText(EntryType.OPTION_NAME, "fog_calculations.warning")))
 				                        .option(HELPER.get(
 						                        "disable_moon_phase_color_transition", defaults.disableMoonPhaseColorTransition,
-						                        () -> config.disableMoonPhaseColorTransition, val -> config.disableMoonPhaseColorTransition = val
+						                        () -> config.disableMoonPhaseColorTransition,
+						                        val -> config.disableMoonPhaseColorTransition = val
 				                        ))
 				                        .option(HELPER.get(
-						                        "new_moon_color", defaults.newMoonColor, () -> config.newMoonColor, val -> config.newMoonColor = val
+						                        "new_moon_color", defaults.newMoonColor, () -> config.newMoonColor,
+						                        val -> config.newMoonColor = val
 				                        ))
 				                        .option(HELPER.get(
 						                        "disable_sunset_fog", defaults.disableSunsetFog,
 						                        () -> config.disableSunsetFog, val -> config.disableSunsetFog = val
 				                        ))
-				                        .option(Option.<Boolean>createBuilder().name(
-						                        HELPER.getText(EntryType.OPTION_NAME, "disable_cloud_whitening")).description(
-						                        initialFogStart -> OptionDescription.createBuilder().text(
-								                        HELPER.getText(
-										                        EntryType.OPTION_DESCRIPTION,
-										                        "disable_cloud_whitening"
-								                        )).build()).binding(
-						                        defaults.disableCloudWhitening, () -> disableCloudWhitening,
-						                        newDisableCloudWhitening -> disableCloudWhitening = newDisableCloudWhitening
-				                        ).controller(BooleanControllerBuilder::create).available(
-						                        !FogClient.isModInstalled("sodium")).build())
+				                        .option(Option.<Boolean>createBuilder()
+				                                      .name(HELPER.getText(EntryType.OPTION_NAME, "disable_cloud_whitening"))
+				                                      .description(unused -> OptionDescription.createBuilder()
+				                                                                              .text(HELPER.getText(
+						                                                                              EntryType.OPTION_DESCRIPTION,
+						                                                                              "disable_cloud_whitening"
+				                                                                              ))
+				                                                                              .build())
+				                                      .binding(
+						                                      defaults.disableCloudWhitening, () -> disableCloudWhitening,
+						                                      newDisableCloudWhitening -> disableCloudWhitening = newDisableCloudWhitening
+				                                      )
+				                                      .controller(BooleanControllerBuilder::create)
+				                                      .available(!FogClient.isModInstalled("sodium"))
+				                                      .build()
+				                        )
+				                        .build()
+				)
+				.category(ConfigCategory.createBuilder()
+				                        .name(HELPER.getText(EntryType.CATEGORY_NAME, "dimension_and_general"))
 				                        .group(ListOption.<String>createBuilder()
 				                                         .name(Text.translatable(
 						                                         String.format("%s.config.option.disabled_dimensions", MOD_ID)))
@@ -185,18 +210,25 @@ public class FogConfig {
 				                                         )
 				                                         .controller(StringControllerBuilder::create)
 				                                         .initial("mod_id:dimension_id")
-				                                         .build())
-				                        .option(Option.<Boolean>createBuilder().name(
-						                        HELPER.getText(EntryType.OPTION_NAME, "disable_mod")).description(
-						                        initialFogStart -> OptionDescription.createBuilder().text(
-								                        HELPER.getText(
-										                        EntryType.OPTION_DESCRIPTION,
-										                        "disable_mod"
-								                        )).build()).binding(
-						                        defaults.disableMod, () -> disableMod,
-						                        newDisableMod -> disableMod = newDisableMod
-				                        ).controller(BooleanControllerBuilder::create).build())
-				                        .build())
+				                                         .build()
+				                        )
+				                        .option(Option.<Boolean>createBuilder()
+				                                      .name(HELPER.getText(EntryType.OPTION_NAME, "disable_mod"))
+				                                      .description(unused -> OptionDescription.createBuilder()
+				                                                                              .text(HELPER.getText(
+						                                                                              EntryType.OPTION_DESCRIPTION,
+						                                                                              "disable_mod"
+				                                                                              ))
+				                                                                              .build())
+				                                      .binding(
+						                                      defaults.disableMod, () -> disableMod,
+						                                      newDisableMod -> disableMod = newDisableMod
+				                                      )
+				                                      .controller(BooleanControllerBuilder::create)
+				                                      .build()
+				                        )
+				                        .build()
+				)
 		));
 	}
 }

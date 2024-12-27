@@ -1,5 +1,8 @@
 {
   "fog.config.category.fog_calculations": "Fog Calculations",
+  "fog.config.category.additional_visual_tweaks": "Additional Visual Tweaks",
+  "fog.config.category.transition_speeds": "Transition Speeds",
+  "fog.config.category.dimension_and_general": "General Settings",
   "key.fog.toggle": "Toggle Fog Engine",
   "fog.config.option.disable_moon_phase_color_transition": "Disable Moon Phase Color Transition",
   "fog.config.option.description.disable_moon_phase_color_transition": "Disables moon phase color transition, which makes the night fog colour change based on the moon phase if a transition is defined",
