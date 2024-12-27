@@ -212,7 +212,7 @@ public class FogConfig {
 				                                         .name(Text.translatable(
 						                                         String.format("%s.config.option.disabled_biomes", MOD_ID)))
 				                                         .binding(
-						                                         disabledBiomes, () -> disabledBiomes,
+						                                         defaults.disabledBiomes, () -> disabledBiomes,
 						                                         val -> disabledBiomes = val
 				                                         )
 				                                         .controller(StringControllerBuilder::create)
