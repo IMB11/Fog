@@ -27,14 +27,21 @@ ordering="NONE"
 side="BOTH"
 
 [[dependencies.fog]]
-modId = "yet_another_config_lib_v3"
+modId="mru"
 ${mandatory_inclusion_field}
-versionRange = "[3.6.2,)"
+versionRange="[${target_mru},)"
+ordering="NONE"
+side="BOTH"
 
 [[dependencies.fog]]
 modId = "architectury"
 ${mandatory_inclusion_field}
 versionRange = "*"
+
+[[dependencies.fog]]
+modId = "yet_another_config_lib_v3"
+${mandatory_inclusion_field}
+versionRange = "[3.6.2,)"
 
 [[mixins]]
 config="fog.mixins.json"
