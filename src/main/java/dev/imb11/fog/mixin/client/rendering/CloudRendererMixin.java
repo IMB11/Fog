@@ -3,7 +3,6 @@ package dev.imb11.fog.mixin.client.rendering;
 //? if >=1.21.2 {
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.imb11.fog.client.FogManager;
-import dev.imb11.fog.client.util.math.CloudCalculator;
 import dev.imb11.fog.config.FogConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.CloudRenderMode;
