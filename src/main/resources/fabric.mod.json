@@ -37,5 +37,8 @@
     "architectury": "*",
     "yet_another_config_lib_v3": ">=3.6.2",
     "minecraft": "${target_minecraft}"
+  },
+  "breaks": {
+    "architectury": "15.0.1"
   }
 }

@@ -12,6 +12,9 @@ version="${mod_version}"
 displayName="Fog"
 description="An expansive and dynamic overhaul to Minecraft's fog rendering system."
 
+[[mixins]]
+config="fog.mixins.json"
+
 [[dependencies.fog]]
 modId="${loader}"
 ${mandatory_inclusion_field}
@@ -43,5 +46,8 @@ modId = "yet_another_config_lib_v3"
 ${mandatory_inclusion_field}
 versionRange = "[3.6.2,)"
 
-[[mixins]]
-config="fog.mixins.json"
+[[dependencies.fog]]
+modId = "architectury"
+${mandatory_inclusion_field}
+type="incompatible"
+versionRange = "15.0.1"

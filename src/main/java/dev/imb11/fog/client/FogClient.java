@@ -58,7 +58,11 @@ public class FogClient {
 
 		FogKeybinds.init();
 
-		ReloadListenerRegistry.register(ResourceType.CLIENT_RESOURCES, new FogResourceReloader());
+		/*? if <1.21.4 {*/
+		/*ReloadListenerRegistry.register(ResourceType.CLIENT_RESOURCES, new FogResourceReloader());
+		*//*?} else {*/
+		ReloadListenerRegistry.register(ResourceType.CLIENT_RESOURCES, new FogResourceReloader(), FogResourceReloader.IDENTIFIER);
+		/*?}*/
 		ClientTickEvent.CLIENT_LEVEL_POST.register((world) -> FogManager.getInstance().onEndTick(world));
 		ClientPlayerEvent.CLIENT_PLAYER_JOIN.register((clientPlayerEntity) -> {
 			FogManager.INSTANCE = new FogManager();
