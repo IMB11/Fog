@@ -9,8 +9,9 @@
     "Steveplays"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://imb11.dev/",
+    "sources": "https://github.com/IMB11/Fog",
+    "issues": "https://github.com/IMB11/Fog/issues"
   },
   "license": "All-Rights-Reserved",
   "accessWidener": "fog.accesswidener",
