@@ -6,7 +6,6 @@ import dev.imb11.fog.client.util.color.Color;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.DimensionEffects;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.biome.Biome;
@@ -21,29 +20,35 @@ import java.util.HashMap;
 public class FogColors {
 	private static final HashMap<Class<? extends DimensionEffects>, FogColors> CACHED_DEFAULTS = new HashMap<>();
 
-	public static FogColors getDefault(ClientWorld world) {
+	public static @NotNull FogColors getDefault(@Nullable ClientWorld world) {
 		if (world == null) {
 			return new FogColors("#b9d2fd", "#000000");
-		} else {
-			if (CACHED_DEFAULTS.containsKey(world.getDimensionEffects().getClass())) {
-				return CACHED_DEFAULTS.get(world.getDimensionEffects().getClass());
-			} else {
-				MinecraftClient client = MinecraftClient.getInstance();
-				float sunHeight = MathHelper.clamp(MathHelper.cos(world.getSkyAngle(client.getRenderTickCounter().getTickDelta(true)) * 6.2831855F) * 2.0F + 0.5F, 0.0F, 1.0F);
-				Vec3d daySky = world.getDimensionEffects().adjustFogColor(Vec3d.unpackRgb(((Biome)world.getBiomeAccess().getBiomeForNoiseGen(client.player.getX(), client.player.getY(), client.player.getZ()).value()).getFogColor()), sunHeight);
-				Vec3d nightSky = daySky.multiply(0.2D);
-				FogColors colors = new FogColors(Color.from(daySky).asHex(), Color.from(nightSky).asHex());
-				CACHED_DEFAULTS.put(world.getDimensionEffects().getClass(), colors);
-				return colors;
-			}
 		}
+
+		@NotNull var worldDimensionEffects = world.getDimensionEffects();
+		if (CACHED_DEFAULTS.containsKey(worldDimensionEffects.getClass())) {
+			return CACHED_DEFAULTS.get(worldDimensionEffects.getClass());
+		}
+
+		if (worldDimensionEffects instanceof DimensionEffects.Overworld) {
+			@NotNull var fogColors = new FogColors("#b9d2fd", "#000000");
+			CACHED_DEFAULTS.put(worldDimensionEffects.getClass(), fogColors);
+			return fogColors;
+		}
+
+		MinecraftClient client = MinecraftClient.getInstance();
+		float sunHeight = MathHelper.clamp(MathHelper.cos(world.getSkyAngle(client.getRenderTickCounter().getTickDelta(true)) * 6.2831855F) * 2.0F + 0.5F, 0.0F, 1.0F);
+		Vec3d daySkyColor = worldDimensionEffects.adjustFogColor(
+				Vec3d.unpackRgb(((Biome) world.getBiomeAccess().getBiomeForNoiseGen(client.player.getX(), client.player.getY(), client.player.getZ()).value()).getFogColor()), sunHeight);
+		Vec3d nightSkyColor = daySkyColor.multiply(0.2D);
+		FogColors fogColors = new FogColors(Color.from(daySkyColor).asHex(), Color.from(nightSkyColor).asHex());
+		CACHED_DEFAULTS.put(worldDimensionEffects.getClass(), fogColors);
+		return fogColors;
 	}
 
 	public static final FogColors DEFAULT_CAVE = new FogColors("#212121", "#101010");
-	public static final Codec<FogColors> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			Codec.STRING.fieldOf("day").forGetter(FogColors::getDay),
-			Codec.STRING.fieldOf("night").forGetter(FogColors::getNight)
-	).apply(instance, FogColors::new));
+	public static final Codec<FogColors> CODEC = RecordCodecBuilder
+			.create(instance -> instance.group(Codec.STRING.fieldOf("day").forGetter(FogColors::getDay), Codec.STRING.fieldOf("night").forGetter(FogColors::getNight)).apply(instance, FogColors::new));
 
 	private final @NotNull String day;
 	private final @NotNull String night;
