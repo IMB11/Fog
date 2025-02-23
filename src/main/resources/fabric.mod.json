@@ -33,7 +33,7 @@
   ],
   "depends": {
     "fabricloader": "*",
-    "fabric": "*",
+    "fabric-api": "*",
     "mru": "~${target_mru}",
     "architectury": "*",
     "yet_another_config_lib_v3": ">=3.6.2",
@@ -41,5 +41,13 @@
   },
   "breaks": {
     "architectury": "15.0.1"
+  },
+  "custom": {
+    "mc-publish": {
+      "dependencies": [
+        "architectury-api",
+        "yacl"
+      ]
+    }
   }
 }

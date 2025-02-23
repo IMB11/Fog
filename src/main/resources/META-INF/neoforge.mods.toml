@@ -15,6 +15,12 @@ description="An expansive and dynamic overhaul to Minecraft's fog rendering syst
 [[mixins]]
 config="fog.mixins.json"
 
+[mc-publish]
+dependencies=[
+    "architectury-api",
+    "yacl"
+]
+
 [[dependencies.fog]]
 modId="${loader}"
 ${mandatory_inclusion_field}

@@ -82,7 +82,3 @@ jobs:
           curseforge-id: ${{ vars.CURSEFORGE_ID }}
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           github-token: ${{ secrets.CLASSIC_GITHUB_TOKEN }}
-          dependencies: |
-            mru
-            architectury-api
-            yacl
