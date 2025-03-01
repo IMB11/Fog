@@ -54,6 +54,5 @@ versionRange = "[3.6.2,)"
 
 [[dependencies.fog]]
 modId = "architectury"
-${mandatory_inclusion_field}
 type="incompatible"
 versionRange = "15.0.1"
