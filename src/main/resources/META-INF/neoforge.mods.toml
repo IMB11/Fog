@@ -43,16 +43,11 @@ ordering="NONE"
 side="BOTH"
 
 [[dependencies.fog]]
-modId = "architectury"
+modId="architectury"
 ${mandatory_inclusion_field}
-versionRange = "*"
+versionRange="(,15.0.1),(15.0.1,)"
 
 [[dependencies.fog]]
-modId = "yet_another_config_lib_v3"
+modId="yet_another_config_lib_v3"
 ${mandatory_inclusion_field}
-versionRange = "[3.6.2,)"
-
-[[dependencies.fog]]
-modId = "architectury"
-type="incompatible"
-versionRange = "15.0.1"
+versionRange="[3.6.2,)"
