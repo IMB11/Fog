@@ -326,7 +326,7 @@ public class FogManager {
 		float[] sourceHSB = java.awt.Color.RGBtoHSB(source.red, source.green, source.blue, null);
 		float[] targetHSB = java.awt.Color.RGBtoHSB(target.red, target.green, target.blue, null);
 		
-		// Determine shortest path for hue
+		// Determine the shortest path for hue
 		float hueDiff = targetHSB[0] - sourceHSB[0];
 		if (Math.abs(hueDiff) > 0.5f) {
 			// Take the shorter path around the hue circle
