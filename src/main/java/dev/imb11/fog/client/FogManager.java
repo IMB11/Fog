@@ -255,6 +255,7 @@ public class FogManager {
 
 	/**
 	 * Applies sunset color blending similar to vanilla Minecraft's implementation.
+	 * Uses HSV color space for more natural color transitions.
 	 */
 	private float[] applySunsetLogic(MinecraftClient client, float red, float green, float blue, float tickDelta) {
 		if (!FogConfig.getInstance().disableSunsetFog && client.world != null) {
@@ -293,13 +294,57 @@ public class FogManager {
 				sunsetSunriseBlendFactor = Math.max(sunsetSunriseBlendFactor - (blendSpeed * tickDelta), 0.0F);
 			}
 
-			// Interpolate each color component towards the sunset color
-			red = MathHelper.lerp(sunsetSunriseBlendFactor, red, (float) sunColor.x);
-			green = MathHelper.lerp(sunsetSunriseBlendFactor, green, (float) sunColor.y);
-			blue = MathHelper.lerp(sunsetSunriseBlendFactor, blue, (float) sunColor.z);
+				// Only apply sunset colors if we're actually in a sunset or have some blend factor
+			if (sunsetSunriseBlendFactor > 0) {
+				// Create color objects for our current fog color and the sunset color
+				Color fogColor = new Color((int)(red * 255), (int)(green * 255), (int)(blue * 255));
+				Color targetSunsetColor = Color.from(sunColor);
+				
+				// Perform color interpolation in RGB space but with curve adjustments to prevent weird intermediates
+				Color resultColor = blendColorsSmoothly(fogColor, targetSunsetColor, sunsetSunriseBlendFactor);
+				
+				// Return the result
+				red = resultColor.red / 255.0F;
+				green = resultColor.green / 255.0F; 
+				blue = resultColor.blue / 255.0F;
+			}
 		}
 
 		return new float[]{red, green, blue};
+	}
+	
+	/**
+	 * Blends colors in a way that prevents undesirable intermediate colors like green or purple
+	 * during color transitions.
+	 */
+	private Color blendColorsSmoothly(Color source, Color target, float factor) {
+		// Use a custom easing function to make the transition more aesthetically pleasing
+		// This gives more time at the start and end colors and less time in the middle
+		float adjustedFactor = (float) (0.5f - 0.5f * Math.cos(factor * Math.PI));
+		
+		// Get color components
+		float[] sourceHSB = java.awt.Color.RGBtoHSB(source.red, source.green, source.blue, null);
+		float[] targetHSB = java.awt.Color.RGBtoHSB(target.red, target.green, target.blue, null);
+		
+		// Determine shortest path for hue
+		float hueDiff = targetHSB[0] - sourceHSB[0];
+		if (Math.abs(hueDiff) > 0.5f) {
+			// Take the shorter path around the hue circle
+			if (hueDiff > 0) {
+				sourceHSB[0] += 1.0f;
+			} else {
+				targetHSB[0] += 1.0f;
+			}
+		}
+		
+		// Interpolate in HSB space
+		float h = MathHelper.lerp(adjustedFactor, sourceHSB[0], targetHSB[0]) % 1.0f;
+		float s = MathHelper.lerp(adjustedFactor, sourceHSB[1], targetHSB[1]);
+		float b = MathHelper.lerp(adjustedFactor, sourceHSB[2], targetHSB[2]);
+		
+		// Convert back to RGB
+		int rgb = java.awt.Color.HSBtoRGB(h, s, b);
+		return new Color((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, rgb & 0xFF);
 	}
 
 	public record FogSettings(double fogStart, double fogEnd, float fogRed, float fogGreen, float fogBlue) {}
