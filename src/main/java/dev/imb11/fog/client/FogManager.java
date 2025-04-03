@@ -342,13 +342,37 @@ public class FogManager {
 	}
 	
 	/**
+	 * Determines if a color is achromatic (very low chroma) in LCH space
+	 */
+	private boolean isAchromatic(double[] lch) {
+		// Threshold for considering a color as "achromatic"
+		final double ACHROMATIC_THRESHOLD = 5.0; // Adjust based on testing
+		return lch[1] < ACHROMATIC_THRESHOLD; // lch[1] is the chroma component
+	}
+	
+	/**
 	 * Performs color interpolation in LCH color space for perceptually accurate blending
 	 * LCH = Lightness, Chroma, Hue - a more perceptually uniform color space
+	 * With special handling for achromatic colors
 	 */
 	private float[] lchColorLerp(double[] rgb1, double[] rgb2, float factor) {
 		// Convert RGB to LCH
 		double[] lch1 = rgbToLCH(rgb1);
 		double[] lch2 = rgbToLCH(rgb2);
+		
+			// Special handling for achromatic colors (colors with very low chroma)
+		boolean isFirstAchromatic = isAchromatic(lch1);
+		boolean isSecondAchromatic = isAchromatic(lch2);
+		
+		// If one color is achromatic but not both, use the hue of the chromatic color
+		if (isFirstAchromatic && !isSecondAchromatic) {
+			// First color is achromatic, use the hue of the second color
+			lch1[2] = lch2[2];
+		} else if (!isFirstAchromatic && isSecondAchromatic) {
+			// Second color is achromatic, use the hue of the first color
+			lch2[2] = lch1[2];
+		}
+		// If both are achromatic, the hue doesn't matter for interpolation
 		
 		// Adjust hue for shortest path around the color wheel
 		// Hue is in the range [0, 360)
