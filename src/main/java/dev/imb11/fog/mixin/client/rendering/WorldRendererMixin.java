@@ -10,8 +10,9 @@ import net.minecraft.client.render.*;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.systems.RenderSystem;
-import dev.imb11.fog.client.util.math.CloudCalculator;
 
+import dev.imb11.fog.client.util.math.CloudCalculator;
+import dev.imb11.fog.client.compat.polytone.IrisCompat;
 import dev.imb11.fog.config.FogConfig;
 
 import net.minecraft.client.MinecraftClient;
@@ -46,6 +47,7 @@ public abstract class WorldRendererMixin {
 				|| FogConfig.getInstance().disableCloudWhitening
 				|| FogManager.isInDisabledBiome()
 				|| this.world.getDimension().hasFixedTime()
+				|| IrisCompat.shouldDisableMod()
 		) {
 			return original.call(this.world, tickDelta);
 		}
@@ -63,6 +65,7 @@ public abstract class WorldRendererMixin {
 				|| FogConfig.getInstance().disableCloudWhitening
 				|| FogManager.isInDisabledBiome()
 				|| this.world.getDimension().hasFixedTime()
+				|| IrisCompat.shouldDisableMod()
 		) {
 			original.call();
 			return;
@@ -82,7 +85,8 @@ public abstract class WorldRendererMixin {
 				|| !(world.getDimensionEffects() instanceof DimensionEffects.Overworld)
 				|| FogConfig.getInstance().disableCloudWhitening
 				|| FogManager.isInDisabledBiome()
-				|| world.getDimension().hasFixedTime()) {
+				|| world.getDimension().hasFixedTime()
+				|| IrisCompat.shouldDisableMod()) {
 			return;
 		}
 

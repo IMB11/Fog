@@ -3,6 +3,7 @@ package dev.imb11.fog.mixin.client.rendering;
 //? if >=1.21.2 {
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.imb11.fog.client.FogManager;
+import dev.imb11.fog.client.compat.polytone.IrisCompat;
 import dev.imb11.fog.config.FogConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.CloudRenderMode;
@@ -31,7 +32,8 @@ public class CloudRendererMixin {
 		if (camera == null || client.world == null || FogConfig.getInstance().disableMod
 				|| !(client.world.getDimensionEffects() instanceof DimensionEffects.Overworld)
 				|| FogConfig.getInstance().disableCloudWhitening
-				|| client.world.getDimension().hasFixedTime() || FogManager.isInDisabledBiome()) {
+				|| client.world.getDimension().hasFixedTime() || FogManager.isInDisabledBiome()
+				|| IrisCompat.shouldDisableMod()) {
 			return;
 		}
 

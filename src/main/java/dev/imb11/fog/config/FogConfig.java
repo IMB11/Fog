@@ -85,6 +85,8 @@ public class FogConfig {
 	public boolean enableHighAltitudeFog = true;
 	@SerialEntry
 	public boolean prioritizePolytoneFogColors = false;
+	@SerialEntry
+	public boolean disableWhenIrisActive = true;
 
 	public static @NotNull FogConfig getInstance() {
 		return HANDLER.instance();
@@ -245,6 +247,8 @@ public class FogConfig {
 										.name(HELPER.getText(EntryType.CATEGORY_NAME, "compatability"))
 										.option(HELPER.get("prioritizePolytoneFogColors", defaults.prioritizePolytoneFogColors,
 												() -> config.prioritizePolytoneFogColors, v -> config.prioritizePolytoneFogColors = v))
+										.option(HELPER.get("disableWhenIrisActive", defaults.disableWhenIrisActive,
+												() -> config.disableWhenIrisActive, v -> config.disableWhenIrisActive = v))
 										.build()
 				)
 		));

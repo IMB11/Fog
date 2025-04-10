@@ -1,5 +1,5 @@
 plugins {
-    id "dev.architectury.loom" version "1.7-SNAPSHOT"
+    id "dev.architectury.loom" version "1.10-SNAPSHOT"
 }
 
 def loader = property("loom.platform")
@@ -122,6 +122,7 @@ dependencies {
     })
 
     modCompileOnly("maven.modrinth:polytone:${property("deps.polytone")}")
+    modCompileOnly("maven.modrinth:iris:${property("deps.iris")}")
 
     if (isFabric) {
         System.out.println(loader)

@@ -1,6 +1,7 @@
 package dev.imb11.fog.mixin.client.rendering;
 
 import dev.imb11.fog.client.FogManager;
+import dev.imb11.fog.client.compat.polytone.IrisCompat;
 import dev.imb11.fog.client.util.math.EnvironmentCalculations;
 import dev.imb11.fog.config.FogConfig;
 import net.minecraft.client.MinecraftClient;
@@ -40,6 +41,7 @@ public abstract class BackgroundRendererMixin {
 		if (FogConfig.getInstance().disableMod
 				|| FogManager.isInDisabledBiome()
 				|| camera.getSubmersionType() != CameraSubmersionType.NONE
+				|| IrisCompat.shouldDisableMod()
 		) {
 			return;
 		}
@@ -64,6 +66,7 @@ public abstract class BackgroundRendererMixin {
 				|| FogConfig.getInstance().disableMod
 				|| FogManager.isInDisabledBiome()
 				|| camera.getSubmersionType() != CameraSubmersionType.NONE
+				|| IrisCompat.shouldDisableMod()
 		) {
 			return;
 		}
@@ -89,6 +92,7 @@ public abstract class BackgroundRendererMixin {
 		if (clientWorld == null || camera == null
 				|| FogManager.isInDisabledBiome()
 				|| camera.getSubmersionType() != CameraSubmersionType.NONE
+				|| IrisCompat.shouldDisableMod()
 		) {
 			return true;
 		}
@@ -115,6 +119,7 @@ public abstract class BackgroundRendererMixin {
 				|| FogConfig.getInstance().disableMod
 				|| FogManager.isInDisabledBiome()
 				|| camera.getSubmersionType() != CameraSubmersionType.NONE
+				|| IrisCompat.shouldDisableMod()
 		) {
 			return;
 		}
@@ -143,6 +148,7 @@ public abstract class BackgroundRendererMixin {
 				|| FogConfig.getInstance().disableMod
 				|| FogManager.isInDisabledBiome()
 				|| camera.getSubmersionType() != CameraSubmersionType.NONE
+				|| IrisCompat.shouldDisableMod()
 		) {
 			return;
 		}
