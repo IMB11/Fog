@@ -3,6 +3,7 @@ package dev.imb11.fog.client.util.math;
 import dev.imb11.fog.api.FogColors;
 import dev.imb11.fog.client.FogManager;
 import dev.imb11.fog.client.util.color.Color;
+import dev.imb11.fog.config.FogConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
@@ -34,6 +35,8 @@ public class EnvironmentCalculations {
 	}
 
 	public static FogManager.FogSettings fixElytraColor(FogManager.FogSettings input, float tickDelta, MinecraftClient client, ClientPlayerEntity player, ClientWorld world) {
+		if (!FogConfig.getInstance().enableHighAltitudeFog) return input;
+
 		float fogColorR = input.fogRed();
 		float fogColorG = input.fogGreen();
 		float fogColorB = input.fogBlue();

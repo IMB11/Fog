@@ -82,6 +82,8 @@ public class FogConfig {
 	@SerialEntry
 	public boolean disableSunsetFog = false;
 	@SerialEntry
+	public boolean enableHighAltitudeFog = true;
+	@SerialEntry
 	public boolean prioritizePolytoneFogColors = false;
 
 	public static @NotNull FogConfig getInstance() {
@@ -190,6 +192,8 @@ public class FogConfig {
 						                        "disable_sunset_fog", defaults.disableSunsetFog,
 						                        () -> config.disableSunsetFog, val -> config.disableSunsetFog = val
 				                        ))
+										.option(HELPER.get("enableHighAltitudeFog", defaults.enableHighAltitudeFog,
+												() -> config.enableHighAltitudeFog, val -> config.enableHighAltitudeFog = val))
 				                        .option(Option.<Boolean>createBuilder()
 				                                      .name(HELPER.getText(EntryType.OPTION_NAME, "disable_cloud_whitening"))
 				                                      .description(unused -> OptionDescription.createBuilder()

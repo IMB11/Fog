@@ -48,6 +48,8 @@
   "fog.config.option.description.undergroundness_transition_speed": "Controls the speed at which underground fog effects transition. Lower values result in smoother transitions.",
   "fog.config.option.prioritizePolytoneFogColors": "Prioritize Polytone Fog Colors",
   "fog.config.option.description.prioritizePolytoneFogColors": "Should biome fog colors defined through polytone be prioritized over fog definitions provided by this mod and resource packs that utilize this mod?",
+  "fog.config.option.enableHighAltitudeFog": "Enable High Altitude Fog",
+  "fog.config.option.description.enableHighAltitudeFog": "Should the fog color match the sky when at high altitudes? Useful for flying at high altitudes with the elytra to prevent the weird horizon issues. This may cause issues in worlds with non-standard world heights.",
 
   "fog.command.toggle.enabled": "Fog engine modifications have now been re-enabled.",
   "fog.command.toggle.disabled": "Fog engine modifications have now been disabled.",
