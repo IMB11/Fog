@@ -81,6 +81,8 @@ public class FogConfig {
 	public Color newMoonColor = new Color(0, 0, 0, 255);
 	@SerialEntry
 	public boolean disableSunsetFog = false;
+	@SerialEntry
+	public boolean prioritizePolytoneFogColors = false;
 
 	public static @NotNull FogConfig getInstance() {
 		return HANDLER.instance();
@@ -235,6 +237,11 @@ public class FogConfig {
 				                                      .build()
 				                        )
 				                        .build()
+				).category(ConfigCategory.createBuilder()
+										.name(HELPER.getText(EntryType.CATEGORY_NAME, "compatability"))
+										.option(HELPER.get("prioritizePolytoneFogColors", defaults.prioritizePolytoneFogColors,
+												() -> config.prioritizePolytoneFogColors, v -> config.prioritizePolytoneFogColors = v))
+										.build()
 				)
 		));
 	}

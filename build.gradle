@@ -121,11 +121,13 @@ dependencies {
         transitive = false;
     })
 
+    modCompileOnly("maven.modrinth:polytone:${property("deps.polytone")}")
+
     if (isFabric) {
         System.out.println(loader)
         modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
 
-        modImplementation("net.fabricmc.fabric-api:fabric-api:${property("runtime.fabric_api")}")
+        modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
         modImplementation("maven.modrinth:modmenu:${property("deps.mod_menu")}")
 
         modImplementation "dev.isxander:yet-another-config-lib:${property("deps.yacl")}-${loader}"

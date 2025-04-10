@@ -7,7 +7,9 @@
     "defaultRequire": 1
   },
   "plugin": "dev.imb11.fog.loaders.mixin.FogMixinPlugin",
-  "mixins": [],
+  "mixins": [
+    "compat.BiomeEffectsManagerAccessor"
+  ],
   "client": [
     "client.rendering.BackgroundRendererMixin",
     "client.rendering.CloudRendererMixin",

@@ -2,6 +2,7 @@ package dev.imb11.fog.client;
 
 import dev.imb11.fog.api.CustomFogDefinition;
 import dev.imb11.fog.api.FogColors;
+import dev.imb11.fog.client.compat.polytone.PolytoneCompat;
 import dev.imb11.fog.client.registry.FogRegistry;
 import dev.imb11.fog.client.util.color.Color;
 import dev.imb11.fog.client.util.math.DarknessCalculation;
@@ -13,6 +14,7 @@ import dev.imb11.fog.config.FogConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.DimensionEffects;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -127,7 +129,8 @@ public class FogManager {
 
 		DarknessCalculation darknessCalculation = DarknessCalculation.of(
 				client, fogStart.getDefaultValue(), fogEnd.getDefaultValue() * density, tickDelta);
-		@NotNull var clientPlayerBiomeKeyOptional = clientWorld.getBiome(clientPlayer.getBlockPos()).getKey();
+		var biomeKey =  clientWorld.getBiome(clientPlayer.getBlockPos());
+		@NotNull var clientPlayerBiomeKeyOptional = biomeKey.getKey();
 		if (clientPlayerBiomeKeyOptional.isEmpty()) {
 			return;
 		}
@@ -137,6 +140,9 @@ public class FogManager {
 		@Nullable FogColors colors = fogDefinition.colors();
 		if (colors == null || FogConfig.getInstance().disableBiomeFogColour) {
 			colors = FogColors.getDefault(clientWorld);
+		}
+		if (PolytoneCompat.shouldUsePolytone()) {
+			colors = PolytoneCompat.getFogColorsFromPolytone(clientPlayerBiomeKeyOptional.get(), colors);
 		}
 
 		float blendFactor = getBlendFactor(clientWorld);
