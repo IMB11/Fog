@@ -3,6 +3,7 @@ package dev.imb11.fog.client.command;
 import com.mojang.brigadier.context.CommandContext;
 import dev.architectury.event.events.client.ClientCommandRegistrationEvent;
 import dev.imb11.fog.client.FogManager;
+import dev.imb11.fog.client.util.TickUtil;
 import dev.imb11.fog.client.util.color.Color;
 import dev.imb11.fog.config.FogConfig;
 import net.minecraft.client.MinecraftClient;
@@ -28,22 +29,16 @@ public class FogClientCommands {
 	}
 
 	private static int outputDebug(CommandContext<ClientCommandRegistrationEvent.ClientCommandSourceStack> commandContext) {
-		MinecraftClient client = MinecraftClient.getInstance();
+		@NotNull FogManager manager = FogManager.INSTANCE;
+		float tickDelta = TickUtil.getTickDelta();
 
-		/*? if <1.21 {*/
-		/*float tickDelta = client.getTickDelta();
-		*//*?} else {*/
-		float tickDelta = client.getRenderTickCounter().getTickDelta(true);
-		/*?}*/
-
-		FogManager manager = FogManager.INSTANCE;
-
-		String hexColor = Integer.toHexString(
+		@NotNull String hexColor = Integer.toHexString(
 				new Color((int) (manager.fogColorRed.get(tickDelta) * 255), (int) (manager.fogColorGreen.get(tickDelta) * 255),
 						(int) (manager.fogColorBlue.get(tickDelta) * 255)
 				).toInt());
 		hexColor = "§c" + hexColor.substring(0, 2) + "§a" + hexColor.substring(2, 4) + "§9" + hexColor.substring(4);
 
+		@NotNull var client = MinecraftClient.getInstance();
 		@Nullable ClientWorld clientWorld = client.world;
 		if (clientWorld == null) {
 			commandContext.getSource().arch$sendFailure(Text.translatable("fog.command.debug.failure"));

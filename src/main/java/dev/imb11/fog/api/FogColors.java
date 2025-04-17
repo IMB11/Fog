@@ -2,13 +2,13 @@ package dev.imb11.fog.api;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.imb11.fog.client.util.TickUtil;
 import dev.imb11.fog.client.util.color.Color;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.DimensionEffects;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.biome.Biome;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,9 +37,9 @@ public class FogColors {
 		}
 
 		MinecraftClient client = MinecraftClient.getInstance();
-		float sunHeight = MathHelper.clamp(MathHelper.cos(world.getSkyAngle(client.getRenderTickCounter().getTickDelta(true)) * 6.2831855F) * 2.0F + 0.5F, 0.0F, 1.0F);
+		float sunHeight = MathHelper.clamp(MathHelper.cos(world.getSkyAngle(TickUtil.getTickDelta()) * 6.2831855F) * 2.0F + 0.5F, 0.0F, 1.0F);
 		Vec3d daySkyColor = worldDimensionEffects.adjustFogColor(
-				Vec3d.unpackRgb(((Biome) world.getBiomeAccess().getBiomeForNoiseGen(client.player.getX(), client.player.getY(), client.player.getZ()).value()).getFogColor()), sunHeight);
+				Vec3d.unpackRgb(world.getBiomeAccess().getBiomeForNoiseGen(client.player.getX(), client.player.getY(), client.player.getZ()).value().getFogColor()), sunHeight);
 		Vec3d nightSkyColor = daySkyColor.multiply(0.2D);
 		FogColors fogColors = new FogColors(Color.from(daySkyColor).asHex(), Color.from(nightSkyColor).asHex());
 		CACHED_DEFAULTS.put(worldDimensionEffects.getClass(), fogColors);

@@ -4,6 +4,7 @@ import dev.imb11.fog.api.CustomFogDefinition;
 import dev.imb11.fog.api.FogColors;
 import dev.imb11.fog.client.compat.polytone.PolytoneCompat;
 import dev.imb11.fog.client.registry.FogRegistry;
+import dev.imb11.fog.client.util.TickUtil;
 import dev.imb11.fog.client.util.color.Color;
 import dev.imb11.fog.client.util.math.DarknessCalculation;
 import dev.imb11.fog.client.util.math.InterpolatedValue;
@@ -125,7 +126,7 @@ public class FogManager {
 		}
 
 		float density = ClientWorldUtil.isFogDenseAtPosition(clientWorld, clientPlayerBlockPosition) ? 0.9F : 1.0F;
-		float tickDelta = client.getRenderTickCounter().getTickDelta(true);
+		float tickDelta = TickUtil.getTickDelta();
 
 		DarknessCalculation darknessCalculation = DarknessCalculation.of(
 				client, fogStart.getDefaultValue(), fogEnd.getDefaultValue() * density, tickDelta);
