@@ -29,25 +29,18 @@ public class FogClientCommands {
 	}
 
 	private static int outputDebug(CommandContext<ClientCommandRegistrationEvent.ClientCommandSourceStack> commandContext) {
-		@NotNull FogManager manager = FogManager.INSTANCE;
-		float tickDelta = TickUtil.getTickDelta();
-
-		@NotNull String hexColor = Integer.toHexString(
-				new Color((int) (manager.fogColorRed.get(tickDelta) * 255), (int) (manager.fogColorGreen.get(tickDelta) * 255),
-						(int) (manager.fogColorBlue.get(tickDelta) * 255)
-				).toInt());
-		if (hexColor.equalsIgnoreCase("0")) {
-			hexColor = "§c00§a00§900";
-		} else {
-			hexColor = "§c" + hexColor.substring(0, 2) + "§a" + hexColor.substring(2, 4) + "§9" + hexColor.substring(4);
-		}
-
 		@NotNull var client = MinecraftClient.getInstance();
 		@Nullable ClientWorld clientWorld = client.world;
 		if (clientWorld == null) {
 			commandContext.getSource().arch$sendFailure(Text.translatable("fog.command.debug.failure"));
 			return 0;
 		}
+
+		@NotNull FogManager manager = FogManager.INSTANCE;
+		float tickDelta = TickUtil.getTickDelta();
+		@NotNull Color fogColor = new Color((int) (manager.fogColorRed.get(tickDelta) * 255),
+				(int) (manager.fogColorGreen.get(tickDelta) * 255), (int) (manager.fogColorBlue.get(tickDelta) * 255));
+		@NotNull String fogColorHex = String.format("#§c%02x§a%02x§9%02x", fogColor.red, fogColor.green, fogColor.blue);
 
 		@SuppressWarnings("TextBlockMigration") @NotNull String debugInfoTable = String.format(
 				"§b§7[§rFog§b§7]§r Current Fog Manager State:\n" +
@@ -56,7 +49,7 @@ public class FogClientCommands {
 						"§b§7[§rFog§b§7]§r Fog Start: §6%.2f§r\n" +
 						"§b§7[§rFog§b§7]§r Fog End: §6%.2f§r\n" +
 						"§b§7[§rFog§b§7]§r Darkness: §6%.2f§r\n" +
-						"§b§7[§rFog§b§7]§r Fog Color: §6#%s§r\n" +
+						"§b§7[§rFog§b§7]§r Fog Color: §6%s§r\n" +
 						"§b§7[§rFog§b§7]§r Current Sky Light: §6%.2f§r\n" +
 						"§b§7[§rFog§b§7]§r Current Block Light: §6%.2f§r\n" +
 						"§b§7[§rFog§b§7]§r Current Light: §6%.2f§r\n" +
@@ -67,7 +60,7 @@ public class FogClientCommands {
 				manager.fogStart.get(tickDelta),
 				manager.fogEnd.get(tickDelta),
 				manager.darkness.get(tickDelta),
-				hexColor,
+				fogColorHex,
 				manager.currentSkyLight.get(tickDelta),
 				manager.currentBlockLight.get(tickDelta),
 				manager.currentLight.get(tickDelta),
