@@ -61,6 +61,8 @@ jobs:
             "1.21.4-neoforge",
             "1.21.5-fabric",
             "1.21.5-neoforge",
+            "1.21.6-1.21.7-fabric",
+            "1.21.6-1.21.7-neoforge",
           ]
     steps:
       - name: Checkout Repository

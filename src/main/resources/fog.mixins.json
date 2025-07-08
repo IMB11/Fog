@@ -8,6 +8,7 @@
   },
   "plugin": "dev.imb11.fog.loaders.mixin.FogMixinPlugin",
   "mixins": [
+    "client.rendering.FogRendererMixin",
     "compat.BiomeEffectsManagerAccessor"
   ],
   "client": [

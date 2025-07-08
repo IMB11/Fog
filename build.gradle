@@ -117,7 +117,7 @@ dependencies {
     })
 
     modImplementation("dev.architectury:architectury-${loader}:${property("deps.arch_api")}")
-    modImplementation ("dev.imb11:mru:${property("deps.mru")}+${mcVersion.replace("1.21.1", "1.21").replace("1.21.3", "1.21.4")}+${loader}", {
+    modImplementation ("dev.imb11:mru:${property("deps.mru")}+${mcVersion.replace("1.21.1", "1.21").replace("1.21.3", "1.21.4").replace("1.21.7", "1.21.6")}+${loader}", {
         transitive = false;
     })
 

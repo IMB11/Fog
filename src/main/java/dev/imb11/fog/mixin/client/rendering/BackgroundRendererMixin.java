@@ -1,6 +1,10 @@
 package dev.imb11.fog.mixin.client.rendering;
 
-import dev.imb11.fog.client.FogManager;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
+
+//? if <1.21.6 {
+/*import dev.imb11.fog.client.FogManager;
 import dev.imb11.fog.client.compat.polytone.IrisCompat;
 import dev.imb11.fog.client.util.math.EnvironmentCalculations;
 import dev.imb11.fog.config.FogConfig;
@@ -10,10 +14,11 @@ import net.minecraft.client.world.ClientWorld;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector4f;
-import org.spongepowered.asm.mixin.Mixin;
+
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import net.minecraft.block.enums.CameraSubmersionType;
+*///?}
 
 //? if <1.21.3 {
 /*import com.llamalad7.mixinextras.sugar.Local;
@@ -22,11 +27,12 @@ import net.minecraft.client.world.ClientWorld;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
-*///?} else {
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-//?}
+*///?} else if <1.21.6 {
+/*import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+*///?}
 
-@Mixin(BackgroundRenderer.class)
+@Pseudo
+@Mixin(targets = "net.minecraft.client.render.BackgroundRenderer")
 public abstract class BackgroundRendererMixin {
 	//? if <1.21.3 {
 	/*@Shadow
@@ -110,8 +116,8 @@ public abstract class BackgroundRendererMixin {
 		RenderSystem.clearColor(fogSettings.fogRed(), fogSettings.fogGreen(), fogSettings.fogBlue(), 1.0F);
 		return false;
 	}
-	*///?} else {
-	@Inject(method = "applyFog", at = @At(value = "HEAD"), cancellable = true)
+	*///?} else if <1.21.6 {
+	/*@Inject(method = "applyFog", at = @At(value = "HEAD"), cancellable = true)
 	private static void fog$modifyFog(Camera camera, BackgroundRenderer.FogType fogType, Vector4f color, float viewDistance, boolean thickenFog, float tickDelta, @NotNull CallbackInfoReturnable<Fog> cir) {
 		@NotNull var client = MinecraftClient.getInstance();
 		@Nullable var world = client.world;
@@ -162,5 +168,5 @@ public abstract class BackgroundRendererMixin {
 
 		cir.setReturnValue(new Vector4f(fogSettings.fogRed(), fogSettings.fogGreen(), fogSettings.fogBlue(), 1.0F));
 	}
-	//?}
+	*///?}
 }
