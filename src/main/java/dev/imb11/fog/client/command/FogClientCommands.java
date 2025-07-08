@@ -36,7 +36,11 @@ public class FogClientCommands {
 				new Color((int) (manager.fogColorRed.get(tickDelta) * 255), (int) (manager.fogColorGreen.get(tickDelta) * 255),
 						(int) (manager.fogColorBlue.get(tickDelta) * 255)
 				).toInt());
-		hexColor = "§c" + hexColor.substring(0, 2) + "§a" + hexColor.substring(2, 4) + "§9" + hexColor.substring(4);
+		if (hexColor.equalsIgnoreCase("0")) {
+			hexColor = "§c00§a00§900";
+		} else {
+			hexColor = "§c" + hexColor.substring(0, 2) + "§a" + hexColor.substring(2, 4) + "§9" + hexColor.substring(4);
+		}
 
 		@NotNull var client = MinecraftClient.getInstance();
 		@Nullable ClientWorld clientWorld = client.world;
