@@ -1,6 +1,5 @@
 package dev.imb11.fog.mixin.client.rendering;
 
-import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 
@@ -25,11 +24,12 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import static dev.imb11.fog.client.util.ChunkSectionUtil.CHUNK_SECTION_DIAMETER;
 //?}
 
 @Pseudo
 @Mixin(targets = "net.minecraft.client.render.fog.FogRenderer")
-@Debug(export = true)
 public class FogRendererMixin {
 	//? if >=1.21.6 {
 	@Inject(method = "applyFog(Lnet/minecraft/client/render/Camera;IZLnet/minecraft/client/render/RenderTickCounter;FLnet/minecraft/client/world/ClientWorld;)Lorg/joml/Vector4f;", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/CommandEncoder;mapBuffer(Lcom/mojang/blaze3d/buffers/GpuBuffer;ZZ)Lcom/mojang/blaze3d/buffers/GpuBuffer$MappedView;"))
@@ -53,9 +53,9 @@ public class FogRendererMixin {
 
 		@NotNull var customFogData = new FogData();
 		customFogData.environmentalStart = fogData.get().environmentalStart;
-		customFogData.renderDistanceStart = (float) fogSettings.fogStart() * viewDistance;
+		customFogData.renderDistanceStart = (float) fogSettings.fogStart() * CHUNK_SECTION_DIAMETER;
 		customFogData.environmentalEnd = fogData.get().environmentalEnd;
-		customFogData.renderDistanceEnd = (float) fogSettings.fogEnd() * viewDistance;
+		customFogData.renderDistanceEnd = (float) fogSettings.fogEnd() * CHUNK_SECTION_DIAMETER;
 		customFogData.skyEnd = fogData.get().skyEnd;
 		customFogData.cloudEnd = fogData.get().cloudEnd;
 		fogData.set(customFogData);
