@@ -1,5 +1,6 @@
 package dev.imb11.fog.mixin.client.rendering;
 
+import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 
@@ -28,9 +29,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Pseudo
 @Mixin(targets = "net.minecraft.client.render.fog.FogRenderer")
+@Debug(export = true)
 public class FogRendererMixin {
 	//? if >=1.21.6 {
-	@Inject(method = "applyFog(Lnet/minecraft/client/render/Camera;IZLnet/minecraft/client/render/RenderTickCounter;FLnet/minecraft/client/world/ClientWorld;)Lorg/joml/Vector4f;", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/fog/FogRenderer;applyFog(Ljava/nio/ByteBuffer;ILorg/joml/Vector4f;FFFFFF)V"))
+	@Inject(method = "applyFog(Lnet/minecraft/client/render/Camera;IZLnet/minecraft/client/render/RenderTickCounter;FLnet/minecraft/client/world/ClientWorld;)Lorg/joml/Vector4f;", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/CommandEncoder;mapBuffer(Lcom/mojang/blaze3d/buffers/GpuBuffer;ZZ)Lcom/mojang/blaze3d/buffers/GpuBuffer$MappedView;"))
 	private void fog$modifyFog(Camera camera, int viewDistance, boolean thick, RenderTickCounter tickCounter, float skyDarkness, @Nullable ClientWorld world, CallbackInfoReturnable<Vector4f> cir, @Local @NotNull LocalRef<FogData> fogData) {
 		@NotNull var client = MinecraftClient.getInstance();
 		if (world == null
@@ -51,9 +53,9 @@ public class FogRendererMixin {
 
 		@NotNull var customFogData = new FogData();
 		customFogData.environmentalStart = fogData.get().environmentalStart;
-		customFogData.renderDistanceStart = (float) fogSettings.fogStart();
+		customFogData.renderDistanceStart = (float) fogSettings.fogStart() * viewDistance;
 		customFogData.environmentalEnd = fogData.get().environmentalEnd;
-		customFogData.renderDistanceEnd = (float) fogSettings.fogEnd();
+		customFogData.renderDistanceEnd = (float) fogSettings.fogEnd() * viewDistance;
 		customFogData.skyEnd = fogData.get().skyEnd;
 		customFogData.cloudEnd = fogData.get().cloudEnd;
 		fogData.set(customFogData);
