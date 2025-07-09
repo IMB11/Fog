@@ -35,7 +35,7 @@ public class EnvironmentCalculations {
 	}
 
 	public static FogManager.FogSettings fixElytraColor(FogManager.FogSettings input, float tickDelta, MinecraftClient client, ClientPlayerEntity player, ClientWorld world) {
-		if (!FogConfig.getInstance().enableHighAltitudeFog) return input;
+		if (!FogConfig.getInstance().enableHighAltitudeFogColorInfluence) return input;
 
 		float fogColorR = input.fogRed();
 		float fogColorG = input.fogGreen();

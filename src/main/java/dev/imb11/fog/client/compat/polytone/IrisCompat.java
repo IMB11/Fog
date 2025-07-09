@@ -6,7 +6,7 @@ import net.irisshaders.iris.Iris;
 
 public class IrisCompat {
 	public static boolean shouldDisableMod() {
-		if (LoaderUtils.isModInstalled("iris") && FogConfig.getInstance().disableWhenIrisActive) {
+		if (LoaderUtils.isModInstalled("iris") && FogConfig.getInstance().disableModWhenIrisShaderPackIsEnabled) {
 			return Iris.isPackInUseQuick();
 		} else {
 			return false;

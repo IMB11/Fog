@@ -84,11 +84,11 @@ public class FogConfig {
 	@SerialEntry
 	public boolean disableSunsetFog = false;
 	@SerialEntry
-	public boolean enableHighAltitudeFog = true;
+	public boolean enableHighAltitudeFogColorInfluence = true;
 	@SerialEntry
 	public boolean prioritizePolytoneFogColors = false;
 	@SerialEntry
-	public boolean disableWhenIrisActive = true;
+	public boolean disableModWhenIrisShaderPackIsEnabled = true;
 
 	public static @NotNull FogConfig getInstance() {
 		return HANDLER.instance();
@@ -226,8 +226,8 @@ public class FogConfig {
 						                        "disable_sunset_fog", defaults.disableSunsetFog,
 						                        () -> config.disableSunsetFog, val -> config.disableSunsetFog = val
 				                        ))
-				                        .option(HELPER.get("enableHighAltitudeFog", defaults.enableHighAltitudeFog,
-						                        () -> config.enableHighAltitudeFog, val -> config.enableHighAltitudeFog = val
+				                        .option(HELPER.get("enable_high_altitude_fog_color_influence", defaults.enableHighAltitudeFogColorInfluence,
+						                        () -> config.enableHighAltitudeFogColorInfluence, val -> config.enableHighAltitudeFogColorInfluence = val
 				                        ))
 				                        .option(Option.<Boolean>createBuilder()
 				                                      .name(HELPER.getText(EntryType.OPTION_NAME, "disable_cloud_whitening"))
@@ -248,10 +248,10 @@ public class FogConfig {
 				                        .build()
 				).category(ConfigCategory.createBuilder()
 				                         .name(HELPER.getText(EntryType.CATEGORY_NAME, "compatibility"))
-				                         .option(HELPER.get("disableWhenIrisActive", defaults.disableWhenIrisActive,
-						                         () -> config.disableWhenIrisActive, v -> config.disableWhenIrisActive = v
+				                         .option(HELPER.get("disable_mod_when_iris_shader_pack_is_enabled", defaults.disableModWhenIrisShaderPackIsEnabled,
+						                         () -> config.disableModWhenIrisShaderPackIsEnabled, v -> config.disableModWhenIrisShaderPackIsEnabled = v
 				                         ))
-				                         .option(HELPER.get("prioritizePolytoneFogColors", defaults.prioritizePolytoneFogColors,
+				                         .option(HELPER.get("prioritize_polytone_fog_colors", defaults.prioritizePolytoneFogColors,
 						                         () -> config.prioritizePolytoneFogColors, v -> config.prioritizePolytoneFogColors = v
 				                         ))
 				                         .build()
