@@ -174,24 +174,9 @@ public class FogConfig {
 						                        val -> config.fogEndTransitionSpeed = val
 				                        ))
 				                        .option(HELPER.getFieldTDP(
-						                        "darkness_transition_speed", 0.001f, 0.5f, defaults.darknessTransitionSpeed,
-						                        () -> config.darknessTransitionSpeed,
-						                        val -> config.darknessTransitionSpeed = val
-				                        ))
-				                        .option(HELPER.getFieldTDP(
 						                        "fog_color_transition_speed", 0.001f, 0.5f, defaults.fogColorTransitionSpeed,
 						                        () -> config.fogColorTransitionSpeed,
 						                        val -> config.fogColorTransitionSpeed = val
-				                        ))
-				                        .option(HELPER.getFieldTDP(
-						                        "start_multiplier_transition_speed", 0.001f, 0.5f, defaults.startMultiplierTransitionSpeed,
-						                        () -> config.startMultiplierTransitionSpeed,
-						                        val -> config.startMultiplierTransitionSpeed = val
-				                        ))
-				                        .option(HELPER.getFieldTDP(
-						                        "end_multiplier_transition_speed", 0.001f, 0.5f, defaults.endMultiplierTransitionSpeed,
-						                        () -> config.endMultiplierTransitionSpeed,
-						                        val -> config.endMultiplierTransitionSpeed = val
 				                        ))
 				                        .option(HELPER.getFieldTDP(
 						                        "raininess_transition_speed", 0.001f, 0.5f, defaults.raininessTransitionSpeed,
@@ -203,6 +188,27 @@ public class FogConfig {
 						                        () -> config.undergroundnessTransitionSpeed,
 						                        val -> config.undergroundnessTransitionSpeed = val
 				                        ))
+				                        .option(HELPER.getFieldTDP(
+						                        "darkness_transition_speed", 0.001f, 0.5f, defaults.darknessTransitionSpeed,
+						                        () -> config.darknessTransitionSpeed,
+						                        val -> config.darknessTransitionSpeed = val
+				                        ))
+										.group(OptionGroup.createBuilder()
+												.name(Text.translatable(
+														String.format("%s.config.group.multipliers", MOD_ID)))
+												.option(HELPER.getFieldTDP(
+														"start_multiplier_transition_speed", 0.001f, 0.5f, defaults.startMultiplierTransitionSpeed,
+														() -> config.startMultiplierTransitionSpeed,
+														val -> config.startMultiplierTransitionSpeed = val
+												))
+												.option(HELPER.getFieldTDP(
+														"end_multiplier_transition_speed", 0.001f, 0.5f, defaults.endMultiplierTransitionSpeed,
+														() -> config.endMultiplierTransitionSpeed,
+														val -> config.endMultiplierTransitionSpeed = val
+												))
+												.collapsed(true)
+												.build()
+										)
 				                        .build()
 				)
 				.category(ConfigCategory.createBuilder()
