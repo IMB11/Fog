@@ -49,7 +49,7 @@
   "fog.config.option.disableWhenIrisActive": "Disable Mod When Iris Is Active",
   "fog.config.option.description.disableWhenIrisActive": "Disables Fog when an Iris shader pack is active.",
   "fog.config.option.prioritizePolytoneFogColors": "Prioritize Polytone Fog Colors",
-  "fog.config.option.description.prioritizePolytoneFogColors": "Prioritizes fog definitions from a Polytone resource pack over fog definitions from Fog resource packs.",
+  "fog.config.option.description.prioritizePolytoneFogColors": "Prioritizes fog definitions from Polytone resource packs over fog definitions from Fog resource packs.",
   "key.fog.toggle": "Toggle Fog Modifications",
   "fog.command.toggle.enabled": "Enabled Fog modifications.",
   "fog.command.toggle.disabled": "Disabled Fog modifications.",
