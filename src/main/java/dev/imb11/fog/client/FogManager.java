@@ -13,9 +13,7 @@ import dev.imb11.fog.client.util.player.PlayerUtil;
 import dev.imb11.fog.client.util.world.ClientWorldUtil;
 import dev.imb11.fog.config.FogConfig;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.DimensionEffects;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -43,7 +41,6 @@ public class FogManager {
 	public final InterpolatedValue currentEndMultiplier;
 
 	public boolean hasSetup = false;
-	public float sunsetSunriseBlendFactor = 0.0F;
 
 	public FogManager() {
 		@NotNull FogConfig config = FogConfig.getInstance();
@@ -113,24 +110,24 @@ public class FogManager {
 
 		var isClientPlayerAboveGround = PlayerUtil.isPlayerAboveGround(clientPlayer);
 		if (isClientPlayerAboveGround) {
-			this.undergroundness.interpolate(0.0F);
+			this.undergroundness.interpolate(0f);
 		} else {
-			this.undergroundness.interpolate(1.0F);
+			this.undergroundness.interpolate(1f);
 		}
 
 		if (isClientPlayerAboveGround && clientWorld.getBiome(
 				clientPlayer.getBlockPos()).value().hasPrecipitation() && clientWorld.isRaining()) {
-			raininess.interpolate(1.0f);
+			raininess.interpolate(clientWorld.isThundering() ? 1f : 0.5f);
 		} else {
-			raininess.interpolate(0.0f);
+			raininess.interpolate(0f);
 		}
 
-		float density = ClientWorldUtil.isFogDenseAtPosition(clientWorld, clientPlayerBlockPosition) ? 0.9F : 1.0F;
+		float density = ClientWorldUtil.isFogDenseAtPosition(clientWorld, clientPlayerBlockPosition) ? 0.9f : 1.0f;
 		float tickDelta = TickUtil.getTickDelta();
 
 		DarknessCalculation darknessCalculation = DarknessCalculation.of(
 				client, fogStart.getDefaultValue(), fogEnd.getDefaultValue() * density, tickDelta);
-		var biomeKey =  clientWorld.getBiome(clientPlayer.getBlockPos());
+		var biomeKey = clientWorld.getBiome(clientPlayer.getBlockPos());
 		@NotNull var clientPlayerBiomeKeyOptional = biomeKey.getKey();
 		if (clientPlayerBiomeKeyOptional.isEmpty()) {
 			return;
@@ -194,7 +191,7 @@ public class FogManager {
 		}
 	}
 
-	public float getUndergroundFactor(@NotNull MinecraftClient client, float deltaTicks) {
+	public float getUndergroundFactor(@NotNull MinecraftClient client, float tickDelta) {
 		@Nullable var clientCamera = client.cameraEntity;
 		@Nullable var clientWorld = client.world;
 		if (clientCamera == null || clientWorld == null) {
@@ -206,89 +203,80 @@ public class FogManager {
 		// Map the client camera's Y position to a factor between 0 and 1 based on the sea level (+/- 32)
 		float yFactor = MathHelper.clamp(
 				MathUtil.mapRange(seaLevel - 32.0F, seaLevel + 32.0F, 1.0F, 0.0F, clientCameraYPosition), 0.0F, 1.0F);
-		float undergroundnessValue = this.undergroundness.get(deltaTicks);
-		float skyLight = this.currentSkyLight.get(deltaTicks);
+		float undergroundnessValue = this.undergroundness.get(tickDelta);
+		float skyLight = this.currentSkyLight.get(tickDelta);
 		// Calculate the underground factor by lerping between yFactor, undergroundness, and sky light
 		return MathHelper.lerp(yFactor, 1.0F - undergroundnessValue, skyLight / 16.0F);
 	}
 
 	public @NotNull FogSettings getFogSettings(float tickDelta, float viewDistance) {
-		MinecraftClient client = MinecraftClient.getInstance();
+		@NotNull var fogConfig = FogConfig.getInstance();
+		float fogStart = this.fogStart.get(tickDelta) * this.currentStartMultiplier.get(tickDelta);
+		float fogEnd = this.fogEnd.get(tickDelta) * this.currentEndMultiplier.get(tickDelta);
+		float fogRed = this.fogColorRed.get(tickDelta);
+		float fogGreen = this.fogColorGreen.get(tickDelta);
+		float fogBlue = this.fogColorBlue.get(tickDelta);
 
-		float fogStartValue = fogStart.get(tickDelta) * viewDistance;
-		// Default to no multiplier
-		float undergroundFogMultiplier = 1.0F;
-		if (!FogConfig.getInstance().disableUndergroundFogMultiplier) {
-			undergroundFogMultiplier = this.undergroundness.get(tickDelta);
-			undergroundFogMultiplier = MathHelper.lerp(this.darkness.get(tickDelta), undergroundFogMultiplier, 1.0F);
-		}
+		// Sunrise/sunset
+		float[] sunriseSunsetAdjustedFogColors = blendFogColorWithSunriseSunsetColors(
+				MinecraftClient.getInstance(), fogRed, fogGreen, fogBlue, tickDelta);
+		fogRed = sunriseSunsetAdjustedFogColors[0];
+		fogGreen = sunriseSunsetAdjustedFogColors[1];
+		fogBlue = sunriseSunsetAdjustedFogColors[2];
 
-		float fogEndValue = viewDistance * (fogEnd.get(tickDelta));
-		if (undergroundFogMultiplier > 0.0F) {
-			fogEndValue /= 1 + undergroundFogMultiplier;
-			fogStartValue *= Math.max(0.1f, 0.5f - undergroundFogMultiplier);
-		}
+		// Darkness
+		float darknessFogColorMultiplier = 1f - this.darkness.get(tickDelta);
+		fogRed *= darknessFogColorMultiplier;
+		fogGreen *= darknessFogColorMultiplier;
+		fogBlue *= darknessFogColorMultiplier;
 
-		float fogRed = fogColorRed.get(tickDelta);
-		float fogGreen = fogColorGreen.get(tickDelta);
-		float fogBlue = fogColorBlue.get(tickDelta);
+		// "Undergroundness"
+		float undergroundness = this.undergroundness.get(tickDelta);
+		float undergroundFogMultiplier = 1f - undergroundness * fogConfig.undergroundFogMultiplier;
+		fogStart *= undergroundFogMultiplier;
+		fogEnd *= undergroundFogMultiplier;
 
-		float raininessValue = raininess.get(tickDelta);
-		if (!FogConfig.getInstance().disableRaininessEffect && raininessValue > 0.0f) {
-			fogEndValue /= 1.0f + raininessValue;
+		// Raininess
+		float rainFogMultiplier = 1f - Math.clamp(this.raininess.get(tickDelta) - undergroundness, 0f, 1f) * fogConfig.rainFogMultiplier;
+		fogStart *= rainFogMultiplier;
+		fogEnd *= Math.clamp(rainFogMultiplier, 0.5f, 1f);
+		fogRed *= rainFogMultiplier;
+		fogGreen *= rainFogMultiplier;
+		fogBlue *= rainFogMultiplier;
 
-			// Darken the fog colour based on raininess
-			fogRed = Math.max(0.1f, fogRed - (0.5f * raininessValue));
-			fogGreen = Math.max(0.1f, fogGreen - (0.5f * raininessValue));
-			fogBlue = Math.max(0.1f, fogBlue - (0.5f * raininessValue));
-		}
-
-		float darknessValue = this.darkness.get(tickDelta);
-		fogRed *= 1 - darknessValue;
-		fogGreen *= 1 - darknessValue;
-		fogBlue *= 1 - darknessValue;
-
-		fogStartValue *= this.currentStartMultiplier.get(tickDelta);
-		fogEndValue *= this.currentEndMultiplier.get(tickDelta);
-
-		// Sunset
-		float[] sunsetAdjustedColors = applySunsetLogic(client, fogRed, fogGreen, fogBlue, tickDelta);
-		fogRed = sunsetAdjustedColors[0];
-		fogGreen = sunsetAdjustedColors[1];
-		fogBlue = sunsetAdjustedColors[2];
-
-		return new FogSettings(fogStartValue, fogEndValue, fogRed, fogGreen, fogBlue);
+		return new FogSettings(fogStart * viewDistance, fogEnd * viewDistance, fogRed, fogGreen, fogBlue);
 	}
 
 	/**
-	 * Applies sunset/sunrise color blending to fog colors.
+	 * Applies sunrise/sunset color blending to fog color.
 	 * Uses vanilla Minecraft's sunset detection for accurate timing.
 	 */
-	private float[] applySunsetLogic(MinecraftClient client, float red, float green, float blue, float tickDelta) {
-		if (!FogConfig.getInstance().disableSunsetFog && client.world != null) {
-			float skyAngle = client.world.getSkyAngle(tickDelta);
-			
-			boolean isSunset = false;
-			Vec3d sunColor;
+	private float[] blendFogColorWithSunriseSunsetColors(@NotNull MinecraftClient client, float red, float green, float blue, float tickDelta) {
+		if (FogConfig.getInstance().disableSunsetFog || client.world == null) {
+			return new float[]{red, green, blue};
+		}
 
-			//? if >=1.21.2 {
-			isSunset = client.world.getDimensionEffects().isSunRisingOrSetting(skyAngle);
-			sunColor = Vec3d.unpackRgb(client.world.getDimensionEffects().getSkyColor(skyAngle));
-			//?} else {
+		float skyAngle = client.world.getSkyAngle(tickDelta);
+		boolean isSunset;
+		Vec3d sunColor;
+		//? if >=1.21.2 {
+		isSunset = client.world.getDimensionEffects().isSunRisingOrSetting(skyAngle);
+		sunColor = Vec3d.unpackRgb(client.world.getDimensionEffects().getSkyColor(skyAngle));
+		//?} else {
 			/*// For versions before 1.21.2, use a simple approach for the overworld
 			if (client.world.getDimensionEffects() instanceof DimensionEffects.Overworld) {
 				float cosAngle = MathHelper.cos(skyAngle * 6.2831855F);
-				isSunset = cosAngle >= -0.4F && cosAngle <= 0.4F;
-				
+				isSunset = cosAngle >= -0.4f && cosAngle <= 0.4f;
+
 				// Approximate vanilla sunset color
-				float g = Math.max(cosAngle, 0.0F) / 0.4F * 0.5F + 0.5F;
-				float h = 1.0F - (1.0F - MathHelper.sin(g * 3.1415927F)) * 0.99F;
+				float g = Math.max(cosAngle, 0f) / 0.4f * 0.5f + 0.5f;
+				float h = 1f - (1f - MathHelper.sin(g * 3.1415927f)) * 0.99f;
 				h = h * h;
-				
-				int color = ((MathHelper.floor(h * 255.0F) & 0xFF) << 24) |
-						((MathHelper.floor((g * 0.3F + 0.7F) * 255.0F) & 0xFF) << 16) |
-						((MathHelper.floor((g * g * 0.7F + 0.2F) * 255.0F) & 0xFF) << 8) |
-						(MathHelper.floor(0.2F * 255.0F) & 0xFF);
+
+				int color = ((MathHelper.floor(h * 255f) & 0xFF) << 24) |
+						((MathHelper.floor((g * 0.3f + 0.7f) * 255.0F) & 0xFF) << 16) |
+						((MathHelper.floor((g * g * 0.7f + 0.2f) * 255f) & 0xFF) << 8) |
+						(MathHelper.floor(0.2f * 255f) & 0xFF);
 				sunColor = Vec3d.unpackRgb(color);
 			} else {
 				isSunset = false;
@@ -296,32 +284,31 @@ public class FogManager {
 			}
 			*///?}
 
-			// Only apply sunset colors if we're actually in sunrise/sunset
-			if (isSunset) {
-				// Calculate blend intensity based on sun angle
-				// This creates a bell curve that peaks during actual sunrise/sunset
-				// and falls off quickly as the sun moves away from the horizon
-				float blendIntensity;
-				float cosAngle = MathHelper.cos(skyAngle * 6.2831855F);
-				
-				// Create a curve that peaks at 1.0 when cosAngle is 0 (sun at horizon)
-				// and drops off to 0.0 when cosAngle approaches -0.4 or 0.4
-				blendIntensity = 1.0F - Math.abs(cosAngle) / 0.4F;
-				blendIntensity = MathHelper.clamp(blendIntensity * blendIntensity * (3 - 2 * blendIntensity), 0.0F, 1.0F);
-				
-				// Apply a smooth fade based on the blend intensity
-				if (blendIntensity > 0) {
-					// Simple direct RGB blending for sunset colors
-					// This is simpler and more predictable than the complex LCH color space conversions
-					float sunR = (float) sunColor.x;
-					float sunG = (float) sunColor.y;
-					float sunB = (float) sunColor.z;
-					
-					// Apply sunset colors with greater intensity during actual sunset
-					red = MathHelper.lerp(blendIntensity * 0.7F, red, sunR);
-					green = MathHelper.lerp(blendIntensity * 0.7F, green, sunG);
-					blue = MathHelper.lerp(blendIntensity * 0.7F, blue, sunB);
-				}
+		// Only apply sunset colors if we're actually in sunrise/sunset
+		if (isSunset) {
+			// Calculate blend intensity based on sun angle
+			// This creates a bell curve that peaks during actual sunrise/sunset
+			// and falls off quickly as the sun moves away from the horizon
+			float blendIntensity;
+			float cosAngle = MathHelper.cos(skyAngle * 6.2831855f);
+
+			// Create a curve that peaks at 1.0 when cosAngle is 0 (sun at horizon)
+			// and drops off to 0.0 when cosAngle approaches -0.4 or 0.4
+			blendIntensity = 1f - Math.abs(cosAngle) / 0.4f;
+			blendIntensity = MathHelper.clamp(blendIntensity * blendIntensity * (3f - 2f * blendIntensity), 0f, 1f);
+
+			// Apply a smooth fade based on the blend intensity
+			if (blendIntensity > 0) {
+				// Simple direct RGB blending for sunset colors
+				// This is simpler and more predictable than the complex LCH color space conversions
+				float sunR = (float) sunColor.x;
+				float sunG = (float) sunColor.y;
+				float sunB = (float) sunColor.z;
+
+				// Apply sunset colors with greater intensity during actual sunset
+				red = MathHelper.lerp(blendIntensity * 0.7f, red, sunR);
+				green = MathHelper.lerp(blendIntensity * 0.7f, green, sunG);
+				blue = MathHelper.lerp(blendIntensity * 0.7f, blue, sunB);
 			}
 		}
 

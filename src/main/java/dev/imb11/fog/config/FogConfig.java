@@ -14,8 +14,10 @@ import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
+
 import java.awt.*;
 import java.util.List;
+
 import static dev.imb11.fog.client.FogClient.MOD_ID;
 
 public class FogConfig {
@@ -39,17 +41,17 @@ public class FogConfig {
 	 */
 	@SerialEntry
 	public @NotNull List<String> disabledBiomes = List.of(
-			"minecraft:nether_wastes", 
-			"minecraft:crimson_forest", 
-			"minecraft:warped_forest", 
-			"minecraft:soul_sand_valley", 
+			"minecraft:nether_wastes",
+			"minecraft:crimson_forest",
+			"minecraft:warped_forest",
+			"minecraft:soul_sand_valley",
 			"minecraft:basalt_deltas"
 	);
-	
+
 	@SerialEntry
-	public boolean disableRaininessEffect = false;
+	public float rainFogMultiplier = 0.5f;
 	@SerialEntry
-	public boolean disableUndergroundFogMultiplier = false;
+	public float undergroundFogMultiplier = 0.5f;
 	@SerialEntry
 	public boolean disableBiomeFogColour = false;
 	@SerialEntry
@@ -118,14 +120,14 @@ public class FogConfig {
 						                        "initial_fog_end", 0f, 1f, 0.05f, defaults.initialFogEnd, () -> config.initialFogEnd,
 						                        val -> config.initialFogEnd = val
 				                        ))
-				                        .option(HELPER.get(
-						                        "disable_raininess_effect", defaults.disableRaininessEffect,
-						                        () -> config.disableRaininessEffect, val -> config.disableRaininessEffect = val
+				                        .option(HELPER.getSlider(
+						                        "rain_fog_multiplier", 0f, 1f, 0.05f, defaults.rainFogMultiplier,
+						                        () -> config.rainFogMultiplier, val -> config.rainFogMultiplier = val
 				                        ))
-				                        .option(HELPER.get(
-						                        "disable_underground_fog_multiplier", defaults.disableUndergroundFogMultiplier,
-						                        () -> config.disableUndergroundFogMultiplier,
-						                        val -> config.disableUndergroundFogMultiplier = val
+				                        .option(HELPER.getSlider(
+						                        "underground_fog_multiplier", 0f, 1f, 0.05f,defaults.undergroundFogMultiplier,
+						                        () -> config.undergroundFogMultiplier,
+						                        val -> config.undergroundFogMultiplier = val
 				                        ))
 				                        .option(HELPER.get(
 						                        "disable_biome_fog_colour", defaults.disableBiomeFogColour,
@@ -194,8 +196,9 @@ public class FogConfig {
 						                        "disable_sunset_fog", defaults.disableSunsetFog,
 						                        () -> config.disableSunsetFog, val -> config.disableSunsetFog = val
 				                        ))
-										.option(HELPER.get("enableHighAltitudeFog", defaults.enableHighAltitudeFog,
-												() -> config.enableHighAltitudeFog, val -> config.enableHighAltitudeFog = val))
+				                        .option(HELPER.get("enableHighAltitudeFog", defaults.enableHighAltitudeFog,
+						                        () -> config.enableHighAltitudeFog, val -> config.enableHighAltitudeFog = val
+				                        ))
 				                        .option(Option.<Boolean>createBuilder()
 				                                      .name(HELPER.getText(EntryType.OPTION_NAME, "disable_cloud_whitening"))
 				                                      .description(unused -> OptionDescription.createBuilder()
@@ -244,12 +247,14 @@ public class FogConfig {
 				                        )
 				                        .build()
 				).category(ConfigCategory.createBuilder()
-										.name(HELPER.getText(EntryType.CATEGORY_NAME, "compatability"))
-										.option(HELPER.get("prioritizePolytoneFogColors", defaults.prioritizePolytoneFogColors,
-												() -> config.prioritizePolytoneFogColors, v -> config.prioritizePolytoneFogColors = v))
-										.option(HELPER.get("disableWhenIrisActive", defaults.disableWhenIrisActive,
-												() -> config.disableWhenIrisActive, v -> config.disableWhenIrisActive = v))
-										.build()
+				                         .name(HELPER.getText(EntryType.CATEGORY_NAME, "compatability"))
+				                         .option(HELPER.get("prioritizePolytoneFogColors", defaults.prioritizePolytoneFogColors,
+						                         () -> config.prioritizePolytoneFogColors, v -> config.prioritizePolytoneFogColors = v
+				                         ))
+				                         .option(HELPER.get("disableWhenIrisActive", defaults.disableWhenIrisActive,
+						                         () -> config.disableWhenIrisActive, v -> config.disableWhenIrisActive = v
+				                         ))
+				                         .build()
 				)
 		));
 	}
