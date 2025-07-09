@@ -53,7 +53,7 @@ public class FogConfig {
 	@SerialEntry
 	public float undergroundFogMultiplier = 0.5f;
 	@SerialEntry
-	public boolean disableBiomeFogColour = false;
+	public boolean disableBiomeSpecificFogColors = false;
 	@SerialEntry
 	public boolean disableCloudWhitening = true;
 	@SerialEntry
@@ -144,8 +144,8 @@ public class FogConfig {
 						                        val -> config.undergroundFogMultiplier = val
 				                        ))
 				                        .option(HELPER.get(
-						                        "disable_biome_fog_colour", defaults.disableBiomeFogColour,
-						                        () -> config.disableBiomeFogColour, val -> config.disableBiomeFogColour = val
+						                        "disable_biome_specific_fog_colors", defaults.disableBiomeSpecificFogColors,
+						                        () -> config.disableBiomeSpecificFogColors, val -> config.disableBiomeSpecificFogColors = val
 				                        ))
 				                        .group(ListOption.<String>createBuilder()
 				                                         .name(Text.translatable(

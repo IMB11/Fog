@@ -136,7 +136,7 @@ public class FogManager {
 		CustomFogDefinition fogDefinition = FogRegistry.getFogDefinitionOrDefault(
 				clientPlayerBiomeKeyOptional.get().getValue(), clientWorld);
 		@Nullable FogColors colors = fogDefinition.colors();
-		if (colors == null || FogConfig.getInstance().disableBiomeFogColour) {
+		if (colors == null || FogConfig.getInstance().disableBiomeSpecificFogColors) {
 			colors = FogColors.getDefault(clientWorld);
 		}
 		if (PolytoneCompat.shouldUsePolytone()) {
