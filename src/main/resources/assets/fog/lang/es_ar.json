@@ -3,7 +3,7 @@
   "fog.config.category.additional_visual_tweaks": "Ajustes Visuales Adicionales",
   "fog.config.category.transition_speeds": "Velocidades de Transición",
   "fog.config.category.general": "Configuración General",
-  "fog.config.category.compatability": "Compatibilidad",
+  "fog.config.category.compatibility": "Compatibilidad",
   "key.fog.toggle": "Activar/Desactivar Motor de Niebla",
   "fog.config.option.disable_moon_phase_color_transition": "Desactivar Transición de Color según Fase Lunar",
   "fog.config.option.description.disable_moon_phase_color_transition": "Desactiva la transición de color según la fase lunar, que cambia el color de la niebla nocturna según la fase de la luna si hay una transición definida",

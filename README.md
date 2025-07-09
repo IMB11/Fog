@@ -96,7 +96,7 @@ You can download Fog from the following locations:
 
 If you want to add support for your modded biomes, you can utilize Fog's custom JSON fog definition format to create unique fog effects. The mod is fully customizable via resource packs and a dedicated configuration file.
 
-Furthermore, if you're developing a Fabric mod, you can utilize Fog's custom datagen providers to speed your development workflow up when adding compatability with the mod.
+Furthermore, if you're developing a Fabric mod, you can utilize Fog's custom datagen providers to speed your development workflow up when adding compatibility with the mod.
 
 Server owners can adjust fog start/end points and biome colors to match their server's aesthetic.
 

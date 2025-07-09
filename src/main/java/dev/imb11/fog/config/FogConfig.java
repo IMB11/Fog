@@ -247,12 +247,12 @@ public class FogConfig {
 				                        )
 				                        .build()
 				).category(ConfigCategory.createBuilder()
-				                         .name(HELPER.getText(EntryType.CATEGORY_NAME, "compatability"))
-				                         .option(HELPER.get("prioritizePolytoneFogColors", defaults.prioritizePolytoneFogColors,
-						                         () -> config.prioritizePolytoneFogColors, v -> config.prioritizePolytoneFogColors = v
-				                         ))
+				                         .name(HELPER.getText(EntryType.CATEGORY_NAME, "compatibility"))
 				                         .option(HELPER.get("disableWhenIrisActive", defaults.disableWhenIrisActive,
 						                         () -> config.disableWhenIrisActive, v -> config.disableWhenIrisActive = v
+				                         ))
+				                         .option(HELPER.get("prioritizePolytoneFogColors", defaults.prioritizePolytoneFogColors,
+						                         () -> config.prioritizePolytoneFogColors, v -> config.prioritizePolytoneFogColors = v
 				                         ))
 				                         .build()
 				)
