@@ -36,7 +36,7 @@ public class CloudRendererMixin {
 	//?}
 		@NotNull var client = MinecraftClient.getInstance();
 		@Nullable var camera = client.gameRenderer.getCamera();
-		if (camera == null || client.world == null || FogConfig.getInstance().disableMod
+		if (camera == null || client.world == null || !FogConfig.getInstance().enableMod
 				|| !(client.world.getDimensionEffects() instanceof DimensionEffects.Overworld)
 				|| !FogConfig.getInstance().enableCloudWhitening
 				|| client.world.getDimension().hasFixedTime() || FogManager.isInDisabledBiome()

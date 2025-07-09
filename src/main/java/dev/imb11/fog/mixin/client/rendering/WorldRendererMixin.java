@@ -42,7 +42,7 @@ public abstract class WorldRendererMixin {
 	@WrapOperation(method = "renderClouds", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/world/ClientWorld;getCloudsColor(F)Lnet/minecraft/util/math/Vec3d;"))
 	public @NotNull Vec3d fog$whiteClouds(ClientWorld instance, float tickDelta, @NotNull Operation<Vec3d> original) {
 		if (this.world == null
-				|| FogConfig.getInstance().disableMod
+				|| !FogConfig.getInstance().enableMod
 				|| !(this.world.getDimensionEffects() instanceof DimensionEffects.Overworld)
 				|| !FogConfig.getInstance().enableCloudWhitening
 				|| FogManager.isInDisabledBiome()
@@ -60,7 +60,7 @@ public abstract class WorldRendererMixin {
 	@WrapOperation(method = "renderClouds", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/BackgroundRenderer;applyFogColor()V"))
 	public void fog$removeFogFromClouds(@NotNull Operation<Void> original, @Local(argsOnly = true) float tickDelta) {
 		if (this.world == null
-				|| FogConfig.getInstance().disableMod
+				|| !FogConfig.getInstance().enableMod
 				|| !(this.world.getDimensionEffects() instanceof DimensionEffects.Overworld)
 				|| !FogConfig.getInstance().enableCloudWhitening
 				|| FogManager.isInDisabledBiome()
@@ -81,7 +81,7 @@ public abstract class WorldRendererMixin {
 	@Inject(method = "renderClouds", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gl/VertexBuffer;draw(Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lnet/minecraft/client/gl/ShaderProgram;)V", shift = At.Shift.BEFORE))
 	public void fog$whiteCloudsDisableFog(MatrixStack matrices, Matrix4f matrix4f, Matrix4f matrix4f2, float tickDelta, double cameraX, double cameraY, double cameraZ, CallbackInfo ci) {
 		if (this.world == null
-				|| FogConfig.getInstance().disableMod
+				|| !FogConfig.getInstance().enableMod
 				|| !(world.getDimensionEffects() instanceof DimensionEffects.Overworld)
 				|| !FogConfig.getInstance().enableCloudWhitening
 				|| FogManager.isInDisabledBiome()

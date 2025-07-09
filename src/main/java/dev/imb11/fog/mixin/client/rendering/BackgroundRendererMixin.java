@@ -44,7 +44,7 @@ public abstract class BackgroundRendererMixin {
 
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;clearColor(FFFF)V", remap = false, shift = At.Shift.BEFORE))
 	private static void fog$modifyFogColors(@NotNull Camera camera, float tickDelta, @NotNull ClientWorld world, int viewDistance, float skyDarkness, @NotNull CallbackInfo ci) {
-		if (FogConfig.getInstance().disableMod
+		if (!FogConfig.getInstance().enableMod
 				|| FogManager.isInDisabledBiome()
 				|| camera.getSubmersionType() != CameraSubmersionType.NONE
 				|| IrisCompat.shouldDisableMod()
@@ -69,7 +69,7 @@ public abstract class BackgroundRendererMixin {
 	private static void fog$fogRenderEvent(@NotNull Camera camera, @NotNull BackgroundRenderer.FogType fogType, float viewDistance, boolean thickFog, float deltaTick, @NotNull CallbackInfo ci, @Local @NotNull BackgroundRenderer.FogData fogData) {
 		@Nullable final var clientWorld = MinecraftClient.getInstance().world;
 		if (clientWorld == null
-				|| FogConfig.getInstance().disableMod
+				|| !FogConfig.getInstance().enableMod
 				|| FogManager.isInDisabledBiome()
 				|| camera.getSubmersionType() != CameraSubmersionType.NONE
 				|| IrisCompat.shouldDisableMod()
@@ -88,7 +88,7 @@ public abstract class BackgroundRendererMixin {
 	 ^/
 	@WrapWithCondition(method = "render", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;clearColor(FFFF)V"))
 	private static boolean fog$setFogBlackChangeClearColor(float red, float green, float blue, float alpha) {
-		if (FogConfig.getInstance().disableMod) {
+		if (!FogConfig.getInstance().enableMod) {
 			return true;
 		}
 
@@ -122,7 +122,7 @@ public abstract class BackgroundRendererMixin {
 		@NotNull var client = MinecraftClient.getInstance();
 		@Nullable var world = client.world;
 		if (world == null
-				|| FogConfig.getInstance().disableMod
+				|| !FogConfig.getInstance().enableMod
 				|| FogManager.isInDisabledBiome()
 				|| camera.getSubmersionType() != CameraSubmersionType.NONE
 				|| IrisCompat.shouldDisableMod()
@@ -151,7 +151,7 @@ public abstract class BackgroundRendererMixin {
 	@Inject(method = "getFogColor", at = @At(value = "HEAD"), cancellable = true)
 	private static void fog$modifyFogColor(Camera camera, float tickDelta, @Nullable ClientWorld world, int clampedViewDistance, float skyDarkness, @NotNull CallbackInfoReturnable<Vector4f> cir) {
 		if (world == null
-				|| FogConfig.getInstance().disableMod
+				|| !FogConfig.getInstance().enableMod
 				|| FogManager.isInDisabledBiome()
 				|| camera.getSubmersionType() != CameraSubmersionType.NONE
 				|| IrisCompat.shouldDisableMod()
