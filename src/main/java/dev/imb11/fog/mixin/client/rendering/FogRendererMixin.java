@@ -36,7 +36,7 @@ public class FogRendererMixin {
 	private void fog$modifyFog(Camera camera, int viewDistance, boolean thick, RenderTickCounter tickCounter, float skyDarkness, @Nullable ClientWorld world, CallbackInfoReturnable<Vector4f> cir, @Local @NotNull LocalRef<FogData> fogData) {
 		@NotNull var client = MinecraftClient.getInstance();
 		if (world == null
-				|| FogConfig.getInstance().disableMod
+				|| !FogConfig.getInstance().enableMod
 				|| FogManager.isInDisabledBiome()
 				|| camera.getSubmersionType() != CameraSubmersionType.NONE
 				|| IrisCompat.shouldDisableMod()
@@ -64,7 +64,7 @@ public class FogRendererMixin {
 	@Inject(method = "getFogColor", at = @At(value = "HEAD"), cancellable = true)
 	private void fog$modifyFogColor(Camera camera, float tickDelta, ClientWorld world, int viewDistance, float skyDarkness, boolean thick, @NotNull CallbackInfoReturnable<Vector4f> cir) {
 		if (world == null
-				|| FogConfig.getInstance().disableMod
+				|| !FogConfig.getInstance().enableMod
 				|| FogManager.isInDisabledBiome()
 				|| camera.getSubmersionType() != CameraSubmersionType.NONE
 				|| IrisCompat.shouldDisableMod()

@@ -82,12 +82,12 @@ public class FogClientCommands {
 
 	public static int toggle(@NotNull CommandContext<ClientCommandRegistrationEvent.ClientCommandSourceStack> commandContext) {
 		FogConfig config = FogConfig.getInstance();
-		config.disableMod = !config.disableMod;
+		config.enableMod = !config.enableMod;
 
 		FogConfig.save();
 
 		commandContext.getSource().arch$sendSuccess(() -> Text.literal("§b§7[§rFog§b§7]§r ").append(
-				Text.translatable("fog.command.toggle." + (config.disableMod ? "disabled" : "enabled")).formatted(Formatting.GOLD)), false);
+				Text.translatable("fog.command.toggle." + (config.enableMod ? "disabled" : "enabled")).formatted(Formatting.GOLD)), false);
 
 		return 1;
 	}

@@ -136,7 +136,7 @@ public class FogManager {
 		CustomFogDefinition fogDefinition = FogRegistry.getFogDefinitionOrDefault(
 				clientPlayerBiomeKeyOptional.get().getValue(), clientWorld);
 		@Nullable FogColors colors = fogDefinition.colors();
-		if (colors == null || FogConfig.getInstance().disableBiomeSpecificFogColors) {
+		if (colors == null || !FogConfig.getInstance().enableBiomeSpecificFogColors) {
 			colors = FogColors.getDefault(clientWorld);
 		}
 		if (PolytoneCompat.shouldUsePolytone()) {
@@ -174,21 +174,21 @@ public class FogManager {
 		this.currentLight.interpolate(clientWorld.getBaseLightLevel(clientPlayerBlockPosition, 0));
 	}
 
-	private Color getFinalNightColor(@NotNull ClientWorld world, FogColors fogColors) {
-		Color newMoonColor = Color.from(FogConfig.getInstance().newMoonColor);
-		if (!FogConfig.getInstance().disableMoonPhaseColorTransition) {
-			float blendFactor = switch (world.getMoonPhase()) {
-				case 0 -> 0.0f;  // new moon
-				case 1, 7 -> 0.25f; // 1/4 moon
-				case 2, 6 -> 0.5f;  // 1/2 moon
-				case 3, 5 -> 0.75f; // 3/4 moon
-				case 4 -> 1.0f;  // full moon
-				default -> 1.0f;
-			};
-			return fogColors.getNightColor().lerp(newMoonColor, blendFactor);
-		} else {
+	private @NotNull Color getFinalNightColor(@NotNull ClientWorld world, FogColors fogColors) {
+		if (!FogConfig.getInstance().enableMoonFogColorInfluence) {
 			return fogColors.getNightColor();
 		}
+
+		@NotNull Color newMoonColor = Color.from(FogConfig.getInstance().newMoonColor);
+		float blendFactor = switch (world.getMoonPhase()) {
+			case 0 -> 0.0f;  // new moon
+			case 1, 7 -> 0.25f; // 1/4 moon
+			case 2, 6 -> 0.5f;  // 1/2 moon
+			case 3, 5 -> 0.75f; // 3/4 moon
+			case 4 -> 1.0f;  // full moon
+			default -> 1.0f;
+		};
+		return fogColors.getNightColor().lerp(newMoonColor, blendFactor);
 	}
 
 	public float getUndergroundFactor(@NotNull MinecraftClient client, float tickDelta) {
@@ -252,7 +252,7 @@ public class FogManager {
 	 * Uses vanilla Minecraft's sunset detection for accurate timing.
 	 */
 	private float[] blendFogColorWithSunriseSunsetColors(@NotNull MinecraftClient client, float red, float green, float blue, float tickDelta) {
-		if (FogConfig.getInstance().disableSunsetFog || client.world == null) {
+		if (!FogConfig.getInstance().enableSunFogColorInfluence || client.world == null) {
 			return new float[]{red, green, blue};
 		}
 

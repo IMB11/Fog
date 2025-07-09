@@ -38,7 +38,7 @@ public class CloudRendererMixin {
 		@Nullable var camera = client.gameRenderer.getCamera();
 		if (camera == null || client.world == null || FogConfig.getInstance().disableMod
 				|| !(client.world.getDimensionEffects() instanceof DimensionEffects.Overworld)
-				|| FogConfig.getInstance().disableCloudWhitening
+				|| !FogConfig.getInstance().enableCloudWhitening
 				|| client.world.getDimension().hasFixedTime() || FogManager.isInDisabledBiome()
 				|| IrisCompat.shouldDisableMod()) {
 			return;

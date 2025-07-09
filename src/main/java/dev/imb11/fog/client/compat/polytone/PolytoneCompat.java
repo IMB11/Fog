@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class PolytoneCompat {
 	public static boolean shouldUsePolytone() {
-		return LoaderUtils.isModInstalled("polytone") && FogConfig.getInstance().prioritizePolytoneFogColors;
+		return LoaderUtils.isModInstalled("polytone") && FogConfig.getInstance().prioritizePolytoneFogDefinitions;
 	}
 
 	private static final Map<String, Integer> darkenCache = new HashMap<>();

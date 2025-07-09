@@ -35,9 +35,9 @@ public class FogConfig {
 	private static final FogConfigHelper HELPER = new FogConfigHelper(MOD_ID, "config");
 
 	@SerialEntry
-	public boolean disableMod = false;
+	public boolean enableMod = true;
 	/**
-	 * Nether has pretty good Fog, it doesn't need changing unless player really wants to.
+	 * The Nether has good fog, it doesn't need changing unless the player really wants to.
 	 */
 	@SerialEntry
 	public @NotNull List<String> disabledBiomes = List.of(
@@ -53,9 +53,9 @@ public class FogConfig {
 	@SerialEntry
 	public float undergroundFogMultiplier = 0.5f;
 	@SerialEntry
-	public boolean disableBiomeSpecificFogColors = false;
+	public boolean enableBiomeSpecificFogColors = true;
 	@SerialEntry
-	public boolean disableCloudWhitening = true;
+	public boolean enableCloudWhitening = false;
 	@SerialEntry
 	public float initialFogStart = 0.1f;
 	@SerialEntry
@@ -78,15 +78,15 @@ public class FogConfig {
 	@SerialEntry
 	public float endMultiplierTransitionSpeed = 0.0075f;
 	@SerialEntry
-	public boolean disableMoonPhaseColorTransition = false;
+	public boolean enableMoonFogColorInfluence = true;
 	@SerialEntry
 	public Color newMoonColor = new Color(0, 0, 0, 255);
 	@SerialEntry
-	public boolean disableSunsetFog = false;
+	public boolean enableSunFogColorInfluence = true;
 	@SerialEntry
 	public boolean enableHighAltitudeFogColorInfluence = true;
 	@SerialEntry
-	public boolean prioritizePolytoneFogColors = false;
+	public boolean prioritizePolytoneFogDefinitions = true;
 	@SerialEntry
 	public boolean disableModWhenIrisShaderPackIsEnabled = true;
 
@@ -120,20 +120,65 @@ public class FogConfig {
 				                                                                              ))
 				                                                                              .build())
 				                                      .binding(
-						                                      defaults.disableMod, () -> disableMod,
-						                                      newDisableMod -> disableMod = newDisableMod
+						                                      defaults.enableMod, () -> enableMod,
+						                                      newEnableMod -> enableMod = newEnableMod
 				                                      )
 				                                      .controller(BooleanControllerBuilder::create)
 				                                      .build()
 				                        )
-				                        .option(HELPER.getSlider(
-						                        "initial_fog_start", 0f, 1f, 0.05f, defaults.initialFogStart, () -> config.initialFogStart,
-						                        val -> config.initialFogStart = val
+				                        .option(ButtonOption.createBuilder()
+	                                            .name(HELPER.getText(EntryType.OPTION_NAME, "reset_fog_modifications"))
+						                        .description(OptionDescription.of(HELPER.getText(EntryType.OPTION_DESCRIPTION, "reset_fog_modifications")))
+						                        .action((yaclScreen, buttonOption) -> {
+							                        FogConfig.load();
+							                        FogManager.INSTANCE = new FogManager();
+						                        })
+						                        .build()
+				                        )
+				                        .option(LabelOption.createBuilder()
+				                                           .line(Text.literal(""))
+				                                           .build()
+				                        )
+				                        .option(HELPER.get(
+						                        "enable_biome_specific_fog_colors", defaults.enableBiomeSpecificFogColors,
+						                        () -> config.enableBiomeSpecificFogColors, val -> config.enableBiomeSpecificFogColors = val
 				                        ))
-				                        .option(HELPER.getSlider(
-						                        "initial_fog_end", 0f, 1f, 0.05f, defaults.initialFogEnd, () -> config.initialFogEnd,
-						                        val -> config.initialFogEnd = val
+				                        .option(HELPER.get("enable_high_altitude_fog_color_influence", defaults.enableHighAltitudeFogColorInfluence,
+						                        () -> config.enableHighAltitudeFogColorInfluence, val -> config.enableHighAltitudeFogColorInfluence = val
 				                        ))
+				                        .option(HELPER.get(
+						                        "enable_sun_fog_color_influence", defaults.enableSunFogColorInfluence,
+						                        () -> config.enableSunFogColorInfluence, val -> config.enableSunFogColorInfluence = val
+				                        ))
+				                        .option(HELPER.get(
+						                        "enable_moon_fog_color_influence", defaults.enableMoonFogColorInfluence,
+						                        () -> config.enableMoonFogColorInfluence,
+						                        val -> config.enableMoonFogColorInfluence = val
+				                        ))
+				                        .option(HELPER.get(
+						                        "new_moon_color", defaults.newMoonColor, () -> config.newMoonColor,
+						                        val -> config.newMoonColor = val
+				                        ))
+				                        .option(Option.<Boolean>createBuilder()
+				                                      .name(HELPER.getText(EntryType.OPTION_NAME, "enable_cloud_whitening"))
+				                                      .description(unused -> OptionDescription.createBuilder()
+				                                                                              .text(HELPER.getText(
+						                                                                              EntryType.OPTION_DESCRIPTION,
+						                                                                              "enable_cloud_whitening"
+				                                                                              ))
+				                                                                              .build())
+				                                      .binding(
+						                                      defaults.enableCloudWhitening, () -> enableCloudWhitening,
+						                                      newDisableCloudWhitening -> enableCloudWhitening = newDisableCloudWhitening
+				                                      )
+				                                      .controller(option -> BooleanControllerBuilder.create(option).coloured(true).trueFalseFormatter())
+				                                      .available(!FogClient.isModInstalled("sodium"))
+				                                      .build()
+				                        )
+						                .option(LabelOption.createBuilder()
+			                                    .line(Text.literal(""))
+			                                    .build()
+						                )
 				                        .option(HELPER.getSlider(
 						                        "rain_fog_multiplier", 0f, 1f, 0.05f, defaults.rainFogMultiplier,
 						                        () -> config.rainFogMultiplier, val -> config.rainFogMultiplier = val
@@ -143,10 +188,10 @@ public class FogConfig {
 						                        () -> config.undergroundFogMultiplier,
 						                        val -> config.undergroundFogMultiplier = val
 				                        ))
-				                        .option(HELPER.get(
-						                        "disable_biome_specific_fog_colors", defaults.disableBiomeSpecificFogColors,
-						                        () -> config.disableBiomeSpecificFogColors, val -> config.disableBiomeSpecificFogColors = val
-				                        ))
+				                        .option(LabelOption.createBuilder()
+				                                           .line(Text.literal(""))
+				                                           .build()
+				                        )
 				                        .group(ListOption.<String>createBuilder()
 				                                         .name(Text.translatable(
 						                                         String.format("%s.config.option.disabled_biomes", MOD_ID)))
@@ -158,6 +203,20 @@ public class FogConfig {
 				                                         .initial("mod_id:dimension_id")
 				                                         .collapsed(true)
 				                                         .build()
+				                        )
+				                        .group(OptionGroup.createBuilder()
+				                                          .name(Text.translatable(
+						                                          String.format("%s.config.group.initial_values", MOD_ID)))
+				                                          .option(HELPER.getSlider(
+						                                          "initial_fog_start", 0f, 1f, 0.05f, defaults.initialFogStart, () -> config.initialFogStart,
+						                                          val -> config.initialFogStart = val
+				                                          ))
+				                                          .option(HELPER.getSlider(
+						                                          "initial_fog_end", 0f, 1f, 0.05f, defaults.initialFogEnd, () -> config.initialFogEnd,
+						                                          val -> config.initialFogEnd = val
+				                                          ))
+				                                          .collapsed(true)
+				                                          .build()
 				                        )
 				                        .build()
 				)
@@ -178,6 +237,10 @@ public class FogConfig {
 						                        () -> config.fogColorTransitionSpeed,
 						                        val -> config.fogColorTransitionSpeed = val
 				                        ))
+				                        .option(LabelOption.createBuilder()
+				                                           .line(Text.literal(""))
+				                                           .build()
+				                        )
 				                        .option(HELPER.getFieldTDP(
 						                        "raininess_transition_speed", 0.001f, 0.5f, defaults.raininessTransitionSpeed,
 						                        () -> config.raininessTransitionSpeed,
@@ -193,6 +256,10 @@ public class FogConfig {
 						                        () -> config.darknessTransitionSpeed,
 						                        val -> config.darknessTransitionSpeed = val
 				                        ))
+				                        .option(LabelOption.createBuilder()
+				                                           .line(Text.literal(""))
+				                                           .build()
+				                        )
 										.group(OptionGroup.createBuilder()
 												.name(Text.translatable(
 														String.format("%s.config.group.multipliers", MOD_ID)))
@@ -210,50 +277,40 @@ public class FogConfig {
 												.build()
 										)
 				                        .build()
-				)
-				.category(ConfigCategory.createBuilder()
-				                        .name(HELPER.getText(EntryType.CATEGORY_NAME, "additional_visual_tweaks"))
-				                        .option(HELPER.get(
-						                        "disable_moon_phase_color_transition", defaults.disableMoonPhaseColorTransition,
-						                        () -> config.disableMoonPhaseColorTransition,
-						                        val -> config.disableMoonPhaseColorTransition = val
-				                        ))
-				                        .option(HELPER.get(
-						                        "new_moon_color", defaults.newMoonColor, () -> config.newMoonColor,
-						                        val -> config.newMoonColor = val
-				                        ))
-				                        .option(HELPER.get(
-						                        "disable_sunset_fog", defaults.disableSunsetFog,
-						                        () -> config.disableSunsetFog, val -> config.disableSunsetFog = val
-				                        ))
-				                        .option(HELPER.get("enable_high_altitude_fog_color_influence", defaults.enableHighAltitudeFogColorInfluence,
-						                        () -> config.enableHighAltitudeFogColorInfluence, val -> config.enableHighAltitudeFogColorInfluence = val
-				                        ))
-				                        .option(Option.<Boolean>createBuilder()
-				                                      .name(HELPER.getText(EntryType.OPTION_NAME, "disable_cloud_whitening"))
-				                                      .description(unused -> OptionDescription.createBuilder()
-				                                                                              .text(HELPER.getText(
-						                                                                              EntryType.OPTION_DESCRIPTION,
-						                                                                              "disable_cloud_whitening"
-				                                                                              ))
-				                                                                              .build())
-				                                      .binding(
-						                                      defaults.disableCloudWhitening, () -> disableCloudWhitening,
-						                                      newDisableCloudWhitening -> disableCloudWhitening = newDisableCloudWhitening
-				                                      )
-				                                      .controller(BooleanControllerBuilder::create)
-				                                      .available(!FogClient.isModInstalled("sodium"))
-				                                      .build()
-				                        )
-				                        .build()
 				).category(ConfigCategory.createBuilder()
 				                         .name(HELPER.getText(EntryType.CATEGORY_NAME, "compatibility"))
-				                         .option(HELPER.get("disable_mod_when_iris_shader_pack_is_enabled", defaults.disableModWhenIrisShaderPackIsEnabled,
-						                         () -> config.disableModWhenIrisShaderPackIsEnabled, v -> config.disableModWhenIrisShaderPackIsEnabled = v
-				                         ))
-				                         .option(HELPER.get("prioritize_polytone_fog_colors", defaults.prioritizePolytoneFogColors,
-						                         () -> config.prioritizePolytoneFogColors, v -> config.prioritizePolytoneFogColors = v
-				                         ))
+				                         .option(Option.<Boolean>createBuilder()
+				                                       .name(HELPER.getText(EntryType.OPTION_NAME, "disable_mod_when_iris_shader_pack_is_enabled"))
+				                                       .description(unused -> OptionDescription.createBuilder()
+				                                                                               .text(HELPER.getText(
+						                                                                               EntryType.OPTION_DESCRIPTION,
+						                                                                               "disable_mod_when_iris_shader_pack_is_enabled"
+				                                                                               ))
+				                                                                               .build())
+				                                       .binding(
+						                                       defaults.disableModWhenIrisShaderPackIsEnabled, () -> disableModWhenIrisShaderPackIsEnabled,
+						                                       newDisableModWhenIrisShaderPackIsEnabled -> disableModWhenIrisShaderPackIsEnabled = newDisableModWhenIrisShaderPackIsEnabled
+				                                       )
+				                                       .controller(option -> BooleanControllerBuilder.create(option).coloured(true).trueFalseFormatter())
+				                                       .available(FogClient.isModInstalled("iris"))
+				                                       .build()
+				                         )
+				                         .option(Option.<Boolean>createBuilder()
+				                                       .name(HELPER.getText(EntryType.OPTION_NAME, "prioritize_polytone_fog_definitions"))
+				                                       .description(unused -> OptionDescription.createBuilder()
+				                                                                               .text(HELPER.getText(
+						                                                                               EntryType.OPTION_DESCRIPTION,
+						                                                                               "prioritize_polytone_fog_definitions"
+				                                                                               ))
+				                                                                               .build())
+				                                       .binding(
+						                                       defaults.prioritizePolytoneFogDefinitions, () -> prioritizePolytoneFogDefinitions,
+						                                       newPrioritizePolytoneFogDefinitions -> prioritizePolytoneFogDefinitions = newPrioritizePolytoneFogDefinitions
+				                                       )
+				                                       .controller(option -> BooleanControllerBuilder.create(option).coloured(true).trueFalseFormatter())
+				                                       .available(FogClient.isModInstalled("polytone"))
+				                                       .build()
+				                         )
 				                         .build()
 				)
 		));

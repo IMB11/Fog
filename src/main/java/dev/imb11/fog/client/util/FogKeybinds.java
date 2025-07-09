@@ -24,12 +24,12 @@ public class FogKeybinds {
 		ClientTickEvent.CLIENT_POST.register(client -> {
 			while (toggleKeybind.wasPressed()) {
 				FogConfig config = FogConfig.getInstance();
-				config.disableMod = !config.disableMod;
+				config.enableMod = !config.enableMod;
 
 				FogConfig.save();
 
 				client.inGameHud.getChatHud().addMessage(Text.literal("§b§7[§rFog§b§7]§r ").append(
-						Text.translatable("fog.command.toggle." + (config.disableMod ? "disabled" : "enabled")).formatted(Formatting.GOLD)));
+						Text.translatable("fog.command.toggle." + (config.enableMod ? "disabled" : "enabled")).formatted(Formatting.GOLD)));
 			}
 		});
 	}
