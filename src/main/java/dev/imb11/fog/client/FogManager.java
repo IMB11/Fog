@@ -14,14 +14,16 @@ import dev.imb11.fog.client.util.world.ClientWorldUtil;
 import dev.imb11.fog.config.FogConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.LightType;
-import net.minecraft.world.biome.Biome;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+//? if <1.21.2 {
+/*import net.minecraft.client.render.DimensionEffects;
+*///?}
 
 public class FogManager {
 	public static FogManager INSTANCE = new FogManager();
@@ -68,10 +70,14 @@ public class FogManager {
 	}
 
 	public static boolean isInDisabledBiome() {
-		MinecraftClient client = MinecraftClient.getInstance();
-		RegistryEntry<Biome> biome = client.world.getBiomeAccess().getBiome(client.player.getBlockPos());
+		@NotNull var client = MinecraftClient.getInstance();
+		@Nullable var world = client.world;
+		@Nullable var player = client.player;
+		if (world == null || player == null) {
+			return false;
+		}
 
-		return FogConfig.getInstance().disabledBiomes.contains(biome.getIdAsString());
+		return FogConfig.getInstance().disabledBiomes.contains(world.getBiomeAccess().getBiome(player.getBlockPos()).getIdAsString());
 	}
 
 	private static float getBlendFactor(@NotNull ClientWorld world) {
@@ -263,26 +269,26 @@ public class FogManager {
 		isSunset = client.world.getDimensionEffects().isSunRisingOrSetting(skyAngle);
 		sunColor = Vec3d.unpackRgb(client.world.getDimensionEffects().getSkyColor(skyAngle));
 		//?} else {
-			/*// For versions before 1.21.2, use a simple approach for the overworld
-			if (client.world.getDimensionEffects() instanceof DimensionEffects.Overworld) {
-				float cosAngle = MathHelper.cos(skyAngle * 6.2831855F);
-				isSunset = cosAngle >= -0.4f && cosAngle <= 0.4f;
+		/*// For versions before 1.21.2, use a simple approach for the overworld
+		if (client.world.getDimensionEffects() instanceof DimensionEffects.Overworld) {
+			float cosAngle = MathHelper.cos(skyAngle * 6.2831855F);
+			isSunset = cosAngle >= -0.4f && cosAngle <= 0.4f;
 
-				// Approximate vanilla sunset color
-				float g = Math.max(cosAngle, 0f) / 0.4f * 0.5f + 0.5f;
-				float h = 1f - (1f - MathHelper.sin(g * 3.1415927f)) * 0.99f;
-				h = h * h;
+			// Approximate vanilla sunset color
+			float g = Math.max(cosAngle, 0f) / 0.4f * 0.5f + 0.5f;
+			float h = 1f - (1f - MathHelper.sin(g * 3.1415927f)) * 0.99f;
+			h = h * h;
 
-				int color = ((MathHelper.floor(h * 255f) & 0xFF) << 24) |
-						((MathHelper.floor((g * 0.3f + 0.7f) * 255.0F) & 0xFF) << 16) |
-						((MathHelper.floor((g * g * 0.7f + 0.2f) * 255f) & 0xFF) << 8) |
-						(MathHelper.floor(0.2f * 255f) & 0xFF);
-				sunColor = Vec3d.unpackRgb(color);
-			} else {
-				isSunset = false;
-				sunColor = Vec3d.ZERO;
-			}
-			*///?}
+			int color = ((MathHelper.floor(h * 255f) & 0xFF) << 24) |
+					((MathHelper.floor((g * 0.3f + 0.7f) * 255.0F) & 0xFF) << 16) |
+					((MathHelper.floor((g * g * 0.7f + 0.2f) * 255f) & 0xFF) << 8) |
+					(MathHelper.floor(0.2f * 255f) & 0xFF);
+			sunColor = Vec3d.unpackRgb(color);
+		} else {
+			isSunset = false;
+			sunColor = Vec3d.ZERO;
+		}
+		*///?}
 
 		// Only apply sunset colors if we're actually in sunrise/sunset
 		if (isSunset) {
