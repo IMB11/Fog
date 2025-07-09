@@ -49,7 +49,7 @@ public class FogConfig {
 	);
 
 	@SerialEntry
-	public float rainFogMultiplier = 0.5f;
+	public float rainFogMultiplier = 0.9f;
 	@SerialEntry
 	public float undergroundFogMultiplier = 0.5f;
 	@SerialEntry
