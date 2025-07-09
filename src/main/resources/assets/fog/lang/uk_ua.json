@@ -1,6 +1,5 @@
 {
   "fog.config.category.fog_calculations": "Розрахунки туману",
-  "fog.config.option.fog_calculations.warning": "§6§l§nПопередження!§r Не рекомендується торкатися цих констант, якщо ви не розумієте, що вони роблять і як вони використовуються.\nПодумайте про те, щоб залишити їх як є для кращої роботи.",
   "fog.config.option.initial_fog_start": "Початок туману",
   "fog.config.option.description.initial_fog_start": "Початкова (при увімкненому двигуні туману) відстань від камери, на якій починає з'являтися туман - виражена у відсотках від відстані огляду",
   "fog.config.option.initial_fog_end": "Кінець туману",

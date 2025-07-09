@@ -110,8 +110,22 @@ public class FogConfig {
 					FogManager.INSTANCE = new FogManager();
 				})
 				.category(ConfigCategory.createBuilder()
-				                        .name(HELPER.getText(EntryType.CATEGORY_NAME, "fog_calculations"))
-				                        .option(LabelOption.create(HELPER.getText(EntryType.OPTION_NAME, "fog_calculations.warning")))
+				                        .name(HELPER.getText(EntryType.CATEGORY_NAME, "general"))
+				                        .option(Option.<Boolean>createBuilder()
+				                                      .name(HELPER.getText(EntryType.OPTION_NAME, "disable_mod"))
+				                                      .description(unused -> OptionDescription.createBuilder()
+				                                                                              .text(HELPER.getText(
+						                                                                              EntryType.OPTION_DESCRIPTION,
+						                                                                              "disable_mod"
+				                                                                              ))
+				                                                                              .build())
+				                                      .binding(
+						                                      defaults.disableMod, () -> disableMod,
+						                                      newDisableMod -> disableMod = newDisableMod
+				                                      )
+				                                      .controller(BooleanControllerBuilder::create)
+				                                      .build()
+				                        )
 				                        .option(HELPER.getSlider(
 						                        "initial_fog_start", 0f, 1f, 0.05f, defaults.initialFogStart, () -> config.initialFogStart,
 						                        val -> config.initialFogStart = val
@@ -133,11 +147,22 @@ public class FogConfig {
 						                        "disable_biome_fog_colour", defaults.disableBiomeFogColour,
 						                        () -> config.disableBiomeFogColour, val -> config.disableBiomeFogColour = val
 				                        ))
+				                        .group(ListOption.<String>createBuilder()
+				                                         .name(Text.translatable(
+						                                         String.format("%s.config.option.disabled_biomes", MOD_ID)))
+				                                         .binding(
+						                                         defaults.disabledBiomes, () -> disabledBiomes,
+						                                         val -> disabledBiomes = val
+				                                         )
+				                                         .controller(StringControllerBuilder::create)
+				                                         .initial("mod_id:dimension_id")
+				                                         .collapsed(true)
+				                                         .build()
+				                        )
 				                        .build()
 				)
 				.category(ConfigCategory.createBuilder()
 				                        .name(HELPER.getText(EntryType.CATEGORY_NAME, "transition_speeds"))
-				                        .option(LabelOption.create(HELPER.getText(EntryType.OPTION_NAME, "fog_calculations.warning")))
 				                        .option(HELPER.getFieldTDP(
 						                        "fog_start_transition_speed", 0.001f, 0.5f, defaults.fogStartTransitionSpeed,
 						                        () -> config.fogStartTransitionSpeed,
@@ -182,7 +207,6 @@ public class FogConfig {
 				)
 				.category(ConfigCategory.createBuilder()
 				                        .name(HELPER.getText(EntryType.CATEGORY_NAME, "additional_visual_tweaks"))
-				                        .option(LabelOption.create(HELPER.getText(EntryType.OPTION_NAME, "fog_calculations.warning")))
 				                        .option(HELPER.get(
 						                        "disable_moon_phase_color_transition", defaults.disableMoonPhaseColorTransition,
 						                        () -> config.disableMoonPhaseColorTransition,
@@ -213,36 +237,6 @@ public class FogConfig {
 				                                      )
 				                                      .controller(BooleanControllerBuilder::create)
 				                                      .available(!FogClient.isModInstalled("sodium"))
-				                                      .build()
-				                        )
-				                        .build()
-				)
-				.category(ConfigCategory.createBuilder()
-				                        .name(HELPER.getText(EntryType.CATEGORY_NAME, "general"))
-				                        .group(ListOption.<String>createBuilder()
-				                                         .name(Text.translatable(
-						                                         String.format("%s.config.option.disabled_biomes", MOD_ID)))
-				                                         .binding(
-						                                         defaults.disabledBiomes, () -> disabledBiomes,
-						                                         val -> disabledBiomes = val
-				                                         )
-				                                         .controller(StringControllerBuilder::create)
-				                                         .initial("mod_id:dimension_id")
-				                                         .build()
-				                        )
-				                        .option(Option.<Boolean>createBuilder()
-				                                      .name(HELPER.getText(EntryType.OPTION_NAME, "disable_mod"))
-				                                      .description(unused -> OptionDescription.createBuilder()
-				                                                                              .text(HELPER.getText(
-						                                                                              EntryType.OPTION_DESCRIPTION,
-						                                                                              "disable_mod"
-				                                                                              ))
-				                                                                              .build())
-				                                      .binding(
-						                                      defaults.disableMod, () -> disableMod,
-						                                      newDisableMod -> disableMod = newDisableMod
-				                                      )
-				                                      .controller(BooleanControllerBuilder::create)
 				                                      .build()
 				                        )
 				                        .build()

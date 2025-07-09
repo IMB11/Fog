@@ -9,7 +9,6 @@
   "fog.config.option.description.disable_moon_phase_color_transition": "Desactiva la transición de color según la fase lunar, que cambia el color de la niebla nocturna según la fase de la luna si hay una transición definida",
   "fog.config.option.new_moon_color": "Color de Luna Nueva",
   "fog.config.option.description.new_moon_color": "Color de la niebla cuando la luna está en fase de \"Luna Nueva\". Se interpolará con el color nocturno predeterminado o del bioma si la transición por fase lunar está habilitada.",
-  "fog.config.option.fog_calculations.warning": "§6§l§n¡Advertencia!§r No se recomienda modificar estas constantes a menos que entiendas qué hacen y cómo se usan.\nConsiderá dejarlas como están para la mejor experiencia.",
   "fog.config.option.disable_sunset_fog": "Desactivar Niebla al Atardecer",
   "fog.config.option.description.disable_sunset_fog": "Desactiva el efecto de niebla al atardecer, que hace que la niebla se vea más anaranjada durante el ocaso",
   "fog.config.option.sunset_color": "Color del Atardecer",

@@ -1,6 +1,5 @@
 {
   "fog.config.category.fog_calculations": "Sis Hesaplamaları",
-  "fog.config.option.fog_calculations.warning": "§6§l§nUyarı!§r Ne işe yaradıklarını ve nasıl kullanıldıklarını anlamadığınız sürece bu sabitlere dokunmanız önerilmez.\nEn iyi deneyim için bunları olduğu gibi bırakmayı düşünün.",
   "fog.config.option.initial_fog_start": "İlk Sis Başlangıcı",
   "fog.config.option.description.initial_fog_start": "Sisin görünmeye başladığı kameradan ilk (sis motoru yüklendiğinde) mesafe - görüş mesafesinin yüzdesi olarak ifade edilir",
   "fog.config.option.initial_fog_end": "İlk Sis Sonu",

@@ -8,7 +8,6 @@
   "fog.config.option.description.disable_moon_phase_color_transition": "禁用月相颜色过渡，使夜晚迷雾颜色在过渡被定义的情况下根据月相改变颜色。",
   "fog.config.option.new_moon_color": "新月颜色",
   "fog.config.option.description.new_moon_color": "当月相为“新月”时所使用的迷雾颜色。如果启用月相颜色过渡，这将与生物群系或默认夜晚颜色进行线性插值（Linear Interpolation）。",
-  "fog.config.option.fog_calculations.warning": "§6§l§n警告！§r 并不建议更改这些常数，除非您知道并了解作用与使用方法。\n请考虑保留以获得最佳效果。",
   "fog.config.option.disable_sunset_fog": "禁用日落迷雾",
   "fog.config.option.description.disable_sunset_fog": "禁用日落迷雾效果，使日落时的迷雾看起来更橙。",
   "fog.config.option.sunset_color": "日落颜色",

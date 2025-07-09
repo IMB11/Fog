@@ -1,7 +1,6 @@
 {
   "fog.config.category.fog_calculations": "迷霧計算",
   "key.fog.toggle": "切換迷霧引擎",
-  "fog.config.option.fog_calculations.warning": "§6§l§n警告！§r 除非你瞭解這些常數的作用及其使用方法，否則不建議修改它們。\n為了獲得最佳體驗，請考慮保留它們的預設值。",
   "fog.config.option.initial_fog_start": "初始迷霧起始距離",
   "fog.config.option.description.initial_fog_start": "迷霧開始出現的初始距離（載入迷霧引擎時） - 以視野距離的百分比表示",
   "fog.config.option.initial_fog_end": "初始迷霧結束距離",
