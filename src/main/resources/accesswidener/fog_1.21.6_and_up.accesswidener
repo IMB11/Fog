@@ -1,0 +1,4 @@
+accessWidener   v2  named
+
+extendable    method    net/minecraft/client/gui/ParentElement    children    ()Ljava/util/List;
+extendable    method    net/minecraft/client/gui/widget/EntryListWidget    children    ()Ljava/util/List;

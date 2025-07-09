@@ -32,9 +32,9 @@ afterEvaluate {
     }
 }
 
+var accessWidenerFilePath = stonecutter.eval(stonecutter.current.version, ">=1.21.6") ? "accesswidener/fog_1.21.6_and_up.accesswidener" : "accesswidener/fog_1.21.5_and_below.accesswidener"
 loom {
-    // TODO: Add a better multi-version AW strategy: https://github.com/IMB11/Sounds/blob/main/build.gradle#L86
-    accessWidenerPath = getRootProject().file('src/main/resources/fog.accesswidener')
+    accessWidenerPath = getRootProject().file("src/main/resources/${accessWidenerFilePath}")
 
     if (loader == "forge") {
         forge {
@@ -162,6 +162,7 @@ processResources {
     props.each { key, value -> inputs.property(key, value) }
 
     if (loader == "fabric") {
+        props.access_widener_file_path = accessWidenerFilePath
         filesMatching("fabric.mod.json") { expand(props) }
         exclude(["META-INF/neoforge.mods.toml"])
     }

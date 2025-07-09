@@ -14,7 +14,7 @@
     "issues": "https://github.com/IMB11/Fog/issues"
   },
   "license": "All-Rights-Reserved",
-  "accessWidener": "fog.accesswidener",
+  "accessWidener": "${access_widener_file_path}",
   "icon": "assets/fog/icon.png",
   "environment": "client",
   "entrypoints": {
