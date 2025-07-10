@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 import java.util.Map;
 
 @Pseudo
-@Mixin(BiomeEffectsManager.class)
+@Mixin(value = BiomeEffectsManager.class, remap = false)
 public interface BiomeEffectsManagerAccessor {
 	@Accessor("effectsToApply")
 	Map<RegistryKey<Biome>, BiomeEffectModifier> getEffectsToApply();

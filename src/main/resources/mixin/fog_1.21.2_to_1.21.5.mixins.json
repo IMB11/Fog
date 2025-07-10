@@ -1,0 +1,18 @@
+{
+  "required": true,
+  "package": "dev.imb11.fog.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.7.11",
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "plugin": "dev.imb11.fog.loaders.mixin.FogMixinPlugin",
+  "mixins": [
+    "compat.BiomeEffectsManagerAccessor"
+  ],
+  "client": [
+    "client.rendering.BackgroundRendererMixin",
+    "client.rendering.CloudRendererMixin",
+    "client.rendering.WorldRendererMixin"
+  ]
+}

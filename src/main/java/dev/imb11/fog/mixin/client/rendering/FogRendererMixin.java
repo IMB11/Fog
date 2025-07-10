@@ -1,12 +1,11 @@
 package dev.imb11.fog.mixin.client.rendering;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Pseudo;
-
 //? if >=1.21.6 {
 import net.minecraft.client.render.Camera;
+import net.minecraft.client.render.fog.FogRenderer;
 import net.minecraft.client.world.ClientWorld;
 import org.joml.Vector4f;
+import org.spongepowered.asm.mixin.Mixin;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import dev.imb11.fog.client.util.TickUtil;
@@ -28,8 +27,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import static dev.imb11.fog.client.util.ChunkSectionUtil.CHUNK_SECTION_DIAMETER;
 //?}
 
-@Pseudo
-@Mixin(targets = "net.minecraft.client.render.fog.FogRenderer")
+//? if >=1.21.6 {
+@Mixin(FogRenderer.class)
+//?}
 public class FogRendererMixin {
 	//? if >=1.21.6 {
 	@Inject(method = "applyFog(Lnet/minecraft/client/render/Camera;IZLnet/minecraft/client/render/RenderTickCounter;FLnet/minecraft/client/world/ClientWorld;)Lorg/joml/Vector4f;", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/CommandEncoder;mapBuffer(Lcom/mojang/blaze3d/buffers/GpuBuffer;ZZ)Lcom/mojang/blaze3d/buffers/GpuBuffer$MappedView;"))
@@ -61,8 +61,7 @@ public class FogRendererMixin {
 		fogData.set(customFogData);
 	}
 
-	// Workaround for getFogColor not remapping to method_62185
-	@Inject(method = "method_62185", at = @At(value = "HEAD"), cancellable = true, remap = false)
+	@Inject(method = "getFogColor", at = @At(value = "HEAD"), cancellable = true)
 	private void fog$modifyFogColor(Camera camera, float tickDelta, ClientWorld world, int viewDistance, float skyDarkness, boolean thick, @NotNull CallbackInfoReturnable<Vector4f> cir) {
 		if (world == null
 				|| !FogConfig.getInstance().enableMod

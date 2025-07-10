@@ -33,13 +33,14 @@ afterEvaluate {
 }
 
 var accessWidenerFilePath = stonecutter.eval(stonecutter.current.version, ">=1.21.6") ? "accesswidener/fog_1.21.6_and_up.accesswidener" : "accesswidener/fog_1.21.5_and_below.accesswidener"
+var mixinConfiguration = stonecutter.eval(stonecutter.current.version, ">=1.21.6") ? "mixin/fog_1.21.6_and_up.mixins.json" : stonecutter.eval(stonecutter.current.version, ">=1.21.2 <=1.21.5") ? "mixin/fog_1.21.2_to_1.21.5.mixins.json" : "mixin/fog_1.21.1_and_below.mixins.json"
 loom {
     accessWidenerPath = getRootProject().file("src/main/resources/${accessWidenerFilePath}")
 
     if (loader == "forge") {
         forge {
             convertAccessWideners = true
-            mixinConfig "fog.mixins.json"
+            mixinConfig mixinConfiguration
         }
     }
 
@@ -163,6 +164,7 @@ processResources {
 
     if (loader == "fabric") {
         props.access_widener_file_path = accessWidenerFilePath
+        props.mixin_configuration = mixinConfiguration
         filesMatching("fabric.mod.json") { expand(props) }
         exclude(["META-INF/neoforge.mods.toml"])
     }

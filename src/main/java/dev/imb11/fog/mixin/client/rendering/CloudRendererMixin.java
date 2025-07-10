@@ -1,11 +1,14 @@
 package dev.imb11.fog.mixin.client.rendering;
 
 //? if >=1.21.2 && <1.21.6 {
-/*import com.mojang.blaze3d.systems.RenderSystem;
+/*import org.spongepowered.asm.mixin.Mixin;
+
+import com.mojang.blaze3d.systems.RenderSystem;
 import dev.imb11.fog.client.FogManager;
 import dev.imb11.fog.client.compat.polytone.IrisCompat;
 import dev.imb11.fog.config.FogConfig;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.CloudRenderer;
 import net.minecraft.client.option.CloudRenderMode;
 import net.minecraft.client.render.DimensionEffects;
 import net.minecraft.client.render.Fog;
@@ -20,11 +23,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 /*import org.joml.Matrix4f;
 *///?}
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Pseudo;
-
-@Pseudo
-@Mixin(targets = "net.minecraft.client.render.CloudRenderer")
+//? if >=1.21.2 && <1.21.6 {
+/*@Mixin(CloudRenderer.class)
+*///?}
 public class CloudRendererMixin {
 	//? if >=1.21.2 && <1.21.6 {
 	/*//? if <1.21.5 {

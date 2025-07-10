@@ -5,9 +5,6 @@ import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import dev.imb11.fog.config.FogConfig;
 
-
-
-
 public class FogClientModMenuCompat implements ModMenuApi {
 	@Override
 	public ConfigScreenFactory<?> getModConfigScreenFactory() {

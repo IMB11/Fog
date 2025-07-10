@@ -1,8 +1,6 @@
 package dev.imb11.fog.mixin.client.rendering;
 
-import dev.imb11.fog.client.FogManager;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Pseudo;
 import net.minecraft.client.render.*;
 
 //? if <1.21.2 {
@@ -11,6 +9,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import dev.imb11.fog.client.FogManager;
 import dev.imb11.fog.client.util.math.CloudCalculator;
 import dev.imb11.fog.client.compat.polytone.IrisCompat;
 import dev.imb11.fog.config.FogConfig;
@@ -32,7 +31,6 @@ import net.minecraft.util.math.Vec3d;
 
 *///?}
 
-@Pseudo
 @Mixin(value = WorldRenderer.class)
 public abstract class WorldRendererMixin {
 	//? if <1.21.2 {

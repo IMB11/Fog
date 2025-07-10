@@ -1,10 +1,9 @@
 package dev.imb11.fog.mixin.client.rendering;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Pseudo;
-
 //? if <1.21.6 {
-/*import dev.imb11.fog.client.FogManager;
+/*import org.spongepowered.asm.mixin.Mixin;
+
+import dev.imb11.fog.client.FogManager;
 import dev.imb11.fog.client.compat.polytone.IrisCompat;
 import dev.imb11.fog.client.util.math.EnvironmentCalculations;
 import dev.imb11.fog.config.FogConfig;
@@ -31,8 +30,9 @@ import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 /*import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 *///?}
 
-@Pseudo
-@Mixin(targets = "net.minecraft.client.render.BackgroundRenderer")
+//? if <1.21.6 {
+/*@Mixin(BackgroundRenderer.class)
+*///?}
 public abstract class BackgroundRendererMixin {
 	//? if <1.21.3 {
 	/*@Shadow

@@ -29,7 +29,7 @@
     ]
   },
   "mixins": [
-    "fog.mixins.json"
+    "${mixin_configuration}"
   ],
   "depends": {
     "fabricloader": "*",
