@@ -61,7 +61,8 @@ public class FogRendererMixin {
 		fogData.set(customFogData);
 	}
 
-	@Inject(method = "getFogColor", at = @At(value = "HEAD"), cancellable = true)
+	// Workaround for getFogColor not remapping to method_62185
+	@Inject(method = "method_62185", at = @At(value = "HEAD"), cancellable = true, remap = false)
 	private void fog$modifyFogColor(Camera camera, float tickDelta, ClientWorld world, int viewDistance, float skyDarkness, boolean thick, @NotNull CallbackInfoReturnable<Vector4f> cir) {
 		if (world == null
 				|| !FogConfig.getInstance().enableMod
