@@ -29,7 +29,7 @@ public class FogKeybinds {
 				FogConfig.save();
 
 				client.inGameHud.getChatHud().addMessage(Text.literal("§b§7[§rFog§b§7]§r ").append(
-						Text.translatable("fog.command.toggle." + (config.enableMod ? "disabled" : "enabled")).formatted(Formatting.GOLD)));
+						Text.translatable("fog.command.toggle." + (config.enableMod ? "enabled" : "disabled")).formatted(Formatting.GOLD)));
 			}
 		});
 	}

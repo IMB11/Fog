@@ -87,7 +87,7 @@ public class FogClientCommands {
 		FogConfig.save();
 
 		commandContext.getSource().arch$sendSuccess(() -> Text.literal("§b§7[§rFog§b§7]§r ").append(
-				Text.translatable("fog.command.toggle." + (config.enableMod ? "disabled" : "enabled")).formatted(Formatting.GOLD)), false);
+				Text.translatable("fog.command.toggle." + (config.enableMod ? "enabled" : "disabled")).formatted(Formatting.GOLD)), false);
 
 		return 1;
 	}

@@ -112,11 +112,11 @@ public class FogConfig {
 				.category(ConfigCategory.createBuilder()
 				                        .name(HELPER.getText(EntryType.CATEGORY_NAME, "general"))
 				                        .option(Option.<Boolean>createBuilder()
-				                                      .name(HELPER.getText(EntryType.OPTION_NAME, "disable_mod"))
+				                                      .name(HELPER.getText(EntryType.OPTION_NAME, "enable_mod"))
 				                                      .description(unused -> OptionDescription.createBuilder()
 				                                                                              .text(HELPER.getText(
 						                                                                              EntryType.OPTION_DESCRIPTION,
-						                                                                              "disable_mod"
+						                                                                              "enable_mod"
 				                                                                              ))
 				                                                                              .build())
 				                                      .binding(
