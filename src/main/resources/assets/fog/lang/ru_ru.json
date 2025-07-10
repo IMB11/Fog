@@ -13,8 +13,6 @@
   "fog.config.option.description.initial_fog_end": "Начальное (при включённом движке тумана) расстояние от камеры, на котором туман полностью непрозрачен, выраженное в процентах от расстояния обзора.",
   "fog.config.option.disabled_biomes": "Отключенные биомы",
   "fog.config.option.description.disabled_biomes": "Отключает все модификации тумана в указанных биомах.",
-  "fog.config.option.disable_mod": "Полностью отключить мод",
-  "fog.config.option.description.disable_mod": "Полностью отключает мод, полезно, если вы хотите провести сравнение с ванильной игрой.",
   "fog.config.option.fog_start_transition_speed": "Скорость перехода к началу тумана",
   "fog.config.option.description.fog_start_transition_speed": "Управляет скоростью, с которой расстояние до начала тумана изменяется на новые значения. Более низкие значения обеспечивают более плавный переход.",
   "fog.config.option.fog_end_transition_speed": "Скорость перехода к концу тумана",

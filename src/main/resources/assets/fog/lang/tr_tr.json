@@ -3,8 +3,6 @@
   "fog.config.option.description.initial_fog_start": "Sisin görünmeye başladığı kameradan ilk (sis motoru yüklendiğinde) mesafe - görüş mesafesinin yüzdesi olarak ifade edilir",
   "fog.config.option.initial_fog_end": "İlk Sis Sonu",
   "fog.config.option.description.initial_fog_end": "Sisin tamamen opak olduğu kameradan ilk (sis motoru yüklendiğinde) mesafe - görüş mesafesinin yüzdesi olarak ifade edilir",
-  "fog.config.option.disable_mod": "Modu Tamamen Devre Dışı Bırak",
-  "fog.config.option.description.disable_mod": "Modu tamamen devre dışı bırakır, vanilla ile karşılaştırma yapmak istiyorsanız kullanışlıdır.",
   "fog.command.toggle.enabled": "Sis motoru modifikasyonları artık yeniden etkinleştirildi.",
   "fog.command.toggle.disabled": "Sis motoru modifikasyonları artık devre dışı bırakıldı.",
   "fog.command.reset": "Sis motoru modifikasyonları yeniden yüklendi ve yapılandırmada belirtilen varsayılan değerlere sıfırlandı.",
