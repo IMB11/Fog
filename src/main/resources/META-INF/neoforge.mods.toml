@@ -13,7 +13,7 @@ displayName="Fog"
 description="An expansive and dynamic overhaul to Minecraft's fog rendering system."
 
 [[mixins]]
-config="fog.mixins.json"
+config="${mixin_configuration}"
 
 [mc-publish]
 dependencies=[

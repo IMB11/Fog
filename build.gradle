@@ -170,6 +170,7 @@ processResources {
     }
 
     if (loader == "neoforge") {
+        props.mixin_configuration = mixinConfiguration
         filesMatching(["META-INF/neoforge.mods.toml"]) { expand(props) }
         exclude("fabric.mod.json")
     }
