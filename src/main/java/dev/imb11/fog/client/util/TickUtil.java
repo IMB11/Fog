@@ -9,7 +9,7 @@ public class TickUtil {
 		/*?} else if >=1.21.5 {*/
 		return MinecraftClient.getInstance().getRenderTickCounter().getTickProgress(true);
 		/*?} else {*/
-		/*return MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(true);*/
-		/*?}*/
+		/*return MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(true);
+		*//*?}*/
 	}
 }

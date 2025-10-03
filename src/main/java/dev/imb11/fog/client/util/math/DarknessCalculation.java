@@ -12,8 +12,8 @@ import org.jetbrains.annotations.NotNull;
 public record DarknessCalculation(float fogStart, float fogEnd, float darknessValue) {
 	@Contract("_, _, _, _ -> new")
 	public static @NotNull DarknessCalculation of(@NotNull MinecraftClient client, float fogStart, float fogEnd, float deltaTick) {
-		float renderDistance = /*? >=1.21.5 {*/ client.gameRenderer.getViewDistanceBlocks() /*?} else {*//* client.gameRenderer.getViewDistance() * 16 *//*?}*/;
-		Entity entity = client.cameraEntity;
+		float renderDistance = /*? >=1.21.5 {*/ client.gameRenderer.getViewDistanceBlocks() /*?} else {*/ /*client.gameRenderer.getViewDistance() * 16 *//*?}*/;
+		Entity entity = client.getCameraEntity();
 		float darknessValue = 0.0F;
 		if (!(entity instanceof LivingEntity livingEntity)) {
 			return new DarknessCalculation(fogStart, fogEnd, darknessValue);

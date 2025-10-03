@@ -3,6 +3,7 @@ package dev.imb11.fog.client.util.player;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.world.Heightmap;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +33,12 @@ public class PlayerUtil {
 			return true;
 		}
 
-		@Nullable ClientWorld clientWorld = clientPlayerEntity.clientWorld;
+		@Nullable World clientWorld = clientPlayerEntity.
+		//? if >1.21.8 {
+		getEntityWorld();
+		//?} else {
+		/*clientWorld;
+		*///?}
 		if (clientWorld == null) {
 			return true;
 		}
