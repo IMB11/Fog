@@ -55,7 +55,13 @@ public class EnvironmentCalculations {
 			//? if <1.21.2 {
 			/*skyColour = client.world.getSkyColor(player.getPos(), tickDelta);
 			*///?} else {
-			skyColour = Vec3d.unpackRgb(client.world.getSkyColor(player.getPos(), tickDelta));
+			skyColour = Vec3d.unpackRgb(client.world.getSkyColor(
+					//? if >1.21.8 {
+					player.getEntityPos()
+					//?} else {
+					/*player.getPos()
+					*///?}
+					, tickDelta));
 			//?}
 
 			// Lerp between the fog color and the sky color

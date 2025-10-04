@@ -1,5 +1,5 @@
 plugins {
-    id("dev.architectury.loom") version "1.10-SNAPSHOT"
+    id("dev.architectury.loom") version "1.11-SNAPSHOT"
 }
 
 val loader = property("loom.platform") as String

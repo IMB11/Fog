@@ -21,9 +21,9 @@ stonecutter {
     shared {
         vers("1.21-fabric", "1.21")
         vers("1.21-neoforge", "1.21")
-        vers("1.21.8-fabric", "1.21.8")
+        vers("1.21.9-fabric", "1.21.9")
 
-        vcsVersion = "1.21.8-fabric"
+        vcsVersion = "1.21.9-fabric"
     }
 
     create(rootProject)

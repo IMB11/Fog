@@ -198,7 +198,7 @@ public class FogManager {
 	}
 
 	public float getUndergroundFactor(@NotNull MinecraftClient client, float tickDelta) {
-		@Nullable var clientCamera = client.cameraEntity;
+		@Nullable var clientCamera = client.getCameraEntity();
 		@Nullable var clientWorld = client.world;
 		if (clientCamera == null || clientWorld == null) {
 			return 0.0F;

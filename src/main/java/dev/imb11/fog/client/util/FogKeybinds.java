@@ -16,7 +16,11 @@ public class FogKeybinds {
 		toggleKeybind = new KeyBinding(
 				"key.fog.toggle",
 				InputUtil.UNKNOWN_KEY.getCode(),
-				"key.categories.misc"
+				//? if >1.21.8 {
+				KeyBinding.Category.MISC
+				//?} else {
+				/*"key.categories.misc"
+				*///?}
 		);
 
 		KeyMappingRegistry.register(toggleKeybind);
