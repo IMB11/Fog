@@ -22,6 +22,7 @@ stonecutter {
         vers("1.21-fabric", "1.21")
         vers("1.21-neoforge", "1.21")
         vers("1.21.9-fabric", "1.21.9")
+        vers("1.21.9-neoforge", "1.21.9")
 
         vcsVersion = "1.21.9-fabric"
     }

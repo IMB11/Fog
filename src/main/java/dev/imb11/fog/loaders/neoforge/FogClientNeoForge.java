@@ -12,17 +12,17 @@ public class FogClientNeoForge {
 		FogClient.initialize();
 
 		/^? if =1.20.4 {^/
-		ModLoadingContext.get().registerExtensionPoint(
+		/^ModLoadingContext.get().registerExtensionPoint(
 				net.neoforged.neoforge.client.ConfigScreenHandler.ConfigScreenFactory.class,
 				() -> new net.neoforged.neoforge.client.ConfigScreenHandler.ConfigScreenFactory(
 						(client, parent) -> FogConfig.getInstance().getYetAnotherConfigLibInstance().generateScreen(parent)
 				)
         );
-        /^?} else {^/
-		/^ModLoadingContext.get().getActiveContainer().registerExtensionPoint(
+        ^//^?} else {^/
+		ModLoadingContext.get().getActiveContainer().registerExtensionPoint(
 				net.neoforged.neoforge.client.gui.IConfigScreenFactory.class, (client, parent) -> FogConfig.getInstance().getYetAnotherConfigLibInstance().generateScreen(parent)
 		);
-		^//^?}^/
+		/^?}^/
 	}
 }
 *//*?}*/
